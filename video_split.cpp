@@ -176,7 +176,7 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
             rename_yuv_file();
 
             timeval tv;
-            unsigned int t_seconds = (p_info->begin_time.tv_usec + fts*1000) / 1000;
+            unsigned int t_seconds = (p_info->begin_time.tv_usec + fts*1000) / 1000000;
             tv.tv_usec = (p_info->begin_time.tv_usec + fts*1000) % 1000;
             tv.tv_sec = p_info->begin_time.tv_sec + t_seconds;
 
@@ -217,7 +217,7 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
 
             // next shot begin time
             tv.tv_usec = (tv.tv_usec + fts * 1000) % 1000;
-            t_seconds = (tv.tv_usec + fts * 1000) / 1000;
+            t_seconds = (tv.tv_usec + fts * 1000) / 1000000;
             tv.tv_sec = tv.tv_sec + t_seconds;
             m_shot_begin_time.tv_sec = tv.tv_sec;
             m_shot_begin_time.tv_usec = tv.tv_usec;
