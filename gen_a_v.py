@@ -17,7 +17,7 @@ import collections
 G_COMMAND_OPTIONS = 'p:d:c:a:o:t:r:'
 def parse_options():
     options = lambda : None
-    options.ifps = 1
+    options.ifps = 2.0
     try:
         opts, args = getopt.getopt(sys.argv[1:], G_COMMAND_OPTIONS)  # home path
     except getopt.GetoptError:
@@ -37,12 +37,14 @@ def parse_options():
 env = lambda : None
 env.video_fifo = None
 env.audio_fifo = None
-env.vfps = 0
+env.vfps =25 
 env.width = 0
 env.height = 0
 env.audio_rate = 0
 env.options = parse_options()
 env.last_come_time = time.time()
+env.options.url="test.asf"
+env.options.path= "./tmp"
 
 def main():
     try:
@@ -78,7 +80,7 @@ def main():
 
 
 
-    debug_out = file("/dev/null", "w")
+    debug_out = file("./ffmpeg.out", "w")
     debug_out.write(" ".join(cmdline))
     debug_out.write("\n")
     debug_out.flush()
@@ -159,9 +161,9 @@ class Video_capturer(threading.Thread):
     def run(self):
         f = file(env.video_fifo, "r")
         data_buffer = ''
-        videofilequeue = collections.deque()
-        for _ in range(10):
-             videofilequeue.append("")
+
+        fts = int(round(1000 / env.vfps))
+
         while True:
             data_buffer += f.read(1024)
             frame_count = int(round(env.vfps / env.options.ifps))
@@ -172,13 +174,14 @@ class Video_capturer(threading.Thread):
                 time.sleep(0.1)
         size = len(data_buffer) // package_size 
         data_buffer = data_buffer[package_size * size:]
-        time_from = time.time()
+        begin_time = time.time()
         while True:
             data_buffer += f.read(package_size -len(data_buffer))
+            end_time = begin_time + float(fts * frame_count/ 1000.0)
             if len(data_buffer) >= package_size:
                 time_to = time.time()
                 env.last_come_time = time_to
-                t = datetime.datetime.utcfromtimestamp(time_from)
+                t = datetime.datetime.utcfromtimestamp(begin_time)
                 filename = '%4s%2s%2s_%2s%2s%2s.%6s.video' % (t.year, t.month, t.day, t.hour, t.minute, t.second, t.microsecond)
                 filename = filename.replace(' ', '0')
                 filename = os.path.join(env.options.path, filename)
@@ -188,18 +191,11 @@ class Video_capturer(threading.Thread):
                 color_type = 1
                 s = struct.pack('2HI2Hd', env.width, env.height, package_size, frame_count, color_type, env.vfps)
                 vf.write(s)
-                s = struct.pack('4Q', int(time_from), int((time_from - int(time_from)) * 1000000), int(time_to), int((time_to - int(time_to)) * 1000000)) 
+                #s = struct.pack('4Q', int(time_from), int((time_from - int(time_from)) * 1000000), int(time_to), int((time_to - int(time_to)) * 1000000)) 
+                s = struct.pack('4Q', int(begin_time), int((begin_time % 1) * 1000000), int(end_time), int((end_time % 1) * 1000000))
                 vf.write(s)
                 vf.close()
-                time_from = time_to
-                videofilequeue.append(filename)
-                h = videofilequeue.popleft()
-                if os.path.isfile(h):
-                    try:
-                        os.unlink(h)
-                    except:
-                        pass
-
+                begin_time = end_time 
 class Audio_capturer(threading.Thread):
 
     def __init__(self):
@@ -208,9 +204,6 @@ class Audio_capturer(threading.Thread):
     def run(self):
         f = file(env.audio_fifo, "r")
         data_buffer = ''
-        Audiofilequeue = collections.deque()
-        for _ in range(10):
-             Audiofilequeue.append("")
         while True:
             data_buffer += f.read(1024)
             frame_count = int(round(env.audio_rate / env.options.ifps))
@@ -243,13 +236,7 @@ class Audio_capturer(threading.Thread):
                 af.write(s)
                 af.close()
                 time_from = time_to
-                Audiofilequeue.append(filename)
-                h = Audiofilequeue.popleft()
-                if os.path.isfile(h):
-                    try:
-                        os.unlink(h)
-                    except:
-                        pass
+
 
 if __name__ == '__main__':
     main()
