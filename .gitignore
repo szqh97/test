@@ -1,4 +1,8 @@
 *.o
 .*.sw*
 a.out
+*.yuv
+*.video
+*.pcm
+*.audio
 
