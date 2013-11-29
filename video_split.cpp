@@ -140,7 +140,7 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
         mp_sd = new shot_detector((uint32_t)p_info->width, \
                 (uint32_t)p_info->height, 4, 4, m_cfg);
         memset(m_tmp_video, 0, FILE_NAME_LEN);
-        sprintf(m_tmp_video, "%s/tmp_%lld%03lld.yuv", m_video_path, \
+        sprintf(m_tmp_video, "%s/tmp_%lld_%03lld.yuv", m_video_path, \
                 p_info->begin_time.tv_sec, p_info->begin_time.tv_usec / 1000 );
         m_fp = fopen(m_tmp_video, "w+");
         
@@ -176,14 +176,14 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
             rename_yuv_file();
 
             timeval tv;
-            unsigned int t_seconds = (p_info->begin_time.tv_usec + fts) / 1000;
-            tv.tv_usec = (p_info->begin_time.tv_usec + fts) % 1000;
+            unsigned int t_seconds = (p_info->begin_time.tv_usec + fts*1000) / 1000;
+            tv.tv_usec = (p_info->begin_time.tv_usec + fts*1000) % 1000;
             tv.tv_sec = p_info->begin_time.tv_sec + t_seconds;
 
             m_shot_begin_time.tv_sec = tv.tv_sec;
             m_shot_begin_time.tv_usec = tv.tv_usec;
             memset(m_tmp_video, 0, FILE_NAME_LEN);
-            sprintf(m_tmp_video, "%s/tmp_%lld%03lld.yuv", m_video_path, \
+            sprintf(m_tmp_video, "%s/tmp_%lld_%03lld.yuv", m_video_path, \
                     p_info->begin_time.tv_sec, p_info->begin_time.tv_usec / 1000 );
             m_fp = fopen(m_tmp_video, "w");
         }
@@ -207,9 +207,9 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
 
             // current shot end time
             timeval tv; 
-            unsigned int t_seconds = p_info->begin_time.tv_usec + (i * fts) / 1000;
+            unsigned int t_seconds = p_info->begin_time.tv_usec + (i * fts)*1000 / 1000000;
             tv.tv_sec = p_info->begin_time.tv_sec + (i * fts) / 1000 + t_seconds;
-            tv.tv_usec = p_info->begin_time.tv_usec + (i * fts) % 1000;
+            tv.tv_usec = p_info->begin_time.tv_usec + (i * fts*1000) % 1000;
             m_shot_end_time.tv_sec = tv.tv_sec;
             m_shot_end_time.tv_usec = tv.tv_usec;
 
@@ -223,7 +223,7 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
             m_shot_begin_time.tv_usec = tv.tv_usec;
 
             memset(m_tmp_video, 0, FILE_NAME_LEN);
-            sprintf(m_tmp_video, "%s/tmp_%ld%ld.yuv", m_video_path, \
+            sprintf(m_tmp_video, "%s/tmp_%ld_%03ld.yuv", m_video_path, \
                     tv.tv_sec, tv.tv_usec / 1000);
             m_fp = fopen(m_tmp_video, "w");
 
