@@ -54,6 +54,7 @@ class video_split_processor
         bool mb_initialized;
         const char *m_video_path;
         char *m_tmp_video;
+        char *m_video_file;
         const char *m_vdna_path;
         const char *m_vdna_name;
         const char *m_shot_info_path;

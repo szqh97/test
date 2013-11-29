@@ -51,6 +51,7 @@ int video_split_processor::init(video_file_info *p_info)
 
     memset(&m_prev_end_time, 0, sizeof(live_timeval));
     m_tmp_video = new char[FILE_NAME_LEN];
+    m_video_file = new char[FILE_NAME_LEN];
     
     return 0;
 }
@@ -61,17 +62,17 @@ video_split_processor::~video_split_processor()
     {
         if (mp_sd) delete mp_sd;
         if (m_tmp_video) delete m_tmp_video;
+        if (m_video_file) delete m_video_file;
     }
 }
 
 
 int video_split_processor::rename_yuv_file()
 {
-    char video_file[FILE_NAME_LEN];
-    sprintf(video_file, "%s/%lld%lld.%lld%lld.yuv", m_video_path, \
+    sprintf(m_video_file, "%s/%lld%lld.%lld%lld.yuv", m_video_path, \
             m_shot_begin_time.tv_sec, m_shot_begin_time.tv_usec / 1000,
             m_shot_end_time.tv_sec, m_shot_end_time.tv_usec / 1000 );
-    int ret = rename(m_tmp_video, video_file);
+    int ret = rename(m_tmp_video, m_video_file);
     return ret;
 }
 
@@ -212,6 +213,8 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
 
 int main ( int argc, char *argv[] )
 {
+    const char *video_path = ".";
+    video_split_processor v(video_path);
 
     return 0;
 }			/* ----------  end of function main  ---------- */
