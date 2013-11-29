@@ -49,7 +49,7 @@ class video_split_processor
         video_split_processor(const char *video_path);
         ~video_split_processor();
         int video_split(FILE *fp, off_t pos, video_file_info *p_info);
-        int init(video_file_info *info);
+        int init();
     private:
         bool mb_initialized;
         const char *m_video_path;

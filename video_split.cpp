@@ -1,4 +1,5 @@
 #include "video_split.h"
+#include <iomanip>
 #define DEBUG 1            /*  */
 
 unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)
@@ -40,17 +41,28 @@ video_split_processor::video_split_processor(const char *video_path):
     m_curr_frame_ts = 0;
 }
 
-int video_split_processor::init(video_file_info *p_info)
+int video_split_processor::init()
 {
-    mb_initialized = true;
     m_cfg.hist_th = 0.5;
     m_cfg.diff_cnt_th = 5;
     m_cfg.var_th = 100.0;
 
-    mp_sd = new shot_detector((uint32_t)p_info->width, (uint32_t)p_info->height, \
-            4, 4, m_cfg);
+    //mp_sd = new shot_detector((uint32_t)p_info->width, (uint32_t)p_info->height, \
+    //       4, 4, m_cfg);
+#if DEBUG
+    if (mp_sd)
+    {
+        cout << "mp_sd is NULL" << endl;
+    }
+    else
+    {
+        cout << "mp_sd_ is OK" << endl;
+    }
+#endif
 
     memset(&m_prev_end_time, 0, sizeof(live_timeval));
+    memset(&m_shot_end_time, 0, sizeof(live_timeval));
+    memset(&m_shot_begin_time, 0, sizeof(live_timeval));
     m_tmp_video = new char[FILE_NAME_LEN];
     m_video_file = new char[FILE_NAME_LEN];
 #if DEBUG 
@@ -67,33 +79,33 @@ video_split_processor::~video_split_processor()
     cout << "destructor" << endl;
     cout << m_video_file << endl;
 #endif
-    if (mb_initialized)
+    
+    if (mp_sd) delete mp_sd;
+    if (m_tmp_video) delete m_tmp_video;
+    if (m_video_file) delete m_video_file;
+    if (m_fp) 
     {
-        if (mp_sd) delete mp_sd;
-        if (m_tmp_video) delete m_tmp_video;
-        if (m_video_file) delete m_video_file;
-        if (m_fp) 
-        {
-            fclose(m_fp);
-            m_fp = NULL;
-        }
+        fclose(m_fp);
+        m_fp = NULL;
     }
 }
 
 
 int video_split_processor::rename_yuv_file()
 {
-    sprintf(m_video_file, "%s/%lld%lld.%lld%lld.yuv", m_video_path, \
+#if 0
+    sprintf(m_video_file, "%s/%lld%03lld.%lld%03lld.yuv", m_video_path, \
             m_shot_begin_time.tv_sec, m_shot_begin_time.tv_usec / 1000,
             m_shot_end_time.tv_sec, m_shot_end_time.tv_usec / 1000 );
     int ret = rename(m_tmp_video, m_video_file);
     return ret;
+#endif
 }
 
 int video_split_processor::write_shot_info()
 {
     char shot_info_file[FILE_NAME_LEN];
-    sprintf(shot_info_file, "%s/%lld%lld.%lld%lld.yuv", m_shot_info_path, \
+    sprintf(shot_info_file, "%s/%lld%03lld.%lld%03lld.yuv", m_shot_info_path, \
             m_shot_begin_time.tv_sec, m_shot_begin_time.tv_usec / 1000,
             m_shot_end_time.tv_sec, m_shot_end_time.tv_usec / 1000 );
     FILE *fp = fopen(shot_info_file, "w");
@@ -120,13 +132,16 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
     m_curr_frame_ts += fts;
 
     // first time detect invoke restart after init
-    if (mb_initialized)
+    if (!mb_initialized)
     {
         // 1. init video_split_processor
         // 2. create a new yuv file
-        init(p_info);
-
-        sprintf(m_tmp_video, "%s/tmp_%lld%lld.yuv", m_video_path, \
+#if DEBUG
+        cout << "wrirte 11111" << endl;
+#endif 
+        mp_sd = new shot_detector((uint32_t)p_info->width, \
+                (uint32_t)p_info->height, 4, 4, m_cfg);
+        sprintf(m_tmp_video, "%s/tmp_%lld%03lld.yuv", m_video_path, \
                 p_info->begin_time.tv_sec, p_info->begin_time.tv_usec / 1000 );
         m_fp = fopen(m_tmp_video, "w+");
         
@@ -135,8 +150,10 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
         m_curr_frame_ts = fts;
 
         memcpy(&m_shot_begin_time, &p_info->begin_time, sizeof(live_timeval));
+        mb_initialized = true;
 #if DEBUG
         cout << "wirte size "<< s << endl;
+        cout << "begintime" << m_shot_begin_time.tv_sec << "." << m_shot_begin_time.tv_usec << endl;
 #endif 
     }
     else
@@ -147,9 +164,9 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
         // 3. frame offset
 
         m_curr_shot = mp_sd->detect(frame_buf, m_curr_frame_ts);
+        fwrite(frame_buf, len, 1, m_fp);
         if (m_curr_shot.start > 0 and m_curr_shot.end > 0)
         {
-            fwrite(frame_buf, len, 1, m_fp);
             if (m_fp)
             {
                 fclose(m_fp);
@@ -164,13 +181,11 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
             tv.tv_usec = (p_info->begin_time.tv_usec + fts) % 1000;
             tv.tv_sec = p_info->begin_time.tv_sec + t_seconds;
 
-            sprintf(m_tmp_video, "%s/tmp_%lld%lld.yuv", m_video_path, \
+            m_shot_begin_time.tv_sec = tv.tv_sec;
+            m_shot_begin_time.tv_usec = tv.tv_usec;
+            sprintf(m_tmp_video, "%s/tmp_%lld%03lld.yuv", m_video_path, \
                     p_info->begin_time.tv_sec, p_info->begin_time.tv_usec / 1000 );
             m_fp = fopen(m_tmp_video, "w");
-        }
-        else
-        {
-            fwrite(frame_buf, len, 1, m_fp);
         }
     }
 
@@ -252,48 +267,51 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
 
 int main ( int argc, char *argv[] )
 {
-    const char video_file_name[] = "20130607_075150.218767.video";
-
-
-    // for test
-    struct timeval t1, t2;
-    FILE *fp = fopen(video_file_name, "r");
-    if (!fp)
-    {
-        cerr << "Open file " << video_file_name << " fails" << endl;
-        return -1;
-    }
-    size_t offset = sizeof(video_file_info);
-    cout  << "offset is " << offset << endl;
-    int ret = fseek(fp, -offset, SEEK_END);
-
-    if (ret)
-    {
-        cerr << "fseek fails" << endl;
-        fclose(fp);
-        return -1;
-    }
-    off_t pos = ftello(fp);
-    video_file_info info;
-    ret = fread(&info, offset, 1, fp);
-    if (ret != 1)
-    {
-        cerr << "Read file fails" << endl;
-        fclose(fp);
-        return -1;
-    }
-    cout << "position : " << pos << " width : " << info.
-        width << " height: " << info.height << " frame rate : " << info.
-        frame_rate << " frame_count : " << info.frame_count << " begin_time : " << info.
-        begin_time.tv_sec << "." << info.begin_time.tv_usec << " end_time : " << info.end_time.
-        tv_sec << "." << info.end_time.
-        tv_usec << endl;
-
 
     const char *video_path = ".";
     video_split_processor v(video_path);
-    v.init(&info);
-    v.video_split(fp, pos, &info);
+    v.init();
+    for (int i = 1; i < argc ; ++i)
+    {
+        char *video_file_name = argv[i];
+        //const char *video_file_name = "20131129_053145.336953.video";
+        // for test
+        struct timeval t1, t2;
+        FILE *fp = fopen(video_file_name, "r");
+        if (!fp)
+        {
+            cerr << "Open file " << video_file_name << " fails" << endl;
+            return -1;
+        }
+        size_t offset = sizeof(video_file_info);
+        cout  << "offset is " << offset << endl;
+        int ret = fseek(fp, -offset, SEEK_END);
+
+        if (ret)
+        {
+            cerr << "fseek fails" << endl;
+            fclose(fp);
+            return -1;
+        }
+
+        off_t pos = ftello(fp);
+        video_file_info info;
+        ret = fread(&info, offset, 1, fp);
+        if (ret != 1)
+        {
+            cerr << "Read file fails" << endl;
+            fclose(fp);
+            return -1;
+        }
+        cout << "position : " << pos << " width : " << info.width 
+            << " height: " << info.height << " frame rate : " << info.frame_rate 
+            << " frame_count : " << info.frame_count << " begin_time : " 
+            << info.begin_time.tv_sec << "." << info.begin_time.tv_usec 
+            << " end_time : " << info.end_time.tv_sec << "." 
+            << info.end_time.tv_usec << endl;
+
+        v.video_split(fp, pos, &info);
+    }
 
     return 0;
 }			/* ----------  end of function main  ---------- */
