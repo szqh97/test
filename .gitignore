@@ -1,14 +1,16 @@
 *.o
 .*.sw*
 a.out
-*.yuv
 *.video
 *.pcm
 *.audio
 *.pyc
 *.pyo
 test
+*.avi
+*.yuv
 *.mp4
+*.flv
 /tmp
 *.asf
 core
