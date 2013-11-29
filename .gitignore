@@ -11,4 +11,5 @@ test
 *.mp4
 /tmp
 *.asf
-
+core
+*.out
