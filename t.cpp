@@ -1,10 +1,12 @@
 #include <iostream>
+#include <stdio.h>
 using namespace std;
 
 
 int main ( int argc, char *argv[] )
 {
-    int i = 1385536572123;
-    cout << i << endl;
+    FILE *fp = fopen("./tttt", "w");
+    fclose(fp);
+    fclose(fp);
     return 0;
 }			/* ----------  end of function main  ---------- */
