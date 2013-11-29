@@ -9,3 +9,6 @@ a.out
 *.pyo
 test
 *.mp4
+/tmp
+*.asf
+
