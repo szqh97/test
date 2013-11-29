@@ -136,11 +136,10 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
     {
         // 1. init video_split_processor
         // 2. create a new yuv file
-#if DEBUG
-        cout << "wrirte 11111" << endl;
-#endif 
+        memcpy(&m_shot_begin_time, &p_info->begin_time, sizeof(live_timeval));
         mp_sd = new shot_detector((uint32_t)p_info->width, \
                 (uint32_t)p_info->height, 4, 4, m_cfg);
+        memset(m_tmp_video, 0, FILE_NAME_LEN);
         sprintf(m_tmp_video, "%s/tmp_%lld%03lld.yuv", m_video_path, \
                 p_info->begin_time.tv_sec, p_info->begin_time.tv_usec / 1000 );
         m_fp = fopen(m_tmp_video, "w+");
@@ -183,6 +182,7 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
 
             m_shot_begin_time.tv_sec = tv.tv_sec;
             m_shot_begin_time.tv_usec = tv.tv_usec;
+            memset(m_tmp_video, 0, FILE_NAME_LEN);
             sprintf(m_tmp_video, "%s/tmp_%lld%03lld.yuv", m_video_path, \
                     p_info->begin_time.tv_sec, p_info->begin_time.tv_usec / 1000 );
             m_fp = fopen(m_tmp_video, "w");
@@ -194,9 +194,6 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
         memcpy(frame_buf, mapped_buffer + i * len, len);
         m_curr_frame_ts += fts;
         m_curr_shot = mp_sd->detect(frame_buf, m_curr_frame_ts);
-#if DEBUG
-        cout << "in detecting ..." << endl;
-#endif 
         fwrite(frame_buf, len, 1, m_fp);
 
         if (m_curr_shot.start > 0 and m_curr_shot.end > 0)
@@ -225,6 +222,7 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
             m_shot_begin_time.tv_sec = tv.tv_sec;
             m_shot_begin_time.tv_usec = tv.tv_usec;
 
+            memset(m_tmp_video, 0, FILE_NAME_LEN);
             sprintf(m_tmp_video, "%s/tmp_%ld%ld.yuv", m_video_path, \
                     tv.tv_sec, tv.tv_usec / 1000);
             m_fp = fopen(m_tmp_video, "w");
