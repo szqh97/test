@@ -1,4 +1,7 @@
 #include "video_split.h"
+#include <unistd.h>
+#include <string>
+#include <fstream>
 #include <iomanip>
 #define DEBUG 1            /*  */
 
@@ -262,7 +265,7 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
 }
 
 
-
+#if 0
 int main ( int argc, char *argv[] )
 {
 
@@ -313,3 +316,4 @@ int main ( int argc, char *argv[] )
 
     return 0;
 }			/* ----------  end of function main  ---------- */
+#endif
