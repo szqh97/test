@@ -96,7 +96,7 @@ video_split_processor::~video_split_processor()
 
 int video_split_processor::rename_yuv_file()
 {
-#if 0
+#if 1
     sprintf(m_video_file, "%s/%lld%03lld.%lld%03lld.yuv", m_video_path, \
             m_shot_begin_time.tv_sec, m_shot_begin_time.tv_usec / 1000,
             m_shot_end_time.tv_sec, m_shot_end_time.tv_usec / 1000 );
@@ -185,6 +185,8 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
 
             m_shot_begin_time.tv_sec = tv.tv_sec;
             m_shot_begin_time.tv_usec = tv.tv_usec;
+            cout << "xxxx m_shot_begin_time:" << m_shot_begin_time.tv_sec << "." << m_shot_begin_time.tv_usec << endl;
+            cout << "shot info: start " << m_curr_shot.start << ", " << m_curr_shot.end << endl;
             memset(m_tmp_video, 0, FILE_NAME_LEN);
             sprintf(m_tmp_video, "%s/tmp_%lld_%03lld.yuv", m_video_path, \
                     p_info->begin_time.tv_sec, p_info->begin_time.tv_usec / 1000 );
@@ -198,6 +200,7 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
         m_curr_frame_ts += fts;
         m_curr_shot = mp_sd->detect(frame_buf, m_curr_frame_ts);
         fwrite(frame_buf, len, 1, m_fp);
+        cout << "=== m_shot_begin_time:" << m_shot_begin_time.tv_sec << "." << m_shot_begin_time.tv_usec << endl;
 
         if (m_curr_shot.start > 0 and m_curr_shot.end > 0)
         {
@@ -210,13 +213,14 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
 
             // current shot end time
             timeval tv; 
-            unsigned int t_seconds = p_info->begin_time.tv_usec + (i * fts)*1000 / 1000000;
-            tv.tv_sec = p_info->begin_time.tv_sec + (i * fts) / 1000 + t_seconds;
-            tv.tv_usec = p_info->begin_time.tv_usec + (i * fts*1000) % 1000000;
+            unsigned int t_seconds = (p_info->begin_time.tv_usec + (i * fts)*1000 )/ 1000000;
+            tv.tv_sec = p_info->begin_time.tv_sec  + t_seconds;
+            tv.tv_usec = (p_info->begin_time.tv_usec + (i * fts*1000))% 1000000;
             m_shot_end_time.tv_sec = tv.tv_sec;
             m_shot_end_time.tv_usec = tv.tv_usec;
 
             rename_yuv_file();
+            cout << "shot info: start " << m_curr_shot.start << ", " << m_curr_shot.end << endl;
 
             // next shot begin time
             tv.tv_usec = (tv.tv_usec + fts * 1000) % 1000000;
@@ -233,6 +237,9 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
         }
     }
     
+    memcpy(&m_prev_end_time, &(p_info->end_time), sizeof(live_timeval));
+    // if the last video_file to deal
+    memcpy(&m_shot_end_time, &(p_info->end_time), sizeof(live_timeval));
 #if 0
     // last frame and first frame in diff viedeo files
     if (timevaldiff(m_prev_end_time, p_info->begin_time) > 1000)
@@ -257,9 +264,6 @@ int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_i
         
     }
 #endif
-    memcpy(&m_prev_end_time, &(p_info->end_time), sizeof(live_timeval));
-    // if the last video_file to deal
-    memcpy(&m_shot_end_time, &(p_info->end_time), sizeof(live_timeval));
 
     return 0;
 }
