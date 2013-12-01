@@ -24,7 +24,6 @@ int main ( int argc, char *argv[] )
             return -1;
         }
         size_t offset = sizeof(video_file_info);
-        cout  << "offset is " << offset << endl;
         int ret = fseek(fp, -offset, SEEK_END);
 
         if (ret)
@@ -43,12 +42,14 @@ int main ( int argc, char *argv[] )
             fclose(fp);
             return -1;
         }
+        /*   
         cout << "position : " << pos << " width : " << info.width 
             << " height: " << info.height << " frame rate : " << info.frame_rate 
             << " frame_count : " << info.frame_count << " begin_time : " 
             << info.begin_time.tv_sec << "." << info.begin_time.tv_usec 
             << " end_time : " << info.end_time.tv_sec << "." 
             << info.end_time.tv_usec << endl;
+            */
 
         v.video_split(fp, pos, &info);
     }
