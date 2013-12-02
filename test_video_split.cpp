@@ -43,12 +43,15 @@ int main ( int argc, char *argv[] )
             fclose(fp);
             return -1;
         }
+        /*   
         cout << "position : " << pos << " width : " << info.width 
             << " height: " << info.height << " frame rate : " << info.frame_rate 
             << " frame_count : " << info.frame_count << " begin_time : " 
             << info.begin_time.tv_sec << "." << info.begin_time.tv_usec 
             << " end_time : " << info.end_time.tv_sec << "." 
             << info.end_time.tv_usec << endl;
+        */
+        cout <<  " color type: " << info.color_type << endl;
 
         v.video_split(fp, pos, &info);
     }
