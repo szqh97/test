@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sstream>
 #include <string>
 #include <fstream>
 using namespace std;
@@ -8,17 +9,20 @@ using namespace std;
 
 int main ( int argc, char *argv[] )
 {
-    string videofilename;
-    ifstream vfile("t.out");
-    while (vfile >> videofilename)
-    {
-        cout << videofilename << endl;
+    FILE *fp = fopen("./aaaaa", "w");
+    int i = 344;
+    stringstream ss;
+    ss<<i;
 
-    }
+    string s = "<shot>";
+    s+= ss.str();
+    s+= "</shot>\n<shot>";
+    ss << 789;
+    s += ss.str(); 
 
-    long long int t = 12345;
-    char name[100];
-    sprintf(name, "%06lld",(t/1000));
-    cout << name << endl;
+    cout << s << endl;
+
+    fwrite(s.c_str(), s.size(), 1, fp);
+    fclose(fp);
     return 0;
 }			/* ----------  end of function main  ---------- */

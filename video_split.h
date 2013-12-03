@@ -14,6 +14,9 @@
 
 using namespace std;
 
+#define CAPTURE_PIX_FMT_YUYV 0
+#define CAPTURE_PIX_FMT_UYVY 1
+
 struct live_timeval
 {
     uint64_t tv_sec;
@@ -49,12 +52,15 @@ class video_split_processor
         video_split_processor(const char *video_path);
         ~video_split_processor();
         int video_split(FILE *fp, off_t pos, video_file_info *p_info);
+        int write_shot_info();
+
         int init();
     private:
         bool mb_initialized;
         const char *m_video_path;
         char *m_tmp_video;
         char *m_video_file;
+        char *m_shot_file;
         const char *m_vdna_path;
         const char *m_vdna_name;
         const char *m_shot_info_path;
@@ -63,6 +69,7 @@ class video_split_processor
         shot m_prev_shot;
         shot m_curr_shot;
         FILE *m_fp;
+        FILE *m_fshot;
         live_timeval m_prev_end_time;
 
         live_timeval m_shot_begin_time;
@@ -73,7 +80,6 @@ class video_split_processor
         video_file_info m_prev_info;
 
         int rename_yuv_file();
-        int write_shot_info();
     
 };
 
