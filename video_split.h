@@ -51,8 +51,10 @@ class video_split_processor
     public:
         video_split_processor(const char *video_path);
         ~video_split_processor();
-        int video_split(FILE *fp, off_t pos, video_file_info *p_info);
+        int video_split(FILE *fp, off_t pos, video_file_info *p_info, \
+                live_timeval &task_begin_time, live_timeval &task_end_time);
         int write_shot_info();
+        int write_yuv_file();
 
        //// int init();
     private:
@@ -60,13 +62,11 @@ class video_split_processor
         const char *m_video_path;
         char *m_tmp_video;
         char *m_video_file;
-        char *m_shot_file;
-        const char *m_vdna_path;
+        const char *m_shot_path;
         const char *m_vdna_name;
         const char *m_shot_info_path;
         config m_cfg;
         shot_detector *mp_sd;
-        shot m_prev_shot;
         shot m_curr_shot;
         FILE *m_fp;
         FILE *m_fshot;
