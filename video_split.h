@@ -54,7 +54,7 @@ class video_split_processor
         int video_split(FILE *fp, off_t pos, video_file_info *p_info);
         int write_shot_info();
 
-        int init();
+       //// int init();
     private:
         bool mb_initialized;
         const char *m_video_path;
@@ -76,7 +76,6 @@ class video_split_processor
         live_timeval m_shot_end_time;
 
         unsigned int m_curr_frame_ts;
-        
         video_file_info m_prev_info;
 
         int rename_yuv_file();

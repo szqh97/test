@@ -9,7 +9,7 @@ int main ( int argc, char *argv[] )
 
     const char *video_path = ".";
     video_split_processor v(video_path);
-    v.init();
+    //v.init();
     ifstream vfile("t.out");
     string video_file_name;
     while(vfile >> video_file_name)

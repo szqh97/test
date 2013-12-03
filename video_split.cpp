@@ -64,10 +64,10 @@ video_split_processor::video_split_processor(const char *video_path):
     m_fshot = NULL;
     m_video_path = ".";
     m_curr_frame_ts = 0;
-}
+//}
 
-int video_split_processor::init()
-{
+//int video_split_processor::init()
+//{
     m_cfg.hist_th = 0.5;
     m_cfg.diff_cnt_th = 5;
     m_cfg.var_th = 100.0;
@@ -100,7 +100,6 @@ int video_split_processor::init()
     cout << "initial ok!" << endl;
 #endif
 
-    return 0;
 }
 
 int video_split_processor::write_shot_info()
