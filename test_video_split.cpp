@@ -7,8 +7,14 @@
 int main ( int argc, char *argv[] )
 {
 
+    live_timeval l1, l2;
+    l1.tv_sec = 111111;
+    l1.tv_usec = 111111;
+    l2.tv_sec = 22222;
+    l2.tv_usec = 22222;
     const char *video_path = ".";
-    video_split_processor v(video_path);
+    const char *shot_path  = ".";
+    video_split_processor v(video_path, shot_path);
     //v.init();
     ifstream vfile("t.out");
     string video_file_name;
@@ -53,7 +59,7 @@ int main ( int argc, char *argv[] )
         */
         cout <<  " color type: " << info.color_type << endl;
 
-        v.video_split(fp, pos, &info);
+        v.video_split(fp, pos, &info, l1, l2);
     }
 
     return 0;

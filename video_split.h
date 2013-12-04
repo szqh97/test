@@ -49,12 +49,12 @@ struct video_file_info
 class video_split_processor
 {
     public:
-        video_split_processor(const char *video_path);
+        video_split_processor(const char *video_path, const char *m_shot_path);
         ~video_split_processor();
         int video_split(FILE *fp, off_t pos, video_file_info *p_info, \
                 live_timeval &task_begin_time, live_timeval &task_end_time);
         int write_shot_info();
-        int write_yuv_file();
+        int write_yuv_file(unsigned char *frames, size_t pos, video_file_info *p_info);
 
        //// int init();
     private:
@@ -77,6 +77,9 @@ class video_split_processor
 
         unsigned int m_curr_frame_ts;
         video_file_info m_prev_info;
+        int m_count;
+
+        bool m_new;
 
         int rename_yuv_file();
     
