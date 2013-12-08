@@ -14,6 +14,9 @@
 
 using namespace std;
 
+#define CAPTURE_PIX_FMT_YUYV 0
+#define CAPTURE_PIX_FMT_UYVY 1
+
 struct live_timeval
 {
     uint64_t tv_sec;
@@ -46,34 +49,39 @@ struct video_file_info
 class video_split_processor
 {
     public:
-        video_split_processor(const char *video_path);
+        video_split_processor(const char *video_path, const char *m_shot_path);
         ~video_split_processor();
-        int video_split(FILE *fp, off_t pos, video_file_info *p_info);
-        int init();
+        int video_split(FILE *fp, off_t pos, video_file_info *p_info, \
+                live_timeval &task_begin_time, live_timeval &task_end_time);
+        int write_shot_info();
+        int write_yuv_file(unsigned char *frames, size_t pos, video_file_info *p_info);
+
+       //// int init();
     private:
         bool mb_initialized;
         const char *m_video_path;
         char *m_tmp_video;
         char *m_video_file;
-        const char *m_vdna_path;
+        const char *m_shot_path;
         const char *m_vdna_name;
         const char *m_shot_info_path;
         config m_cfg;
         shot_detector *mp_sd;
-        shot m_prev_shot;
         shot m_curr_shot;
         FILE *m_fp;
+        FILE *m_fshot;
         live_timeval m_prev_end_time;
 
         live_timeval m_shot_begin_time;
         live_timeval m_shot_end_time;
 
         unsigned int m_curr_frame_ts;
-        
         video_file_info m_prev_info;
+        int m_count;
+
+        bool m_new;
 
         int rename_yuv_file();
-        int write_shot_info();
     
 };
 

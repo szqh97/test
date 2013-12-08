@@ -4,178 +4,436 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Audio_capturer	gen_a_v.py	/^class Audio_capturer(threading.Thread):$/;"	c	inherits:threading.Thread
 BLACK	shot_boundary_detect.hpp	/^enum frametype {NORMAL, BOUNDARY, BLACK};$/;"	e	enum:frametype
 BOUNDARY	shot_boundary_detect.hpp	/^enum frametype {NORMAL, BOUNDARY, BLACK};$/;"	e	enum:frametype
+DEBUG	video_split.cpp	6;"	d	file:
 FILE_NAME_LEN	video_split.h	13;"	d
 FPS	shot_detector.cpp	4;"	d	file:
+G_COMMAND_OPTIONS	gen_a_v.py	/^G_COMMAND_OPTIONS = 'p:d:c:a:o:t:r:'$/;"	v
 NEW_SHOT	shot_detector.hpp	/^enum status {NO_SHOT, NEW_SHOT, PENDING};$/;"	e	enum:status
 NORMAL	shot_boundary_detect.hpp	/^enum frametype {NORMAL, BOUNDARY, BLACK};$/;"	e	enum:frametype
 NO_SHOT	shot_detector.hpp	/^enum status {NO_SHOT, NEW_SHOT, PENDING};$/;"	e	enum:status
 PENDING	shot_detector.hpp	/^enum status {NO_SHOT, NEW_SHOT, PENDING};$/;"	e	enum:status
+Video_capturer	gen_a_v.py	/^class Video_capturer(threading.Thread):$/;"	c	inherits:threading.Thread
 _SHOT_DETECTOR_H_	shot_detector.hpp	2;"	d
 _SHOT_DETECT_H_	shot_boundary_detect.hpp	2;"	d
 _VIDEO_SPLIT_H_	video_split.h	2;"	d
-_avg_th	shot_boundary_detect.hpp	/^        float _avg_th;$/;"	m	class:shot_boundary_detector
-_black_skipping	shot_detector.hpp	/^        bool _black_skipping;$/;"	m	class:shot_detector
-_black_start	shot_detector.hpp	/^        unsigned int _black_start;$/;"	m	class:shot_detector
-_block_h	shot_boundary_detect.hpp	/^        unsigned int _block_h; $/;"	m	class:shot_boundary_detector
-_block_w	shot_boundary_detect.hpp	/^        unsigned int _block_w;$/;"	m	class:shot_boundary_detector
-_boundaries_cache	shot_detector.hpp	/^        std::vector<frame_info> _boundaries_cache;$/;"	m	class:shot_detector
-_curr_frame_hist	shot_boundary_detect.hpp	/^        unsigned int **_curr_frame_hist;$/;"	m	class:shot_boundary_detector
-_curr_ts	shot_detector.hpp	/^        unsigned int _curr_ts;$/;"	m	class:shot_detector
-_diff_cnt_th	shot_boundary_detect.hpp	/^        int _diff_cnt_th;$/;"	m	class:shot_boundary_detector
-_height	shot_boundary_detect.hpp	/^        unsigned int _height;$/;"	m	class:shot_boundary_detector
-_hist_num	shot_boundary_detect.hpp	/^        unsigned int *_hist_num;$/;"	m	class:shot_boundary_detector
-_hist_th	shot_boundary_detect.hpp	/^        float _hist_th;$/;"	m	class:shot_boundary_detector
-_min_len	shot_detector.hpp	/^        unsigned int _min_len;$/;"	m	class:shot_detector
-_prev_avg	shot_boundary_detect.hpp	/^        float _prev_avg;$/;"	m	class:shot_boundary_detector
-_prev_black	shot_boundary_detect.hpp	/^        bool _prev_black;$/;"	m	class:shot_boundary_detector
-_prev_boundary_ts	shot_detector.hpp	/^        unsigned int _prev_boundary_ts;$/;"	m	class:shot_detector
-_prev_boundary_type	shot_detector.hpp	/^        frametype _prev_boundary_type;$/;"	m	class:shot_detector
-_prev_cut	shot_boundary_detect.hpp	/^        unsigned int _prev_cut;$/;"	m	class:shot_boundary_detector
-_prev_frame_hist	shot_boundary_detect.hpp	/^        unsigned int **_prev_frame_hist;$/;"	m	class:shot_boundary_detector
-_prev_prev_ts	shot_detector.hpp	/^        unsigned int _prev_prev_ts;$/;"	m	class:shot_detector
-_prev_shot	shot_detector.hpp	/^        shot _prev_shot;$/;"	m	class:shot_detector
-_prev_ts	shot_boundary_detect.hpp	/^        unsigned int _prev_ts;$/;"	m	class:shot_boundary_detector
-_prev_ts	shot_detector.hpp	/^        unsigned int _prev_ts;$/;"	m	class:shot_detector
-_prev_var	shot_boundary_detect.hpp	/^        float _prev_var;$/;"	m	class:shot_boundary_detector
-_sbd	shot_detector.hpp	/^        shot_boundary_detector _sbd;$/;"	m	class:shot_detector
-_shot_avg	shot_detector.hpp	/^        float _shot_avg;$/;"	m	class:shot_detector
-_shot_num	shot_detector.hpp	/^        int _shot_num;$/;"	m	class:shot_detector
-_shot_var	shot_detector.hpp	/^        float _shot_var;$/;"	m	class:shot_detector
-_stared	shot_detector.hpp	/^        bool _stared;$/;"	m	class:shot_detector
-_started	shot_boundary_detect.hpp	/^        bool _started;$/;"	m	class:shot_boundary_detector
-_status	shot_detector.hpp	/^        status _status;$/;"	m	class:shot_detector
-_var_th	shot_boundary_detect.hpp	/^        float _var_th;$/;"	m	class:shot_boundary_detector
-_width	shot_boundary_detect.hpp	/^        unsigned int _width;$/;"	m	class:shot_boundary_detector
-append_boundaries	shot_detector.cpp	/^void shot::append_boundaries (const std::vector<frame_info> in_boundaries)$/;"	f	class:shot
+__init__	gen_a_v.py	/^    def __init__(self):$/;"	m	class:Audio_capturer	access:public
+__init__	gen_a_v.py	/^    def __init__(self):$/;"	m	class:Video_capturer	access:public
+_avg_th	shot_boundary_detect.hpp	/^        float _avg_th;$/;"	m	class:shot_boundary_detector	access:private
+_black_skipping	shot_detector.hpp	/^        bool _black_skipping;$/;"	m	class:shot_detector	access:private
+_black_start	shot_detector.hpp	/^        unsigned int _black_start;$/;"	m	class:shot_detector	access:private
+_block_h	shot_boundary_detect.hpp	/^        unsigned int _block_h; $/;"	m	class:shot_boundary_detector	access:private
+_block_w	shot_boundary_detect.hpp	/^        unsigned int _block_w;$/;"	m	class:shot_boundary_detector	access:private
+_boundaries_cache	shot_detector.hpp	/^        std::vector<frame_info> _boundaries_cache;$/;"	m	class:shot_detector	access:private
+_curr_frame_hist	shot_boundary_detect.hpp	/^        unsigned int **_curr_frame_hist;$/;"	m	class:shot_boundary_detector	access:private
+_curr_ts	shot_detector.hpp	/^        unsigned int _curr_ts;$/;"	m	class:shot_detector	access:private
+_diff_cnt_th	shot_boundary_detect.hpp	/^        int _diff_cnt_th;$/;"	m	class:shot_boundary_detector	access:private
+_height	shot_boundary_detect.hpp	/^        unsigned int _height;$/;"	m	class:shot_boundary_detector	access:private
+_hist_num	shot_boundary_detect.hpp	/^        unsigned int *_hist_num;$/;"	m	class:shot_boundary_detector	access:private
+_hist_th	shot_boundary_detect.hpp	/^        float _hist_th;$/;"	m	class:shot_boundary_detector	access:private
+_min_len	shot_detector.hpp	/^        unsigned int _min_len;$/;"	m	class:shot_detector	access:private
+_prev_avg	shot_boundary_detect.hpp	/^        float _prev_avg;$/;"	m	class:shot_boundary_detector	access:private
+_prev_black	shot_boundary_detect.hpp	/^        bool _prev_black;$/;"	m	class:shot_boundary_detector	access:private
+_prev_boundary_ts	shot_detector.hpp	/^        unsigned int _prev_boundary_ts;$/;"	m	class:shot_detector	access:private
+_prev_boundary_type	shot_detector.hpp	/^        frametype _prev_boundary_type;$/;"	m	class:shot_detector	access:private
+_prev_cut	shot_boundary_detect.hpp	/^        unsigned int _prev_cut;$/;"	m	class:shot_boundary_detector	access:private
+_prev_frame_hist	shot_boundary_detect.hpp	/^        unsigned int **_prev_frame_hist;$/;"	m	class:shot_boundary_detector	access:private
+_prev_prev_ts	shot_detector.hpp	/^        unsigned int _prev_prev_ts;$/;"	m	class:shot_detector	access:private
+_prev_shot	shot_detector.hpp	/^        shot _prev_shot;$/;"	m	class:shot_detector	access:private
+_prev_ts	shot_boundary_detect.hpp	/^        unsigned int _prev_ts;$/;"	m	class:shot_boundary_detector	access:private
+_prev_ts	shot_detector.hpp	/^        unsigned int _prev_ts;$/;"	m	class:shot_detector	access:private
+_prev_var	shot_boundary_detect.hpp	/^        float _prev_var;$/;"	m	class:shot_boundary_detector	access:private
+_sbd	shot_detector.hpp	/^        shot_boundary_detector _sbd;$/;"	m	class:shot_detector	access:private
+_shot_avg	shot_detector.hpp	/^        float _shot_avg;$/;"	m	class:shot_detector	access:private
+_shot_num	shot_detector.hpp	/^        int _shot_num;$/;"	m	class:shot_detector	access:private
+_shot_var	shot_detector.hpp	/^        float _shot_var;$/;"	m	class:shot_detector	access:private
+_stared	shot_detector.hpp	/^        bool _stared;$/;"	m	class:shot_detector	access:private
+_started	shot_boundary_detect.hpp	/^        bool _started;$/;"	m	class:shot_boundary_detector	access:private
+_status	shot_detector.hpp	/^        status _status;$/;"	m	class:shot_detector	access:private
+_var_th	shot_boundary_detect.hpp	/^        float _var_th;$/;"	m	class:shot_boundary_detector	access:private
+_width	shot_boundary_detect.hpp	/^        unsigned int _width;$/;"	m	class:shot_boundary_detector	access:private
+append_boundaries	shot_detector.cpp	/^void shot::append_boundaries (const std::vector<frame_info> in_boundaries)$/;"	f	class:shot	signature:(const std::vector<frame_info> in_boundaries)
+append_boundaries	shot_detector.hpp	/^    void append_boundaries (const std::vector<frame_info> in_boundaries);$/;"	p	struct:shot	access:public	signature:(const std::vector<frame_info> in_boundaries)
+audio_file_info	a_v_info.cpp	/^struct audio_file_info$/;"	s	file:
 audio_file_info	process_audio_file.cpp	/^struct audio_file_info$/;"	s	file:
 audio_file_info	process_video_file.cpp	/^struct audio_file_info$/;"	s	file:
 audio_file_info	video_split.h	/^struct audio_file_info$/;"	s
-avg	shot_boundary_detect.hpp	/^    unsigned int avg;$/;"	m	struct:frame_info
-avg_sum	shot_detector.hpp	/^    int avg_sum; \/\/average gray sumary of the shot$/;"	m	struct:shot
-begin_time	process_audio_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
-begin_time	process_audio_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
-begin_time	process_video_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
-begin_time	process_video_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
-begin_time	video_split.h	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval
-begin_time	video_split.h	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval
-bit	process_audio_file.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:
-bit	process_video_file.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:
-bit	video_split.h	/^    uint16_t bit;$/;"	m	struct:audio_file_info
-boundaries	shot_detector.hpp	/^    std::vector<frame_info> boundaries; \/\/middle boundaries timestamp$/;"	m	struct:shot
-calc_hist	shot_boundary_detect.cpp	/^static void calc_hist (const unsigned char *frame_buffer, const unsigned int width, $/;"	f	file:
-channel	process_audio_file.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:
-channel	process_video_file.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:
-channel	video_split.h	/^    uint16_t channel;$/;"	m	struct:audio_file_info
-check_frame_black	shot_boundary_detect.cpp	/^static bool check_frame_black (const unsigned char *frame_buffer, const unsigned int width, $/;"	f	file:
-check_hist_diff	shot_boundary_detect.cpp	/^static frametype check_hist_diff (unsigned int **hist1, unsigned int **hist2,$/;"	f	file:
-check_params	shot_boundary_detect.cpp	/^bool shot_boundary_detector::check_params ()$/;"	f	class:shot_boundary_detector
-color_type	process_audio_file.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:
-color_type	process_video_file.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:
-color_type	video_split.h	/^    uint16_t color_type;$/;"	m	struct:video_file_info
+audio_file_info::begin_time	a_v_info.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+audio_file_info::begin_time	process_audio_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+audio_file_info::begin_time	process_video_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+audio_file_info::begin_time	video_split.h	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	access:public
+audio_file_info::bit	a_v_info.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::bit	process_audio_file.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::bit	process_video_file.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::bit	video_split.h	/^    uint16_t bit;$/;"	m	struct:audio_file_info	access:public
+audio_file_info::channel	a_v_info.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::channel	process_audio_file.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::channel	process_video_file.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::channel	video_split.h	/^    uint16_t channel;$/;"	m	struct:audio_file_info	access:public
+audio_file_info::end_time	a_v_info.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+audio_file_info::end_time	process_audio_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+audio_file_info::end_time	process_video_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+audio_file_info::end_time	video_split.h	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	access:public
+audio_file_info::rate	a_v_info.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::rate	process_audio_file.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::rate	process_video_file.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:	access:public
+audio_file_info::rate	video_split.h	/^    uint32_t rate;$/;"	m	struct:audio_file_info	access:public
+avg	shot_boundary_detect.hpp	/^    unsigned int avg;$/;"	m	struct:frame_info	access:public
+avg_sum	shot_detector.hpp	/^    int avg_sum; \/\/average gray sumary of the shot$/;"	m	struct:shot	access:public
+begin_time	a_v_info.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+begin_time	a_v_info.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+begin_time	process_audio_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+begin_time	process_audio_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+begin_time	process_video_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+begin_time	process_video_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+begin_time	video_split.h	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	access:public
+begin_time	video_split.h	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	access:public
+begin_time	yuv_timediff.py	/^    begin_time = int(yuvfile.split('.')[0])$/;"	v
+bit	a_v_info.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:	access:public
+bit	process_audio_file.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:	access:public
+bit	process_video_file.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:	access:public
+bit	video_split.h	/^    uint16_t bit;$/;"	m	struct:audio_file_info	access:public
+boundaries	shot_detector.hpp	/^    std::vector<frame_info> boundaries; \/\/middle boundaries timestamp$/;"	m	struct:shot	access:public
+calc_hist	shot_boundary_detect.cpp	/^static void calc_hist (const unsigned char *frame_buffer, const unsigned int width, $/;"	f	file:	signature:(const unsigned char *frame_buffer, const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, unsigned int **hist)
+channel	a_v_info.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:	access:public
+channel	process_audio_file.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:	access:public
+channel	process_video_file.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:	access:public
+channel	video_split.h	/^    uint16_t channel;$/;"	m	struct:audio_file_info	access:public
+check_frame_black	shot_boundary_detect.cpp	/^static bool check_frame_black (const unsigned char *frame_buffer, const unsigned int width, $/;"	f	file:	signature:(const unsigned char *frame_buffer, const unsigned int width, const unsigned int height, float th_var, float th_avg, float &var, float &gray_avg)
+check_hist_diff	shot_boundary_detect.cpp	/^static frametype check_hist_diff (unsigned int **hist1, unsigned int **hist2,$/;"	f	file:	signature:(unsigned int **hist1, unsigned int **hist2, const unsigned int block_w, const unsigned int block_h, float hist_th, unsigned int diff_cnt_th, unsigned int *hist_num, unsigned int &diff_cnt)
+check_params	shot_boundary_detect.cpp	/^bool shot_boundary_detector::check_params ()$/;"	f	class:shot_boundary_detector	signature:()
+check_params	shot_boundary_detect.hpp	/^        bool check_params ();$/;"	p	class:shot_boundary_detector	access:public	signature:()
+color_type	a_v_info.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:	access:public
+color_type	process_audio_file.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:	access:public
+color_type	process_video_file.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:	access:public
+color_type	video_split.h	/^    uint16_t color_type;$/;"	m	struct:video_file_info	access:public
 config	shot_detector.hpp	/^struct config$/;"	s
-curr_frame_ts	video_split.h	/^        unsigned int curr_frame_ts;$/;"	m	class:video_split_processor
-cut	shot_boundary_detect.hpp	/^    unsigned int cut;$/;"	m	struct:frame_info
-detect	shot_boundary_detect.cpp	/^frame_info shot_boundary_detector::detect (const unsigned char *current_frame_buffer,$/;"	f	class:shot_boundary_detector
-detect	shot_detector.cpp	/^shot shot_detector::detect (const unsigned char *curr_frame, const unsigned int curr_ts)$/;"	f	class:shot_detector
-diff_cnt_th	shot_detector.hpp	/^    int diff_cnt_th; \/\/control judgging shot boundary, default is 5$/;"	m	struct:config
-end	shot_detector.hpp	/^    int end; \/\/shot end timestamp$/;"	m	struct:shot
-end_cut	shot_detector.hpp	/^    unsigned int end_cut; \/\/end boundary intensity$/;"	m	struct:shot
-end_frame_type	shot_detector.hpp	/^    frametype end_frame_type;\/\/end frame type: normal-boundary\/black-frame$/;"	m	struct:shot
-end_time	process_audio_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
-end_time	process_audio_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
-end_time	process_video_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
-end_time	process_video_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
-end_time	video_split.h	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval
-end_time	video_split.h	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval
-flush	shot_detector.cpp	/^shot shot_detector::flush ()$/;"	f	class:shot_detector
-frame_count	process_audio_file.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:
-frame_count	process_video_file.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:
-frame_count	video_split.h	/^    uint16_t frame_count;$/;"	m	struct:video_file_info
+config::diff_cnt_th	shot_detector.hpp	/^    int diff_cnt_th; \/\/control judgging shot boundary, default is 5$/;"	m	struct:config	access:public
+config::hist_th	shot_detector.hpp	/^    float hist_th; \/\/control judgging shot boundary, default is 0.5$/;"	m	struct:config	access:public
+config::min_len	shot_detector.hpp	/^    int min_len; \/\/control minimum length of one shot with $/;"	m	struct:config	access:public
+config::var_th	shot_detector.hpp	/^    float var_th; \/\/control judge black frame, default is 100.0$/;"	m	struct:config	access:public
+cut	shot_boundary_detect.hpp	/^    unsigned int cut;$/;"	m	struct:frame_info	access:public
+detect	shot_boundary_detect.cpp	/^frame_info shot_boundary_detector::detect (const unsigned char *current_frame_buffer,$/;"	f	class:shot_boundary_detector	signature:(const unsigned char *current_frame_buffer, const unsigned int curr_ts)
+detect	shot_boundary_detect.hpp	/^        frame_info detect (const unsigned char *current_frame_buffer, $/;"	p	class:shot_boundary_detector	access:public	signature:(const unsigned char *current_frame_buffer, const unsigned int curr_ts)
+detect	shot_detector.cpp	/^shot shot_detector::detect (const unsigned char *curr_frame, const unsigned int curr_ts)$/;"	f	class:shot_detector	signature:(const unsigned char *curr_frame, const unsigned int curr_ts)
+detect	shot_detector.hpp	/^        shot detect (const unsigned char *curr_frame, const unsigned int curr_ts);$/;"	p	class:shot_detector	access:public	signature:(const unsigned char *curr_frame, const unsigned int curr_ts)
+diff_cnt_th	shot_detector.hpp	/^    int diff_cnt_th; \/\/control judgging shot boundary, default is 5$/;"	m	struct:config	access:public
+do_detect	shot_detector.hpp	/^        void do_detect (const unsigned char *curr_frame, unsigned int curr_ts);$/;"	p	class:shot_detector	access:private	signature:(const unsigned char *curr_frame, unsigned int curr_ts)
+end	shot_detector.hpp	/^    int end; \/\/shot end timestamp$/;"	m	struct:shot	access:public
+end_cut	shot_detector.hpp	/^    unsigned int end_cut; \/\/end boundary intensity$/;"	m	struct:shot	access:public
+end_frame_type	shot_detector.hpp	/^    frametype end_frame_type;\/\/end frame type: normal-boundary\/black-frame$/;"	m	struct:shot	access:public
+end_time	a_v_info.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+end_time	a_v_info.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+end_time	process_audio_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+end_time	process_audio_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+end_time	process_video_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:	access:public
+end_time	process_video_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+end_time	video_split.h	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	access:public
+end_time	video_split.h	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	access:public
+end_time	yuv_timediff.py	/^    end_time = int(yuvfile.split('.')[1])$/;"	v
+env	gen_a_v.py	/^env = lambda : None$/;"	v
+flush	shot_detector.cpp	/^shot shot_detector::flush ()$/;"	f	class:shot_detector	signature:()
+flush	shot_detector.hpp	/^        shot flush ();$/;"	p	class:shot_detector	access:public	signature:()
+frame_count	a_v_info.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:	access:public
+frame_count	process_audio_file.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:	access:public
+frame_count	process_video_file.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:	access:public
+frame_count	video_split.h	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	access:public
 frame_info	shot_boundary_detect.hpp	/^struct frame_info $/;"	s
-frame_rate	process_audio_file.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:
-frame_rate	process_video_file.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:
-frame_rate	video_split.h	/^    double frame_rate;$/;"	m	struct:video_file_info
-frame_type	shot_boundary_detect.hpp	/^    frametype frame_type; \/\/0 for not boundary, 1 for boundary, 2 for black frame$/;"	m	struct:frame_info
+frame_info::avg	shot_boundary_detect.hpp	/^    unsigned int avg;$/;"	m	struct:frame_info	access:public
+frame_info::cut	shot_boundary_detect.hpp	/^    unsigned int cut;$/;"	m	struct:frame_info	access:public
+frame_info::frame_type	shot_boundary_detect.hpp	/^    frametype frame_type; \/\/0 for not boundary, 1 for boundary, 2 for black frame$/;"	m	struct:frame_info	access:public
+frame_info::prev_ts	shot_boundary_detect.hpp	/^    unsigned int prev_ts;$/;"	m	struct:frame_info	access:public
+frame_info::var	shot_boundary_detect.hpp	/^    unsigned int var;$/;"	m	struct:frame_info	access:public
+frame_rate	a_v_info.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:	access:public
+frame_rate	process_audio_file.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:	access:public
+frame_rate	process_video_file.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:	access:public
+frame_rate	video_split.h	/^    double frame_rate;$/;"	m	struct:video_file_info	access:public
+frame_type	shot_boundary_detect.hpp	/^    frametype frame_type; \/\/0 for not boundary, 1 for boundary, 2 for black frame$/;"	m	struct:frame_info	access:public
 frametype	shot_boundary_detect.hpp	/^enum frametype {NORMAL, BOUNDARY, BLACK};$/;"	g
-good_shot	shot_detector.cpp	/^static bool good_shot (const shot &shotv, const frame_info &fi, $/;"	f	file:
-height	process_audio_file.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:
-height	process_video_file.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:
-height	video_split.h	/^    uint16_t height;$/;"	m	struct:video_file_info
-hist_th	shot_detector.hpp	/^    float hist_th; \/\/control judgging shot boundary, default is 0.5$/;"	m	struct:config
-image_size	process_audio_file.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:
-image_size	process_video_file.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:
-image_size	video_split.h	/^    uint32_t image_size;$/;"	m	struct:video_file_info
-init	video_split.cpp	/^int video_split_processor::init(video_file_info *p_info)$/;"	f	class:video_split_processor
-is_shot_valid	shot_detector.cpp	/^static bool is_shot_valid (const shot &shotv)$/;"	f	file:
+good_shot	shot_detector.cpp	/^static bool good_shot (const shot &shotv, const frame_info &fi, $/;"	f	file:	signature:(const shot &shotv, const frame_info &fi, const int min_len)
+height	a_v_info.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:	access:public
+height	process_audio_file.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:	access:public
+height	process_video_file.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:	access:public
+height	video_split.h	/^    uint16_t height;$/;"	m	struct:video_file_info	access:public
+hist_th	shot_detector.hpp	/^    float hist_th; \/\/control judgging shot boundary, default is 0.5$/;"	m	struct:config	access:public
+image_size	a_v_info.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:	access:public
+image_size	process_audio_file.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:	access:public
+image_size	process_video_file.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:	access:public
+image_size	video_split.h	/^    uint32_t image_size;$/;"	m	struct:video_file_info	access:public
+init	video_split.cpp	/^int video_split_processor::init()$/;"	f	class:video_split_processor	signature:()
+init	video_split.h	/^        int init();$/;"	p	class:video_split_processor	access:public	signature:()
+is_shot_valid	shot_detector.cpp	/^static bool is_shot_valid (const shot &shotv)$/;"	f	file:	signature:(const shot &shotv)
+live_timeval	a_v_info.cpp	/^struct live_timeval$/;"	s	file:
 live_timeval	process_audio_file.cpp	/^struct live_timeval$/;"	s	file:
 live_timeval	process_video_file.cpp	/^struct live_timeval$/;"	s	file:
 live_timeval	video_split.h	/^struct live_timeval$/;"	s
-m_cfg	video_split.h	/^        config m_cfg;$/;"	m	class:video_split_processor
-m_curr_shot	video_split.h	/^        shot m_curr_shot;$/;"	m	class:video_split_processor
-m_fp	video_split.h	/^        FILE *m_fp;$/;"	m	class:video_split_processor
-m_prev_end_time	video_split.h	/^        live_timeval m_prev_end_time;$/;"	m	class:video_split_processor
-m_prev_info	video_split.h	/^        video_file_info m_prev_info;$/;"	m	class:video_split_processor
-m_prev_shot	video_split.h	/^        shot m_prev_shot;$/;"	m	class:video_split_processor
-m_shot_begin_time	video_split.h	/^        live_timeval m_shot_begin_time;$/;"	m	class:video_split_processor
-m_shot_end_time	video_split.h	/^        live_timeval m_shot_end_time;$/;"	m	class:video_split_processor
-main	process_audio_file.cpp	/^int main ( int argc, char *argv[] )$/;"	f
-main	t.cpp	/^int main ( int argc, char *argv[] )$/;"	f
-map_file	process_audio_file.cpp	/^unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)$/;"	f
-map_file	video_split.cpp	/^unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)$/;"	f
-mb_initialized	video_split.h	/^        bool mb_initialized;$/;"	m	class:video_split_processor
-min_len	shot_detector.hpp	/^    int min_len; \/\/control minimum length of one shot with $/;"	m	struct:config
-mp_sd	video_split.h	/^        shot_detector *mp_sd;$/;"	m	class:video_split_processor
+live_timeval::tv_sec	a_v_info.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:	access:public
+live_timeval::tv_sec	process_audio_file.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:	access:public
+live_timeval::tv_sec	process_video_file.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:	access:public
+live_timeval::tv_sec	video_split.h	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	access:public
+live_timeval::tv_usec	a_v_info.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:	access:public
+live_timeval::tv_usec	process_audio_file.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:	access:public
+live_timeval::tv_usec	process_video_file.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:	access:public
+live_timeval::tv_usec	video_split.h	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	access:public
+m_cfg	video_split.h	/^        config m_cfg;$/;"	m	class:video_split_processor	access:private
+m_curr_frame_ts	video_split.h	/^        unsigned int m_curr_frame_ts;$/;"	m	class:video_split_processor	access:private
+m_curr_shot	video_split.h	/^        shot m_curr_shot;$/;"	m	class:video_split_processor	access:private
+m_fp	video_split.h	/^        FILE *m_fp;$/;"	m	class:video_split_processor	access:private
+m_prev_end_time	video_split.h	/^        live_timeval m_prev_end_time;$/;"	m	class:video_split_processor	access:private
+m_prev_info	video_split.h	/^        video_file_info m_prev_info;$/;"	m	class:video_split_processor	access:private
+m_prev_shot	video_split.h	/^        shot m_prev_shot;$/;"	m	class:video_split_processor	access:private
+m_shot_begin_time	video_split.h	/^        live_timeval m_shot_begin_time;$/;"	m	class:video_split_processor	access:private
+m_shot_end_time	video_split.h	/^        live_timeval m_shot_end_time;$/;"	m	class:video_split_processor	access:private
+m_shot_info_path	video_split.h	/^        const char *m_shot_info_path;$/;"	m	class:video_split_processor	access:private
+m_tmp_video	video_split.h	/^        char *m_tmp_video;$/;"	m	class:video_split_processor	access:private
+m_vdna_name	video_split.h	/^        const char *m_vdna_name;$/;"	m	class:video_split_processor	access:private
+m_vdna_path	video_split.h	/^        const char *m_vdna_path;$/;"	m	class:video_split_processor	access:private
+m_video_file	video_split.h	/^        char *m_video_file;$/;"	m	class:video_split_processor	access:private
+m_video_path	video_split.h	/^        const char *m_video_path;$/;"	m	class:video_split_processor	access:private
+main	a_v_info.cpp	/^int main ( int argc, char *argv[] )$/;"	f	signature:( int argc, char *argv[] )
+main	gen_a_v.py	/^def main():$/;"	f	access:public
+main	process_audio_file.cpp	/^int main ( int argc, char *argv[] )$/;"	f	signature:( int argc, char *argv[] )
+main	t.cpp	/^int main ( int argc, char *argv[] )$/;"	f	signature:( int argc, char *argv[] )
+main	test_video_split.cpp	/^int main ( int argc, char *argv[] )$/;"	f	signature:( int argc, char *argv[] )
+map_file	process_audio_file.cpp	/^unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)$/;"	f	signature:(FILE * fp, size_t size, size_t & mapped_size)
+map_file	process_audio_file.cpp	/^unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size);$/;"	p	file:	signature:(FILE * fp, size_t size, size_t & mapped_size)
+map_file	process_video_file.cpp	/^unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size);$/;"	p	file:	signature:(FILE * fp, size_t size, size_t & mapped_size)
+map_file	video_split.cpp	/^unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)$/;"	f	signature:(FILE * fp, size_t size, size_t & mapped_size)
+mb_initialized	video_split.h	/^        bool mb_initialized;$/;"	m	class:video_split_processor	access:private
+min_len	shot_detector.hpp	/^    int min_len; \/\/control minimum length of one shot with $/;"	m	struct:config	access:public
+mp_sd	video_split.h	/^        shot_detector *mp_sd;$/;"	m	class:video_split_processor	access:private
+name_buffer	a_v_info.cpp	/^char name_buffer[] = "20130608_021945.238344.audio";$/;"	v
 name_buffer	process_audio_file.cpp	/^char name_buffer[] = "20130608_021945.238344.audio";$/;"	v
-num	shot_detector.hpp	/^    int num; \/\/total boundaries count$/;"	m	struct:shot
-operator <<	shot_detector.cpp	/^std::ostream& operator << (std::ostream &os, const shot &s)$/;"	f
-operator =	shot_boundary_detect.cpp	/^shot_boundary_detector &shot_boundary_detector::operator = (const shot_boundary_detector &other)$/;"	f	class:shot_boundary_detector
-operator =	shot_detector.cpp	/^shot & shot::operator = (const shot &other)$/;"	f	class:shot
-prev_ts	shot_boundary_detect.hpp	/^    unsigned int prev_ts;$/;"	m	struct:frame_info
-print_hist	shot_boundary_detect.cpp	/^static void print_hist (unsigned int **hist, int total)$/;"	f	file:
-print_status	shot_detector.cpp	/^void shot_detector::print_status ()$/;"	f	class:shot_detector
-process_audio_file	process_audio_file.cpp	/^int process_audio_file ()$/;"	f
-process_video_file	process_audio_file.cpp	/^int process_video_file()$/;"	f
-rate	process_audio_file.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:
-rate	process_video_file.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:
-rate	video_split.h	/^    uint32_t rate;$/;"	m	struct:audio_file_info
-reset_config	shot_boundary_detect.cpp	/^void shot_boundary_detector::reset_config (const float hist_th, $/;"	f	class:shot_boundary_detector
-reset_config	shot_detector.cpp	/^void shot_detector::reset_config (const config &iconfig)$/;"	f	class:shot_detector
-restart	shot_detector.cpp	/^void shot_detector::restart (const unsigned char *first_frame, unsigned int first_ts)$/;"	f	class:shot_detector
-set_boundaries	shot_detector.cpp	/^void shot::set_boundaries (const std::vector<frame_info> in_boundaries)$/;"	f	class:shot
-shot	shot_detector.cpp	/^shot::shot (unsigned int istart, unsigned int iend, unsigned int  iavg_sum, $/;"	f	class:shot
+num	shot_detector.hpp	/^    int num; \/\/total boundaries count$/;"	m	struct:shot	access:public
+operator <<	shot_detector.cpp	/^std::ostream& operator << (std::ostream &os, const shot &s)$/;"	f	signature:(std::ostream &os, const shot &s)
+operator <<	shot_detector.hpp	/^    friend std::ostream& operator << (std::ostream &os, const shot &s);$/;"	p	struct:shot	access:friend	signature:(std::ostream &os, const shot &s)
+operator =	shot_boundary_detect.cpp	/^shot_boundary_detector &shot_boundary_detector::operator = (const shot_boundary_detector &other)$/;"	f	class:shot_boundary_detector	signature:(const shot_boundary_detector &other)
+operator =	shot_boundary_detect.hpp	/^        shot_boundary_detector &operator = (const shot_boundary_detector &other);$/;"	p	class:shot_boundary_detector	access:public	signature:(const shot_boundary_detector &other)
+operator =	shot_detector.cpp	/^shot & shot::operator = (const shot &other)$/;"	f	class:shot	signature:(const shot &other)
+operator =	shot_detector.hpp	/^    shot & operator = (const shot &other);$/;"	p	struct:shot	access:public	signature:(const shot &other)
+parse_options	gen_a_v.py	/^def parse_options():$/;"	f	access:public
+prev_ts	shot_boundary_detect.hpp	/^    unsigned int prev_ts;$/;"	m	struct:frame_info	access:public
+print_hist	shot_boundary_detect.cpp	/^static void print_hist (unsigned int **hist, int total)$/;"	f	file:	signature:(unsigned int **hist, int total)
+print_status	shot_detector.cpp	/^void shot_detector::print_status ()$/;"	f	class:shot_detector	signature:()
+print_status	shot_detector.hpp	/^        void print_status ();$/;"	p	class:shot_detector	access:public	signature:()
+process_audio_file	a_v_info.cpp	/^int process_audio_file ()$/;"	f	signature:()
+process_audio_file	process_audio_file.cpp	/^int process_audio_file ()$/;"	f	signature:()
+process_video_file	a_v_info.cpp	/^int process_video_file(char *video_file_name)$/;"	f	signature:(char *video_file_name)
+process_video_file	process_audio_file.cpp	/^int process_video_file()$/;"	f	signature:()
+rate	a_v_info.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:	access:public
+rate	process_audio_file.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:	access:public
+rate	process_video_file.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:	access:public
+rate	video_split.h	/^    uint32_t rate;$/;"	m	struct:audio_file_info	access:public
+rename_yuv_file	video_split.cpp	/^int video_split_processor::rename_yuv_file()$/;"	f	class:video_split_processor	signature:()
+rename_yuv_file	video_split.h	/^        int rename_yuv_file();$/;"	p	class:video_split_processor	access:private	signature:()
+reset_config	shot_boundary_detect.cpp	/^void shot_boundary_detector::reset_config (const float hist_th, $/;"	f	class:shot_boundary_detector	signature:(const float hist_th, const int diff_cnt_th, const float var_th)
+reset_config	shot_boundary_detect.hpp	/^        void reset_config (const float hist_th, const int diff_cnt_th, $/;"	p	class:shot_boundary_detector	access:public	signature:(const float hist_th, const int diff_cnt_th, const float var_th)
+reset_config	shot_detector.cpp	/^void shot_detector::reset_config (const config &iconfig)$/;"	f	class:shot_detector	signature:(const config &iconfig)
+reset_config	shot_detector.hpp	/^        void reset_config (const config &iconfig);$/;"	p	class:shot_detector	access:public	signature:(const config &iconfig)
+restart	shot_detector.cpp	/^void shot_detector::restart (const unsigned char *first_frame, unsigned int first_ts)$/;"	f	class:shot_detector	signature:(const unsigned char *first_frame, unsigned int first_ts)
+restart	shot_detector.hpp	/^        void restart (const unsigned char *first_frame, const unsigned int first_ts);$/;"	p	class:shot_detector	access:public	signature:(const unsigned char *first_frame, const unsigned int first_ts)
+run	gen_a_v.py	/^    def run(self):$/;"	m	class:Audio_capturer	access:public
+run	gen_a_v.py	/^    def run(self):$/;"	m	class:Video_capturer	access:public
+set_boundaries	shot_detector.cpp	/^void shot::set_boundaries (const std::vector<frame_info> in_boundaries)$/;"	f	class:shot	signature:(const std::vector<frame_info> in_boundaries)
+set_boundaries	shot_detector.hpp	/^    void set_boundaries (const std::vector<frame_info> in_boundaries);$/;"	p	struct:shot	access:public	signature:(const std::vector<frame_info> in_boundaries)
+set_nonblock	gen_a_v.py	/^def set_nonblock(fileHandler):$/;"	f	access:public
+shot	shot_detector.cpp	/^shot::shot (unsigned int istart, unsigned int iend, unsigned int  iavg_sum, $/;"	f	class:shot	signature:(unsigned int istart, unsigned int iend, unsigned int iavg_sum, unsigned int ivar_sum, unsigned int inum, frametype istarttype, frametype iendtype, unsigned int iendcut)
+shot	shot_detector.hpp	/^    shot (unsigned int istart, unsigned int iend, unsigned int  iavg_sum, $/;"	p	struct:shot	access:public	signature:(unsigned int istart, unsigned int iend, unsigned int iavg_sum, unsigned int ivar_sum, unsigned int inum, frametype istarttype, frametype iendtype, unsigned int iendcut)
 shot	shot_detector.hpp	/^struct shot$/;"	s
-shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::shot_boundary_detector (const shot_boundary_detector &other)$/;"	f	class:shot_boundary_detector
-shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::shot_boundary_detector (const unsigned int width, $/;"	f	class:shot_boundary_detector
+shot::append_boundaries	shot_detector.cpp	/^void shot::append_boundaries (const std::vector<frame_info> in_boundaries)$/;"	f	class:shot	signature:(const std::vector<frame_info> in_boundaries)
+shot::append_boundaries	shot_detector.hpp	/^    void append_boundaries (const std::vector<frame_info> in_boundaries);$/;"	p	struct:shot	access:public	signature:(const std::vector<frame_info> in_boundaries)
+shot::avg_sum	shot_detector.hpp	/^    int avg_sum; \/\/average gray sumary of the shot$/;"	m	struct:shot	access:public
+shot::boundaries	shot_detector.hpp	/^    std::vector<frame_info> boundaries; \/\/middle boundaries timestamp$/;"	m	struct:shot	access:public
+shot::end	shot_detector.hpp	/^    int end; \/\/shot end timestamp$/;"	m	struct:shot	access:public
+shot::end_cut	shot_detector.hpp	/^    unsigned int end_cut; \/\/end boundary intensity$/;"	m	struct:shot	access:public
+shot::end_frame_type	shot_detector.hpp	/^    frametype end_frame_type;\/\/end frame type: normal-boundary\/black-frame$/;"	m	struct:shot	access:public
+shot::num	shot_detector.hpp	/^    int num; \/\/total boundaries count$/;"	m	struct:shot	access:public
+shot::operator <<	shot_detector.hpp	/^    friend std::ostream& operator << (std::ostream &os, const shot &s);$/;"	p	struct:shot	access:friend	signature:(std::ostream &os, const shot &s)
+shot::operator =	shot_detector.cpp	/^shot & shot::operator = (const shot &other)$/;"	f	class:shot	signature:(const shot &other)
+shot::operator =	shot_detector.hpp	/^    shot & operator = (const shot &other);$/;"	p	struct:shot	access:public	signature:(const shot &other)
+shot::set_boundaries	shot_detector.cpp	/^void shot::set_boundaries (const std::vector<frame_info> in_boundaries)$/;"	f	class:shot	signature:(const std::vector<frame_info> in_boundaries)
+shot::set_boundaries	shot_detector.hpp	/^    void set_boundaries (const std::vector<frame_info> in_boundaries);$/;"	p	struct:shot	access:public	signature:(const std::vector<frame_info> in_boundaries)
+shot::shot	shot_detector.cpp	/^shot::shot (unsigned int istart, unsigned int iend, unsigned int  iavg_sum, $/;"	f	class:shot	signature:(unsigned int istart, unsigned int iend, unsigned int iavg_sum, unsigned int ivar_sum, unsigned int inum, frametype istarttype, frametype iendtype, unsigned int iendcut)
+shot::shot	shot_detector.hpp	/^    shot (unsigned int istart, unsigned int iend, unsigned int  iavg_sum, $/;"	p	struct:shot	access:public	signature:(unsigned int istart, unsigned int iend, unsigned int iavg_sum, unsigned int ivar_sum, unsigned int inum, frametype istarttype, frametype iendtype, unsigned int iendcut)
+shot::start	shot_detector.hpp	/^    int start; \/\/shot start timestamp$/;"	m	struct:shot	access:public
+shot::start_frame_type	shot_detector.hpp	/^    frametype start_frame_type; \/\/start frame type: normal-boundary\/black-frame$/;"	m	struct:shot	access:public
+shot::var_sum	shot_detector.hpp	/^    int var_sum; \/\/boundary variance of the shot$/;"	m	struct:shot	access:public
+shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::shot_boundary_detector (const shot_boundary_detector &other)$/;"	f	class:shot_boundary_detector	signature:(const shot_boundary_detector &other)
+shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::shot_boundary_detector (const unsigned int width, $/;"	f	class:shot_boundary_detector	signature:(const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, const float hist_th, const int diff_cnt_th, const float var_th)
+shot_boundary_detector	shot_boundary_detect.hpp	/^        shot_boundary_detector (const shot_boundary_detector &other);$/;"	p	class:shot_boundary_detector	access:public	signature:(const shot_boundary_detector &other)
+shot_boundary_detector	shot_boundary_detect.hpp	/^        shot_boundary_detector (const unsigned int width, $/;"	p	class:shot_boundary_detector	access:public	signature:(const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, const float hist_th, const int diff_cnt_th, const float var_th)
 shot_boundary_detector	shot_boundary_detect.hpp	/^class shot_boundary_detector $/;"	c
-shot_detector	shot_detector.cpp	/^shot_detector::shot_detector (const unsigned int width, const unsigned int height, $/;"	f	class:shot_detector
+shot_boundary_detector::_avg_th	shot_boundary_detect.hpp	/^        float _avg_th;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_block_h	shot_boundary_detect.hpp	/^        unsigned int _block_h; $/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_block_w	shot_boundary_detect.hpp	/^        unsigned int _block_w;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_curr_frame_hist	shot_boundary_detect.hpp	/^        unsigned int **_curr_frame_hist;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_diff_cnt_th	shot_boundary_detect.hpp	/^        int _diff_cnt_th;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_height	shot_boundary_detect.hpp	/^        unsigned int _height;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_hist_num	shot_boundary_detect.hpp	/^        unsigned int *_hist_num;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_hist_th	shot_boundary_detect.hpp	/^        float _hist_th;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_prev_avg	shot_boundary_detect.hpp	/^        float _prev_avg;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_prev_black	shot_boundary_detect.hpp	/^        bool _prev_black;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_prev_cut	shot_boundary_detect.hpp	/^        unsigned int _prev_cut;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_prev_frame_hist	shot_boundary_detect.hpp	/^        unsigned int **_prev_frame_hist;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_prev_ts	shot_boundary_detect.hpp	/^        unsigned int _prev_ts;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_prev_var	shot_boundary_detect.hpp	/^        float _prev_var;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_started	shot_boundary_detect.hpp	/^        bool _started;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_var_th	shot_boundary_detect.hpp	/^        float _var_th;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::_width	shot_boundary_detect.hpp	/^        unsigned int _width;$/;"	m	class:shot_boundary_detector	access:private
+shot_boundary_detector::check_params	shot_boundary_detect.cpp	/^bool shot_boundary_detector::check_params ()$/;"	f	class:shot_boundary_detector	signature:()
+shot_boundary_detector::check_params	shot_boundary_detect.hpp	/^        bool check_params ();$/;"	p	class:shot_boundary_detector	access:public	signature:()
+shot_boundary_detector::detect	shot_boundary_detect.cpp	/^frame_info shot_boundary_detector::detect (const unsigned char *current_frame_buffer,$/;"	f	class:shot_boundary_detector	signature:(const unsigned char *current_frame_buffer, const unsigned int curr_ts)
+shot_boundary_detector::detect	shot_boundary_detect.hpp	/^        frame_info detect (const unsigned char *current_frame_buffer, $/;"	p	class:shot_boundary_detector	access:public	signature:(const unsigned char *current_frame_buffer, const unsigned int curr_ts)
+shot_boundary_detector::operator =	shot_boundary_detect.cpp	/^shot_boundary_detector &shot_boundary_detector::operator = (const shot_boundary_detector &other)$/;"	f	class:shot_boundary_detector	signature:(const shot_boundary_detector &other)
+shot_boundary_detector::operator =	shot_boundary_detect.hpp	/^        shot_boundary_detector &operator = (const shot_boundary_detector &other);$/;"	p	class:shot_boundary_detector	access:public	signature:(const shot_boundary_detector &other)
+shot_boundary_detector::reset_config	shot_boundary_detect.cpp	/^void shot_boundary_detector::reset_config (const float hist_th, $/;"	f	class:shot_boundary_detector	signature:(const float hist_th, const int diff_cnt_th, const float var_th)
+shot_boundary_detector::reset_config	shot_boundary_detect.hpp	/^        void reset_config (const float hist_th, const int diff_cnt_th, $/;"	p	class:shot_boundary_detector	access:public	signature:(const float hist_th, const int diff_cnt_th, const float var_th)
+shot_boundary_detector::shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::shot_boundary_detector (const shot_boundary_detector &other)$/;"	f	class:shot_boundary_detector	signature:(const shot_boundary_detector &other)
+shot_boundary_detector::shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::shot_boundary_detector (const unsigned int width, $/;"	f	class:shot_boundary_detector	signature:(const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, const float hist_th, const int diff_cnt_th, const float var_th)
+shot_boundary_detector::shot_boundary_detector	shot_boundary_detect.hpp	/^        shot_boundary_detector (const shot_boundary_detector &other);$/;"	p	class:shot_boundary_detector	access:public	signature:(const shot_boundary_detector &other)
+shot_boundary_detector::shot_boundary_detector	shot_boundary_detect.hpp	/^        shot_boundary_detector (const unsigned int width, $/;"	p	class:shot_boundary_detector	access:public	signature:(const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, const float hist_th, const int diff_cnt_th, const float var_th)
+shot_boundary_detector::start	shot_boundary_detect.cpp	/^void shot_boundary_detector::start (const unsigned char *first_frame_buffer,$/;"	f	class:shot_boundary_detector	signature:(const unsigned char *first_frame_buffer, const unsigned int first_ts)
+shot_boundary_detector::start	shot_boundary_detect.hpp	/^        void start (const unsigned char *first_frame_buffer, $/;"	p	class:shot_boundary_detector	access:public	signature:(const unsigned char *first_frame_buffer, const unsigned int first_ts)
+shot_boundary_detector::~shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::~shot_boundary_detector ()$/;"	f	class:shot_boundary_detector	signature:()
+shot_boundary_detector::~shot_boundary_detector	shot_boundary_detect.hpp	/^        ~shot_boundary_detector (); $/;"	p	class:shot_boundary_detector	access:public	signature:()
+shot_detector	shot_detector.cpp	/^shot_detector::shot_detector (const unsigned int width, const unsigned int height, $/;"	f	class:shot_detector	signature:(const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, const config &iconfig)
+shot_detector	shot_detector.hpp	/^        shot_detector (const unsigned int width, const unsigned int height, $/;"	p	class:shot_detector	access:public	signature:(const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, const config &iconfig)
 shot_detector	shot_detector.hpp	/^class shot_detector$/;"	c
-shot_merge	shot_detector.cpp	/^static void shot_merge (shot &into, const shot &m)$/;"	f	file:
-split_video	process_video_file.cpp	/^int split_video(FILE *fp, off_t pos, video_file_info *info)$/;"	f
-start	shot_boundary_detect.cpp	/^void shot_boundary_detector::start (const unsigned char *first_frame_buffer,$/;"	f	class:shot_boundary_detector
-start	shot_detector.hpp	/^    int start; \/\/shot start timestamp$/;"	m	struct:shot
-start_frame_type	shot_detector.hpp	/^    frametype start_frame_type; \/\/start frame type: normal-boundary\/black-frame$/;"	m	struct:shot
+shot_detector::_black_skipping	shot_detector.hpp	/^        bool _black_skipping;$/;"	m	class:shot_detector	access:private
+shot_detector::_black_start	shot_detector.hpp	/^        unsigned int _black_start;$/;"	m	class:shot_detector	access:private
+shot_detector::_boundaries_cache	shot_detector.hpp	/^        std::vector<frame_info> _boundaries_cache;$/;"	m	class:shot_detector	access:private
+shot_detector::_curr_ts	shot_detector.hpp	/^        unsigned int _curr_ts;$/;"	m	class:shot_detector	access:private
+shot_detector::_min_len	shot_detector.hpp	/^        unsigned int _min_len;$/;"	m	class:shot_detector	access:private
+shot_detector::_prev_boundary_ts	shot_detector.hpp	/^        unsigned int _prev_boundary_ts;$/;"	m	class:shot_detector	access:private
+shot_detector::_prev_boundary_type	shot_detector.hpp	/^        frametype _prev_boundary_type;$/;"	m	class:shot_detector	access:private
+shot_detector::_prev_prev_ts	shot_detector.hpp	/^        unsigned int _prev_prev_ts;$/;"	m	class:shot_detector	access:private
+shot_detector::_prev_shot	shot_detector.hpp	/^        shot _prev_shot;$/;"	m	class:shot_detector	access:private
+shot_detector::_prev_ts	shot_detector.hpp	/^        unsigned int _prev_ts;$/;"	m	class:shot_detector	access:private
+shot_detector::_sbd	shot_detector.hpp	/^        shot_boundary_detector _sbd;$/;"	m	class:shot_detector	access:private
+shot_detector::_shot_avg	shot_detector.hpp	/^        float _shot_avg;$/;"	m	class:shot_detector	access:private
+shot_detector::_shot_num	shot_detector.hpp	/^        int _shot_num;$/;"	m	class:shot_detector	access:private
+shot_detector::_shot_var	shot_detector.hpp	/^        float _shot_var;$/;"	m	class:shot_detector	access:private
+shot_detector::_stared	shot_detector.hpp	/^        bool _stared;$/;"	m	class:shot_detector	access:private
+shot_detector::_status	shot_detector.hpp	/^        status _status;$/;"	m	class:shot_detector	access:private
+shot_detector::detect	shot_detector.cpp	/^shot shot_detector::detect (const unsigned char *curr_frame, const unsigned int curr_ts)$/;"	f	class:shot_detector	signature:(const unsigned char *curr_frame, const unsigned int curr_ts)
+shot_detector::detect	shot_detector.hpp	/^        shot detect (const unsigned char *curr_frame, const unsigned int curr_ts);$/;"	p	class:shot_detector	access:public	signature:(const unsigned char *curr_frame, const unsigned int curr_ts)
+shot_detector::do_detect	shot_detector.hpp	/^        void do_detect (const unsigned char *curr_frame, unsigned int curr_ts);$/;"	p	class:shot_detector	access:private	signature:(const unsigned char *curr_frame, unsigned int curr_ts)
+shot_detector::flush	shot_detector.cpp	/^shot shot_detector::flush ()$/;"	f	class:shot_detector	signature:()
+shot_detector::flush	shot_detector.hpp	/^        shot flush ();$/;"	p	class:shot_detector	access:public	signature:()
+shot_detector::print_status	shot_detector.cpp	/^void shot_detector::print_status ()$/;"	f	class:shot_detector	signature:()
+shot_detector::print_status	shot_detector.hpp	/^        void print_status ();$/;"	p	class:shot_detector	access:public	signature:()
+shot_detector::reset_config	shot_detector.cpp	/^void shot_detector::reset_config (const config &iconfig)$/;"	f	class:shot_detector	signature:(const config &iconfig)
+shot_detector::reset_config	shot_detector.hpp	/^        void reset_config (const config &iconfig);$/;"	p	class:shot_detector	access:public	signature:(const config &iconfig)
+shot_detector::restart	shot_detector.cpp	/^void shot_detector::restart (const unsigned char *first_frame, unsigned int first_ts)$/;"	f	class:shot_detector	signature:(const unsigned char *first_frame, unsigned int first_ts)
+shot_detector::restart	shot_detector.hpp	/^        void restart (const unsigned char *first_frame, const unsigned int first_ts);$/;"	p	class:shot_detector	access:public	signature:(const unsigned char *first_frame, const unsigned int first_ts)
+shot_detector::shot_detector	shot_detector.cpp	/^shot_detector::shot_detector (const unsigned int width, const unsigned int height, $/;"	f	class:shot_detector	signature:(const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, const config &iconfig)
+shot_detector::shot_detector	shot_detector.hpp	/^        shot_detector (const unsigned int width, const unsigned int height, $/;"	p	class:shot_detector	access:public	signature:(const unsigned int width, const unsigned int height, const unsigned int block_w, const unsigned int block_h, const config &iconfig)
+shot_detector::update_status	shot_detector.hpp	/^        void update_status ();$/;"	p	class:shot_detector	access:private	signature:()
+shot_detector::~shot_detector	shot_detector.cpp	/^shot_detector::~shot_detector ()$/;"	f	class:shot_detector	signature:()
+shot_detector::~shot_detector	shot_detector.hpp	/^        ~shot_detector ();$/;"	p	class:shot_detector	access:public	signature:()
+shot_merge	shot_detector.cpp	/^static void shot_merge (shot &into, const shot &m)$/;"	f	file:	signature:(shot &into, const shot &m)
+split_video	process_video_file.cpp	/^int split_video(FILE *fp, off_t pos, video_file_info *info)$/;"	f	signature:(FILE *fp, off_t pos, video_file_info *info)
+start	shot_boundary_detect.cpp	/^void shot_boundary_detector::start (const unsigned char *first_frame_buffer,$/;"	f	class:shot_boundary_detector	signature:(const unsigned char *first_frame_buffer, const unsigned int first_ts)
+start	shot_boundary_detect.hpp	/^        void start (const unsigned char *first_frame_buffer, $/;"	p	class:shot_boundary_detector	access:public	signature:(const unsigned char *first_frame_buffer, const unsigned int first_ts)
+start	shot_detector.hpp	/^    int start; \/\/shot start timestamp$/;"	m	struct:shot	access:public
+start_frame_type	shot_detector.hpp	/^    frametype start_frame_type; \/\/start frame type: normal-boundary\/black-frame$/;"	m	struct:shot	access:public
 status	shot_detector.hpp	/^enum status {NO_SHOT, NEW_SHOT, PENDING};$/;"	g
-tv_sec	process_audio_file.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:
-tv_sec	process_video_file.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:
-tv_sec	video_split.h	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval
-tv_usec	process_audio_file.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:
-tv_usec	process_video_file.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:
-tv_usec	video_split.h	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval
-var	shot_boundary_detect.hpp	/^    unsigned int var;$/;"	m	struct:frame_info
-var_sum	shot_detector.hpp	/^    int var_sum; \/\/boundary variance of the shot$/;"	m	struct:shot
-var_th	shot_detector.hpp	/^    float var_th; \/\/control judge black frame, default is 100.0$/;"	m	struct:config
+timevaldiff	video_split.cpp	/^long int timevaldiff(const live_timeval &start_time, \\$/;"	f	signature:(const live_timeval &start_time, \ const live_timeval &end_time)
+tv_sec	a_v_info.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:	access:public
+tv_sec	process_audio_file.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:	access:public
+tv_sec	process_video_file.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:	access:public
+tv_sec	video_split.h	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	access:public
+tv_usec	a_v_info.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:	access:public
+tv_usec	process_audio_file.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:	access:public
+tv_usec	process_video_file.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:	access:public
+tv_usec	video_split.h	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	access:public
+update_status	shot_detector.hpp	/^        void update_status ();$/;"	p	class:shot_detector	access:private	signature:()
+var	shot_boundary_detect.hpp	/^    unsigned int var;$/;"	m	struct:frame_info	access:public
+var_sum	shot_detector.hpp	/^    int var_sum; \/\/boundary variance of the shot$/;"	m	struct:shot	access:public
+var_th	shot_detector.hpp	/^    float var_th; \/\/control judge black frame, default is 100.0$/;"	m	struct:config	access:public
+video_file_info	a_v_info.cpp	/^struct video_file_info$/;"	s	file:
 video_file_info	process_audio_file.cpp	/^struct video_file_info$/;"	s	file:
 video_file_info	process_video_file.cpp	/^struct video_file_info$/;"	s	file:
 video_file_info	video_split.h	/^struct video_file_info$/;"	s
+video_file_info::begin_time	a_v_info.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+video_file_info::begin_time	process_audio_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+video_file_info::begin_time	process_video_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+video_file_info::begin_time	video_split.h	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	access:public
+video_file_info::color_type	a_v_info.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::color_type	process_audio_file.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::color_type	process_video_file.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::color_type	video_split.h	/^    uint16_t color_type;$/;"	m	struct:video_file_info	access:public
+video_file_info::end_time	a_v_info.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+video_file_info::end_time	process_audio_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+video_file_info::end_time	process_video_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:	access:public
+video_file_info::end_time	video_split.h	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	access:public
+video_file_info::frame_count	a_v_info.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::frame_count	process_audio_file.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::frame_count	process_video_file.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::frame_count	video_split.h	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	access:public
+video_file_info::frame_rate	a_v_info.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::frame_rate	process_audio_file.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::frame_rate	process_video_file.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::frame_rate	video_split.h	/^    double frame_rate;$/;"	m	struct:video_file_info	access:public
+video_file_info::height	a_v_info.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::height	process_audio_file.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::height	process_video_file.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::height	video_split.h	/^    uint16_t height;$/;"	m	struct:video_file_info	access:public
+video_file_info::image_size	a_v_info.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::image_size	process_audio_file.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::image_size	process_video_file.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::image_size	video_split.h	/^    uint32_t image_size;$/;"	m	struct:video_file_info	access:public
+video_file_info::width	a_v_info.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::width	process_audio_file.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::width	process_video_file.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:	access:public
+video_file_info::width	video_split.h	/^    uint16_t width;$/;"	m	struct:video_file_info	access:public
+video_file_name	process_audio_file.cpp	/^char *video_file_name = argv[1];$/;"	v
 video_file_name	process_audio_file.cpp	/^const char video_file_name[] = "20130607_075150.218767.video";$/;"	v
-video_split	video_split.cpp	/^int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_info)$/;"	f	class:video_split_processor
-video_split_processor	video_split.cpp	/^video_split_processor::video_split_processor()$/;"	f	class:video_split_processor
-video_split_processor	video_split.cpp	/^~video_split_processor::video_split_processor()$/;"	f	class:~video_split_processor
+video_split	video_split.cpp	/^int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_info)$/;"	f	class:video_split_processor	signature:(FILE *fp, off_t pos, video_file_info *p_info)
+video_split	video_split.h	/^        int video_split(FILE *fp, off_t pos, video_file_info *p_info);$/;"	p	class:video_split_processor	access:public	signature:(FILE *fp, off_t pos, video_file_info *p_info)
+video_split_processor	video_split.cpp	/^video_split_processor::video_split_processor(const char *video_path):$/;"	f	class:video_split_processor	signature:(const char *video_path)
+video_split_processor	video_split.h	/^        video_split_processor(const char *video_path);$/;"	p	class:video_split_processor	access:public	signature:(const char *video_path)
 video_split_processor	video_split.h	/^class video_split_processor$/;"	c
-width	process_audio_file.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:
-width	process_video_file.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:
-width	video_split.h	/^    uint16_t width;$/;"	m	struct:video_file_info
-~shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::~shot_boundary_detector ()$/;"	f	class:shot_boundary_detector
-~shot_detector	shot_detector.cpp	/^shot_detector::~shot_detector ()$/;"	f	class:shot_detector
+video_split_processor::init	video_split.cpp	/^int video_split_processor::init()$/;"	f	class:video_split_processor	signature:()
+video_split_processor::init	video_split.h	/^        int init();$/;"	p	class:video_split_processor	access:public	signature:()
+video_split_processor::m_cfg	video_split.h	/^        config m_cfg;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_curr_frame_ts	video_split.h	/^        unsigned int m_curr_frame_ts;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_curr_shot	video_split.h	/^        shot m_curr_shot;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_fp	video_split.h	/^        FILE *m_fp;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_prev_end_time	video_split.h	/^        live_timeval m_prev_end_time;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_prev_info	video_split.h	/^        video_file_info m_prev_info;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_prev_shot	video_split.h	/^        shot m_prev_shot;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_shot_begin_time	video_split.h	/^        live_timeval m_shot_begin_time;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_shot_end_time	video_split.h	/^        live_timeval m_shot_end_time;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_shot_info_path	video_split.h	/^        const char *m_shot_info_path;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_tmp_video	video_split.h	/^        char *m_tmp_video;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_vdna_name	video_split.h	/^        const char *m_vdna_name;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_vdna_path	video_split.h	/^        const char *m_vdna_path;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_video_file	video_split.h	/^        char *m_video_file;$/;"	m	class:video_split_processor	access:private
+video_split_processor::m_video_path	video_split.h	/^        const char *m_video_path;$/;"	m	class:video_split_processor	access:private
+video_split_processor::mb_initialized	video_split.h	/^        bool mb_initialized;$/;"	m	class:video_split_processor	access:private
+video_split_processor::mp_sd	video_split.h	/^        shot_detector *mp_sd;$/;"	m	class:video_split_processor	access:private
+video_split_processor::rename_yuv_file	video_split.cpp	/^int video_split_processor::rename_yuv_file()$/;"	f	class:video_split_processor	signature:()
+video_split_processor::rename_yuv_file	video_split.h	/^        int rename_yuv_file();$/;"	p	class:video_split_processor	access:private	signature:()
+video_split_processor::video_split	video_split.cpp	/^int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_info)$/;"	f	class:video_split_processor	signature:(FILE *fp, off_t pos, video_file_info *p_info)
+video_split_processor::video_split	video_split.h	/^        int video_split(FILE *fp, off_t pos, video_file_info *p_info);$/;"	p	class:video_split_processor	access:public	signature:(FILE *fp, off_t pos, video_file_info *p_info)
+video_split_processor::video_split_processor	video_split.cpp	/^video_split_processor::video_split_processor(const char *video_path):$/;"	f	class:video_split_processor	signature:(const char *video_path)
+video_split_processor::video_split_processor	video_split.h	/^        video_split_processor(const char *video_path);$/;"	p	class:video_split_processor	access:public	signature:(const char *video_path)
+video_split_processor::write_shot_info	video_split.cpp	/^int video_split_processor::write_shot_info()$/;"	f	class:video_split_processor	signature:()
+video_split_processor::write_shot_info	video_split.h	/^        int write_shot_info();$/;"	p	class:video_split_processor	access:private	signature:()
+video_split_processor::~video_split_processor	video_split.cpp	/^video_split_processor::~video_split_processor()$/;"	f	class:video_split_processor	signature:()
+video_split_processor::~video_split_processor	video_split.h	/^        ~video_split_processor();$/;"	p	class:video_split_processor	access:public	signature:()
+width	a_v_info.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:	access:public
+width	process_audio_file.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:	access:public
+width	process_video_file.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:	access:public
+width	video_split.h	/^    uint16_t width;$/;"	m	struct:video_file_info	access:public
+write_shot_info	video_split.cpp	/^int video_split_processor::write_shot_info()$/;"	f	class:video_split_processor	signature:()
+write_shot_info	video_split.h	/^        int write_shot_info();$/;"	p	class:video_split_processor	access:private	signature:()
+~shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::~shot_boundary_detector ()$/;"	f	class:shot_boundary_detector	signature:()
+~shot_boundary_detector	shot_boundary_detect.hpp	/^        ~shot_boundary_detector (); $/;"	p	class:shot_boundary_detector	access:public	signature:()
+~shot_detector	shot_detector.cpp	/^shot_detector::~shot_detector ()$/;"	f	class:shot_detector	signature:()
+~shot_detector	shot_detector.hpp	/^        ~shot_detector ();$/;"	p	class:shot_detector	access:public	signature:()
+~video_split_processor	video_split.cpp	/^video_split_processor::~video_split_processor()$/;"	f	class:video_split_processor	signature:()
+~video_split_processor	video_split.h	/^        ~video_split_processor();$/;"	p	class:video_split_processor	access:public	signature:()

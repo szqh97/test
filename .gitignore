@@ -5,6 +5,7 @@ a.out
 *.pcm
 *.audio
 *.pyc
+tags
 *.pyo
 test
 *.avi
@@ -15,3 +16,5 @@ test
 *.asf
 core
 *.out
+dna
+*.cdna
