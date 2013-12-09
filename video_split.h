@@ -81,7 +81,6 @@ class video_split_processor
 
         bool m_new;
 
-        int rename_yuv_file();
     
 };
 
