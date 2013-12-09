@@ -4,17 +4,26 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Audio_capturer	gen_a_v.py	/^class Audio_capturer(threading.Thread):$/;"	c
 BLACK	shot_boundary_detect.hpp	/^enum frametype {NORMAL, BOUNDARY, BLACK};$/;"	e	enum:frametype
 BOUNDARY	shot_boundary_detect.hpp	/^enum frametype {NORMAL, BOUNDARY, BLACK};$/;"	e	enum:frametype
+CAPTURE_PIX_FMT_UYVY	video_split.h	18;"	d
+CAPTURE_PIX_FMT_YUYV	video_split.h	17;"	d
+DEBUG	video_split.cpp	7;"	d	file:
 FILE_NAME_LEN	video_split.h	13;"	d
 FPS	shot_detector.cpp	4;"	d	file:
+G_COMMAND_OPTIONS	gen_a_v.py	/^G_COMMAND_OPTIONS = 'p:d:c:a:o:t:r:'$/;"	v
 NEW_SHOT	shot_detector.hpp	/^enum status {NO_SHOT, NEW_SHOT, PENDING};$/;"	e	enum:status
 NORMAL	shot_boundary_detect.hpp	/^enum frametype {NORMAL, BOUNDARY, BLACK};$/;"	e	enum:frametype
 NO_SHOT	shot_detector.hpp	/^enum status {NO_SHOT, NEW_SHOT, PENDING};$/;"	e	enum:status
 PENDING	shot_detector.hpp	/^enum status {NO_SHOT, NEW_SHOT, PENDING};$/;"	e	enum:status
+Video_capturer	gen_a_v.py	/^class Video_capturer(threading.Thread):$/;"	c
 _SHOT_DETECTOR_H_	shot_detector.hpp	2;"	d
 _SHOT_DETECT_H_	shot_boundary_detect.hpp	2;"	d
 _VIDEO_SPLIT_H_	video_split.h	2;"	d
+__LIBXMLCPP_H	libxml++.h	8;"	d
+__init__	gen_a_v.py	/^    def __init__(self):$/;"	m	class:Audio_capturer
+__init__	gen_a_v.py	/^    def __init__(self):$/;"	m	class:Video_capturer
 _avg_th	shot_boundary_detect.hpp	/^        float _avg_th;$/;"	m	class:shot_boundary_detector
 _black_skipping	shot_detector.hpp	/^        bool _black_skipping;$/;"	m	class:shot_detector
 _black_start	shot_detector.hpp	/^        unsigned int _black_start;$/;"	m	class:shot_detector
@@ -49,33 +58,39 @@ _status	shot_detector.hpp	/^        status _status;$/;"	m	class:shot_detector
 _var_th	shot_boundary_detect.hpp	/^        float _var_th;$/;"	m	class:shot_boundary_detector
 _width	shot_boundary_detect.hpp	/^        unsigned int _width;$/;"	m	class:shot_boundary_detector
 append_boundaries	shot_detector.cpp	/^void shot::append_boundaries (const std::vector<frame_info> in_boundaries)$/;"	f	class:shot
+audio_file_info	a_v_info.cpp	/^struct audio_file_info$/;"	s	file:
 audio_file_info	process_audio_file.cpp	/^struct audio_file_info$/;"	s	file:
 audio_file_info	process_video_file.cpp	/^struct audio_file_info$/;"	s	file:
 audio_file_info	video_split.h	/^struct audio_file_info$/;"	s
 avg	shot_boundary_detect.hpp	/^    unsigned int avg;$/;"	m	struct:frame_info
 avg_sum	shot_detector.hpp	/^    int avg_sum; \/\/average gray sumary of the shot$/;"	m	struct:shot
+begin_time	a_v_info.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
+begin_time	a_v_info.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
 begin_time	process_audio_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
 begin_time	process_audio_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
 begin_time	process_video_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
 begin_time	process_video_file.cpp	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
 begin_time	video_split.h	/^    struct live_timeval begin_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval
 begin_time	video_split.h	/^    struct live_timeval begin_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval
+begin_time	yuv_timediff.py	/^    begin_time = int(yuvfile.split('.')[0])$/;"	v
+bit	a_v_info.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:
 bit	process_audio_file.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:
 bit	process_video_file.cpp	/^    uint16_t bit;$/;"	m	struct:audio_file_info	file:
 bit	video_split.h	/^    uint16_t bit;$/;"	m	struct:audio_file_info
 boundaries	shot_detector.hpp	/^    std::vector<frame_info> boundaries; \/\/middle boundaries timestamp$/;"	m	struct:shot
 calc_hist	shot_boundary_detect.cpp	/^static void calc_hist (const unsigned char *frame_buffer, const unsigned int width, $/;"	f	file:
+channel	a_v_info.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:
 channel	process_audio_file.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:
 channel	process_video_file.cpp	/^    uint16_t channel;$/;"	m	struct:audio_file_info	file:
 channel	video_split.h	/^    uint16_t channel;$/;"	m	struct:audio_file_info
 check_frame_black	shot_boundary_detect.cpp	/^static bool check_frame_black (const unsigned char *frame_buffer, const unsigned int width, $/;"	f	file:
 check_hist_diff	shot_boundary_detect.cpp	/^static frametype check_hist_diff (unsigned int **hist1, unsigned int **hist2,$/;"	f	file:
 check_params	shot_boundary_detect.cpp	/^bool shot_boundary_detector::check_params ()$/;"	f	class:shot_boundary_detector
+color_type	a_v_info.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:
 color_type	process_audio_file.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:
 color_type	process_video_file.cpp	/^    uint16_t color_type;$/;"	m	struct:video_file_info	file:
 color_type	video_split.h	/^    uint16_t color_type;$/;"	m	struct:video_file_info
 config	shot_detector.hpp	/^struct config$/;"	s
-curr_frame_ts	video_split.h	/^        unsigned int curr_frame_ts;$/;"	m	class:video_split_processor
 cut	shot_boundary_detect.hpp	/^    unsigned int cut;$/;"	m	struct:frame_info
 detect	shot_boundary_detect.cpp	/^frame_info shot_boundary_detector::detect (const unsigned char *current_frame_buffer,$/;"	f	class:shot_boundary_detector
 detect	shot_detector.cpp	/^shot shot_detector::detect (const unsigned char *curr_frame, const unsigned int curr_ts)$/;"	f	class:shot_detector
@@ -83,67 +98,103 @@ diff_cnt_th	shot_detector.hpp	/^    int diff_cnt_th; \/\/control judgging shot b
 end	shot_detector.hpp	/^    int end; \/\/shot end timestamp$/;"	m	struct:shot
 end_cut	shot_detector.hpp	/^    unsigned int end_cut; \/\/end boundary intensity$/;"	m	struct:shot
 end_frame_type	shot_detector.hpp	/^    frametype end_frame_type;\/\/end frame type: normal-boundary\/black-frame$/;"	m	struct:shot
+end_time	a_v_info.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
+end_time	a_v_info.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
 end_time	process_audio_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
 end_time	process_audio_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
 end_time	process_video_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval	file:
 end_time	process_video_file.cpp	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval	file:
 end_time	video_split.h	/^    struct live_timeval end_time;$/;"	m	struct:audio_file_info	typeref:struct:audio_file_info::live_timeval
 end_time	video_split.h	/^    struct live_timeval end_time;$/;"	m	struct:video_file_info	typeref:struct:video_file_info::live_timeval
+end_time	yuv_timediff.py	/^    end_time = int(yuvfile.split('.')[1])$/;"	v
+env	gen_a_v.py	/^env = lambda : None$/;"	v
+f	tmp/merge.py	/^    f =open(s.split('\\n')[0], 'r')$/;"	v
 flush	shot_detector.cpp	/^shot shot_detector::flush ()$/;"	f	class:shot_detector
+frame_count	a_v_info.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:
 frame_count	process_audio_file.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:
 frame_count	process_video_file.cpp	/^    uint16_t frame_count;$/;"	m	struct:video_file_info	file:
 frame_count	video_split.h	/^    uint16_t frame_count;$/;"	m	struct:video_file_info
 frame_info	shot_boundary_detect.hpp	/^struct frame_info $/;"	s
+frame_rate	a_v_info.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:
 frame_rate	process_audio_file.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:
 frame_rate	process_video_file.cpp	/^    double frame_rate;$/;"	m	struct:video_file_info	file:
 frame_rate	video_split.h	/^    double frame_rate;$/;"	m	struct:video_file_info
 frame_type	shot_boundary_detect.hpp	/^    frametype frame_type; \/\/0 for not boundary, 1 for boundary, 2 for black frame$/;"	m	struct:frame_info
 frametype	shot_boundary_detect.hpp	/^enum frametype {NORMAL, BOUNDARY, BLACK};$/;"	g
+get_Y	video_split.cpp	/^void get_Y(uint16_t color_type, unsigned char *frame, unsigned char *y_buffer, int y_size)$/;"	f
 good_shot	shot_detector.cpp	/^static bool good_shot (const shot &shotv, const frame_info &fi, $/;"	f	file:
+height	a_v_info.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:
 height	process_audio_file.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:
 height	process_video_file.cpp	/^    uint16_t height;$/;"	m	struct:video_file_info	file:
 height	video_split.h	/^    uint16_t height;$/;"	m	struct:video_file_info
 hist_th	shot_detector.hpp	/^    float hist_th; \/\/control judgging shot boundary, default is 0.5$/;"	m	struct:config
+image_size	a_v_info.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:
 image_size	process_audio_file.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:
 image_size	process_video_file.cpp	/^    uint32_t image_size;$/;"	m	struct:video_file_info	file:
 image_size	video_split.h	/^    uint32_t image_size;$/;"	m	struct:video_file_info
-init	video_split.cpp	/^int video_split_processor::init(video_file_info *p_info)$/;"	f	class:video_split_processor
 is_shot_valid	shot_detector.cpp	/^static bool is_shot_valid (const shot &shotv)$/;"	f	file:
+len	tmp/merge.py	/^    len = f.tell()$/;"	v
+live_timeval	a_v_info.cpp	/^struct live_timeval$/;"	s	file:
 live_timeval	process_audio_file.cpp	/^struct live_timeval$/;"	s	file:
 live_timeval	process_video_file.cpp	/^struct live_timeval$/;"	s	file:
 live_timeval	video_split.h	/^struct live_timeval$/;"	s
 m_cfg	video_split.h	/^        config m_cfg;$/;"	m	class:video_split_processor
+m_count	video_split.h	/^        int m_count;$/;"	m	class:video_split_processor
+m_curr_frame_ts	video_split.h	/^        unsigned int m_curr_frame_ts;$/;"	m	class:video_split_processor
 m_curr_shot	video_split.h	/^        shot m_curr_shot;$/;"	m	class:video_split_processor
 m_fp	video_split.h	/^        FILE *m_fp;$/;"	m	class:video_split_processor
+m_fshot	video_split.h	/^        FILE *m_fshot;$/;"	m	class:video_split_processor
+m_new	video_split.h	/^        bool m_new;$/;"	m	class:video_split_processor
 m_prev_end_time	video_split.h	/^        live_timeval m_prev_end_time;$/;"	m	class:video_split_processor
 m_prev_info	video_split.h	/^        video_file_info m_prev_info;$/;"	m	class:video_split_processor
-m_prev_shot	video_split.h	/^        shot m_prev_shot;$/;"	m	class:video_split_processor
 m_shot_begin_time	video_split.h	/^        live_timeval m_shot_begin_time;$/;"	m	class:video_split_processor
 m_shot_end_time	video_split.h	/^        live_timeval m_shot_end_time;$/;"	m	class:video_split_processor
+m_shot_info_path	video_split.h	/^        const char *m_shot_info_path;$/;"	m	class:video_split_processor
+m_shot_path	video_split.h	/^        const char *m_shot_path;$/;"	m	class:video_split_processor
+m_tmp_video	video_split.h	/^        char *m_tmp_video;$/;"	m	class:video_split_processor
+m_vdna_name	video_split.h	/^        const char *m_vdna_name;$/;"	m	class:video_split_processor
+m_video_file	video_split.h	/^        char *m_video_file;$/;"	m	class:video_split_processor
+m_video_path	video_split.h	/^        const char *m_video_path;$/;"	m	class:video_split_processor
+main	a_v_info.cpp	/^int main ( int argc, char *argv[] )$/;"	f
+main	gen_a_v.py	/^def main():$/;"	f
+main	get_video_info.cpp	/^int main ( int argc, char *argv[] )$/;"	f
 main	process_audio_file.cpp	/^int main ( int argc, char *argv[] )$/;"	f
 main	t.cpp	/^int main ( int argc, char *argv[] )$/;"	f
+main	test_video_split.cpp	/^int main ( int argc, char *argv[] )$/;"	f
+main	xml_test.cpp	/^int main ( int argc, char *argv[] )$/;"	f
 map_file	process_audio_file.cpp	/^unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)$/;"	f
 map_file	video_split.cpp	/^unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)$/;"	f
 mb_initialized	video_split.h	/^        bool mb_initialized;$/;"	m	class:video_split_processor
 min_len	shot_detector.hpp	/^    int min_len; \/\/control minimum length of one shot with $/;"	m	struct:config
 mp_sd	video_split.h	/^        shot_detector *mp_sd;$/;"	m	class:video_split_processor
+name_buffer	a_v_info.cpp	/^char name_buffer[] = "20130608_021945.238344.audio";$/;"	v
 name_buffer	process_audio_file.cpp	/^char name_buffer[] = "20130608_021945.238344.audio";$/;"	v
 num	shot_detector.hpp	/^    int num; \/\/total boundaries count$/;"	m	struct:shot
 operator <<	shot_detector.cpp	/^std::ostream& operator << (std::ostream &os, const shot &s)$/;"	f
 operator =	shot_boundary_detect.cpp	/^shot_boundary_detector &shot_boundary_detector::operator = (const shot_boundary_detector &other)$/;"	f	class:shot_boundary_detector
 operator =	shot_detector.cpp	/^shot & shot::operator = (const shot &other)$/;"	f	class:shot
+outf	tmp/merge.py	/^outf =  os.open(outfile, os.O_RDWR)$/;"	v
+outfile	tmp/merge.py	/^outfile = "out.yuv"$/;"	v
+parse_options	gen_a_v.py	/^def parse_options():$/;"	f
 prev_ts	shot_boundary_detect.hpp	/^    unsigned int prev_ts;$/;"	m	struct:frame_info
 print_hist	shot_boundary_detect.cpp	/^static void print_hist (unsigned int **hist, int total)$/;"	f	file:
 print_status	shot_detector.cpp	/^void shot_detector::print_status ()$/;"	f	class:shot_detector
+process_audio_file	a_v_info.cpp	/^int process_audio_file ()$/;"	f
 process_audio_file	process_audio_file.cpp	/^int process_audio_file ()$/;"	f
+process_video_file	a_v_info.cpp	/^int process_video_file(char *video_file_name)$/;"	f
 process_video_file	process_audio_file.cpp	/^int process_video_file()$/;"	f
+rate	a_v_info.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:
 rate	process_audio_file.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:
 rate	process_video_file.cpp	/^    uint32_t rate;$/;"	m	struct:audio_file_info	file:
 rate	video_split.h	/^    uint32_t rate;$/;"	m	struct:audio_file_info
+rename_yuv_file	video_split.cpp	/^int video_split_processor::rename_yuv_file()$/;"	f	class:video_split_processor
 reset_config	shot_boundary_detect.cpp	/^void shot_boundary_detector::reset_config (const float hist_th, $/;"	f	class:shot_boundary_detector
 reset_config	shot_detector.cpp	/^void shot_detector::reset_config (const config &iconfig)$/;"	f	class:shot_detector
 restart	shot_detector.cpp	/^void shot_detector::restart (const unsigned char *first_frame, unsigned int first_ts)$/;"	f	class:shot_detector
+run	gen_a_v.py	/^    def run(self):$/;"	m	class:Audio_capturer
+run	gen_a_v.py	/^    def run(self):$/;"	m	class:Video_capturer
 set_boundaries	shot_detector.cpp	/^void shot::set_boundaries (const std::vector<frame_info> in_boundaries)$/;"	f	class:shot
+set_nonblock	gen_a_v.py	/^def set_nonblock(fileHandler):$/;"	f
 shot	shot_detector.cpp	/^shot::shot (unsigned int istart, unsigned int iend, unsigned int  iavg_sum, $/;"	f	class:shot
 shot	shot_detector.hpp	/^struct shot$/;"	s
 shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::shot_boundary_detector (const shot_boundary_detector &other)$/;"	f	class:shot_boundary_detector
@@ -157,25 +208,34 @@ start	shot_boundary_detect.cpp	/^void shot_boundary_detector::start (const unsig
 start	shot_detector.hpp	/^    int start; \/\/shot start timestamp$/;"	m	struct:shot
 start_frame_type	shot_detector.hpp	/^    frametype start_frame_type; \/\/start frame type: normal-boundary\/black-frame$/;"	m	struct:shot
 status	shot_detector.hpp	/^enum status {NO_SHOT, NEW_SHOT, PENDING};$/;"	g
+timevaldiff	video_split.cpp	/^long int timevaldiff(const live_timeval &start_time, \\$/;"	f
+tv_sec	a_v_info.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:
 tv_sec	process_audio_file.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:
 tv_sec	process_video_file.cpp	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval	file:
 tv_sec	video_split.h	/^    uint64_t tv_sec;$/;"	m	struct:live_timeval
+tv_usec	a_v_info.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:
 tv_usec	process_audio_file.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:
 tv_usec	process_video_file.cpp	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval	file:
 tv_usec	video_split.h	/^    uint64_t tv_usec;$/;"	m	struct:live_timeval
 var	shot_boundary_detect.hpp	/^    unsigned int var;$/;"	m	struct:frame_info
 var_sum	shot_detector.hpp	/^    int var_sum; \/\/boundary variance of the shot$/;"	m	struct:shot
 var_th	shot_detector.hpp	/^    float var_th; \/\/control judge black frame, default is 100.0$/;"	m	struct:config
+vf	tmp/merge.py	/^vf = file('t.out', 'r')$/;"	v
+video_file_info	a_v_info.cpp	/^struct video_file_info$/;"	s	file:
 video_file_info	process_audio_file.cpp	/^struct video_file_info$/;"	s	file:
 video_file_info	process_video_file.cpp	/^struct video_file_info$/;"	s	file:
 video_file_info	video_split.h	/^struct video_file_info$/;"	s
+video_file_name	process_audio_file.cpp	/^char *video_file_name = argv[1];$/;"	v
 video_file_name	process_audio_file.cpp	/^const char video_file_name[] = "20130607_075150.218767.video";$/;"	v
-video_split	video_split.cpp	/^int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_info)$/;"	f	class:video_split_processor
-video_split_processor	video_split.cpp	/^video_split_processor::video_split_processor()$/;"	f	class:video_split_processor
-video_split_processor	video_split.cpp	/^~video_split_processor::video_split_processor()$/;"	f	class:~video_split_processor
+video_split	video_split.cpp	/^int video_split_processor::video_split(FILE *fp, off_t pos, video_file_info *p_info, \\$/;"	f	class:video_split_processor
+video_split_processor	video_split.cpp	/^video_split_processor::video_split_processor(const char *video_path):$/;"	f	class:video_split_processor
 video_split_processor	video_split.h	/^class video_split_processor$/;"	c
+width	a_v_info.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:
 width	process_audio_file.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:
 width	process_video_file.cpp	/^    uint16_t width;$/;"	m	struct:video_file_info	file:
 width	video_split.h	/^    uint16_t width;$/;"	m	struct:video_file_info
+write_shot_info	video_split.cpp	/^int video_split_processor::write_shot_info()$/;"	f	class:video_split_processor
+write_yuv_file	video_split.cpp	/^int video_split_processor::write_yuv_file(unsigned char *frames, size_t pos, video_file_info *p_info)$/;"	f	class:video_split_processor
 ~shot_boundary_detector	shot_boundary_detect.cpp	/^shot_boundary_detector::~shot_boundary_detector ()$/;"	f	class:shot_boundary_detector
 ~shot_detector	shot_detector.cpp	/^shot_detector::~shot_detector ()$/;"	f	class:shot_detector
+~video_split_processor	video_split.cpp	/^video_split_processor::~video_split_processor()$/;"	f	class:video_split_processor

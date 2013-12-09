@@ -72,14 +72,14 @@ video_split_processor::video_split_processor(const char *video_path, const char 
     m_cfg.min_len = 5000;
 
 #if DEBUG
-if (mp_sd)
-{
-    cout << "mp_sd is NULL" << endl;
-}
-else
-{
-    cout << "mp_sd_ is OK" << endl;
-}
+    if (mp_sd)
+    {
+        cout << "mp_sd is NULL" << endl;
+    }
+    else
+    {
+        cout << "mp_sd_ is OK" << endl;
+    }
 #endif
 
     memset(&m_prev_end_time, 0, sizeof(live_timeval));
@@ -89,7 +89,7 @@ else
     m_video_file = new char[FILE_NAME_LEN];
     m_shot_path = shot_path;
 #if DEBUG 
-cout << "initial ok!" << endl;
+    cout << "initial ok!" << endl;
 #endif
 
 }

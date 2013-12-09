@@ -43,7 +43,7 @@ env.height = 0
 env.audio_rate = 0
 env.options = parse_options()
 env.last_come_time = time.time()
-env.options.url="test.asf"
+env.options.url="test2.asf"
 env.options.path= "./tmp"
 
 def main():
