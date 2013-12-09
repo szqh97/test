@@ -43,7 +43,11 @@ env.height = 0
 env.audio_rate = 0
 env.options = parse_options()
 env.last_come_time = time.time()
+<<<<<<< HEAD
 env.options.url="test2.asf"
+=======
+env.options.url="cee.mp4"
+>>>>>>> 436fdfef693cf026f04e18bcebb8ff4fe0b1b6f2
 env.options.path= "./tmp"
 
 def main():
@@ -76,8 +80,10 @@ def main():
 
     cmdline = ['ffmpeg', '-y', '-i', env.options.url, '-f', 'rawvideo', '-pix_fmt', 'uyvy422', env.video_fifo, '-ac', '2', '-f', 's16le', '-acodec', 'pcm_s16le', env.audio_fifo]
 
-    ffmpeg_process = subprocess.Popen(cmdline, stdin=subprocess.PIPE, stdout=open(os.devnull, 'w'), stderr=subprocess.PIPE)
-
+    ffmpeg_process = subprocess.Popen(cmdline,\
+            stdin=subprocess.PIPE,\
+            stdout=open(os.devnull, 'w'), \
+            stderr=subprocess.PIPE)
 
 
     debug_out = file("./ffmpeg.out", "w")
