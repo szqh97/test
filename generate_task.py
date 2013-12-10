@@ -6,14 +6,19 @@
 import os
 import time
 import struct
+import logging
+import threading
+import traceback
 import collections
 import xml.dom.minidom
+from xml.dom.minidom import parse, parseString
 
-class task_generator():
+class task_generator(threading.Thread):
     """ 
     generate task for TV Ads Job tracker
     """
-    def __init__(self, len):
+    def __init__(self, channel_id ):
+        threading.__init__(self)
         self.task_len = 6 #the task cycle time (hour)
         self.redunt_time = 60 #the redundancy time (second)
         self.shotfiles = collections.deque()
@@ -23,10 +28,30 @@ class task_generator():
         self.dna_fd = None
         self.channel_id = None
         self.new_dna_file = ""
+        self.channel_uuid = channel_id
+        self.db_host = None
+        self.db_name = None
+        self.db_user = None
+        self.db_pass = None
+
 
     def load_conf(self):
+        self.load_db_conf()
         self.dna_dir = '/opt/rtfp/var/cache/dna_dir/'
         pass
+
+    def load_db_conf(self):
+        path = "./etc/database.conf"
+        config = ConfigParser ()
+        config.read (path)
+        self.db_host = config.get("Database", "host")
+        self.db_name = config.get("Database", "name")
+        self.db_user = config.get("Database", "user")
+        self.db_pass = config.get("Database", "passwd")
+        if self.db_name != "":
+            return 0
+        return -1
+
 
     def getfiles(self):
         # get dna files
@@ -41,7 +66,7 @@ class task_generator():
                     self.dnafiles.append(os.path.normpath(os.path.join(self.dna_dir, f)))
 
     def merge_vdna_by_file(self, prev_f, cur_f, nex_f):
-         
+
         # struct dna_control_block
         # {
         #     int serial_number;
@@ -50,7 +75,7 @@ class task_generator():
         #     int pad;
         #     long long timestamp;    // millisecond.
         # };
-        
+
         vdna_buf = ""
         dna_fd = None
         rf = file(prev_f, "r")
@@ -77,11 +102,11 @@ class task_generator():
                 if dna_frame_ts + self.redunt_time * 1000 >= last_frame_ts:
                     vdna_begin_ts = h[4] + i * deltats
                     if dna_fd == None:
-                        new_dna_file = self.channel_id + "." + str(vdna_begin_ts) 
+                        new_dna_file = self.channel_id + "." + str(vdna_begin_ts) \
                             + ".vdna"
                         dna_fd = file(os.path.normpath(os.path.join(self.dna_dir, 
                             self.new_dna_file, "w")))
-                    frame_ts += deltats
+                        frame_ts += deltats
                     dna_frame_buf = struct.pack('I', frame_ts) + dna_frame_buf[4:]
                     vdna_buf += dna_frame_buf
                     if len(vdna_buf) >= 40960:
@@ -139,16 +164,148 @@ class task_generator():
         nf.close()
 
 
-    def merge_shot_info_by_files(self, prev_shot_file, curt_shot_file, next_shot_file):
-        prev_dom = parse(prev_shot_file)
-        shot_nodes = prev_dom.getElementsByTagName('shot')
-        new_start_ts = (3600 - self.redunt_time) * 1000
-        for shot in shot_nodes:
-            start_ts = int(shot.getElementsByTagName('shot')[0].firstchild.data)
-            if start_ts >= new_start_ts:
-                #TODO
-            
+    def merge_shot_info_by_files(self, prev_shot_file, curr_shot_file, next_shot_file):
+
+        # prev_shot_file like: /opt/rtfp/var/cache/dna_dir/2.1386612900000.1386613200000.xml
+        # curr_shot_file like: /opt/rtfp/var/cache/dna_dir/2.1386613200000.1386613500000.xml
+        # next_shot_file like: /opt/rtfp/var/cache/dna_dir/2.1386613500000.1386613500000.xml
+
+        str_shot_info ="<shots></shots>"
+        shot_len = 0
+        new_sf_dom = parseString(str_shot_info)
+        try:
+            # 1. get the reduntant shot info from prev_shot_file
+            prev_dom = parse(prev_shot_file)
+
+            shot_nodes = prev_dom.getElementsByTagName('shot')
+            prev_start_ts = int(prev_shot_file.split(os.sep)[-1][2:15])
+            prev_end_ts = int(prev_shot_file.split(os.sep)[-1][16:29])
+            new_start_ts = prev_end_ts - self.redunt_time * 1000
+            new_end_ts = -1
+            for shot in shot_nodes:
+                start_ts_n = shot.getElementsByTagName('start')[0].childNodes[0]
+                start_ts = int(start_ts_n.nodeValue)
+                end_ts_n = shot.getElementsByTagName('end')[0].childNodes[0] 
+                end_ts = int(end_ts_n.nodeValue)
+                if prev_start_ts + start_ts >= new_start_ts:
+                    # start ts 
+                    start_ts_n.nodeValue = str(prev_start_ts + start_ts - new_start_ts)
+                    # end ts 
+                    new_end_ts = prev_start_ts + end_ts - new_start_ts
+                    end_ts_n.nodeValue = str(new_end_ts)
+
+                    # mid-boundary
+                    mid_boundaries = shot.getElementsByTagName('mid-boundary')
+                    for mb in mid_boundaries:
+                        prev_ts_n = mb.getElementsByTagName('prev_ts')[0].childNodes[0]
+                        prev_ts = int(prev_ts_n.nodeValue)
+                        prev_ts_n.nodeValue = str(prev_start_ts + prev_ts - new_start_ts)
+
+                    new_sf_dom.getElementsByTagName('shots')[-1].appendChild(shot)
+
+            # 2. get the current task shot info
+            curr_dom = parse(curr_shot_file)
+            shot_nodes = curr_dom.getElementsByTagName('shot')
+            curr_start_ts = int(curr_shot_file.split(os.sep)[-1][2:15])
+            for shot in shot_nodes:
+                # start ts
+                start_ts_n = shot.getElementsByTagName('start')[0].childNodes[0]
+                start_ts = int(start_ts_n.nodeValue)
+                start_ts_n.nodeValue = str(curr_start_ts + start_ts - new_start_ts)
+                # end ts
+                end_ts_n = shot.getElementsByTagName('end')[0].childNodes[0]
+                end_ts = int(end_ts_n.nodeValue)
+                end_ts_n.nodeValue = str(curr_start_ts + end_ts - new_start_ts)
+                 
+                shot_len += end_ts - start_ts
+
+                # mid-boundary
+                mid_boudaries = shot.getElementsByTagName('mid-boundary')
+                for mb in mid_boudaries:
+                    prev_ts_n = mb.getElementsByTagName('prev_ts')[0].childNodes[0]
+                    prev_ts = int(prev_ts_n.nodeValue)
+                    prev_ts_n.nodeValue = str(curr_start_ts + prev_ts - new_start_ts)
+
+                new_sf_dom.getElementsByTagName('shots')[-1].appendChild(shot)
+
+            # 3. get redunt shot from 
+            next_dom = parse(next_shot_file)
+            shot_nodes = next_dom.getElementsByTagName('shot')
+            next_start_ts = int(next_shot_file.split(os.sep)[-1][2:15])
+            for shot in shot_nodes:
+                #start ts
+                start_ts_n = shot.getElementsByTagName('start')[0].childNodes[0]
+                start_ts = int(start_ts_n.nodeValue)
+                if start_ts <= self.redunt_time * 1000:
+                    start_ts_n.nodeValue = str(next_start_ts + start_ts - new_start_ts)
+                    #end ts
+                    end_ts_n = shot.getElementsByTagName('end')[0].childNodes[0]
+                    end_ts_n.nodeValue = str(next_start_ts + end_ts - new_start_ts)
+                    # mid-boudnary
+                    mid_boundaries = shot.getElementsByTagName('mid-boundary')
+                    for mb in mid_boundaries:
+                        prev_ts_n = mb.getElementsByTagName('prev_ts')[0].childNodes[0]
+                        prev_ts = int(prev_ts_n.nodeValue)
+                        prev_ts_n.nodeValue = str(next_start_ts + prev_ts - new_start_ts)
+
+                    new_sf_dom.getElementsByTagName('shots')[-1].appendChild(shot)
+                else:
+                    # TODO end time a frame later
+                    new_end_ts = start_ts + next_start_ts
+                    break
+        except Exception, err:
+            print "merge_shot_info err:" + str(err)
+            print traceback.format_exc()
+        # TODO new dna an shot save to a new directory?
+        new_shot_file = self.dna_dir + os.sep + str(self.channel_id) + "." \
+                        + str(new_start_ts) + "." + str(new_end_ts) + ".xml"
+
+        with file(new_shot_file, 'w') as sf:
+            sf.write(new_sf_dom.toprettyxml())
+
+        return shot_len
+
+class task_manager():
+    """
+    
+    """
+    def __init__(self)
+    self.id_uuid_dict = {}
+    self.db_host = None
+    self.db_name = None
+    self.db_user = None
+    self.db_pass = None
+    self.db_inst = None
+
+
+    def load_db_conf(self):
+        path = "./etc/database.conf"
+        config = ConfigParser ()
+        config.read (path)
+        self.db_host = config.get("Database", "host")
+        self.db_name = config.get("Database", "name")
+        self.db_user = config.get("Database", "user")
+        self.db_pass = config.get("Database", "passwd")
+        if self.db_name != "":
+            return 0
+        return -1
+    def new_mysql_conn(self):
+        try:
+            conn = torndb.Connection(self.db_host, self.db_name, user = self.db_user, password = self.db_pass)
+        except Exception, err:
+            print "connect mysql error: %s" % (str)
+        if conn != None:
+            return conn
+
+
+    def get_task_uuid(self):
+        sql = "select id, channel_uuid from videoSource where is_using = 'true' "
+        try:
+            id_
+        
 
 
 
-                
+
+    
+
