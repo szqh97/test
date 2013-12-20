@@ -4,6 +4,7 @@
 # author: li_yun@vobile.cn
 # date: 2013-12-08 14:24:44
 import struct
+import sys
 
 dnafile = '2.1386376200.cdna'
 
@@ -25,7 +26,7 @@ def generate_dna_info(dnafile):
         h = struct.unpack('4iq', head)
 
 if __name__ == '__main__':
-    generate_dna_info(dnafile)
+    generate_dna_info(sys.argv[1])
 
 
 
