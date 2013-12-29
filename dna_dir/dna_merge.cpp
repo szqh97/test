@@ -132,6 +132,7 @@ int merge_dna( unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos
                 }
                 dna_frame d = *d1;
                 d.dna_ts -= off_ts;
+                cout << d.dna_ts << endl;
                 dvec.push_back(d);
                 ++d1;
             }
@@ -168,7 +169,8 @@ int merge_dna( unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos
        while( d2 != (dna_frame  *)(p2 + cb->length))
        {
            dna_frame d = *d2;
-           d.dna_ts += off_ts;
+           d.dna_ts += new_off;
+           cout << d.dna_ts << endl;
            fwrite(&d, DNA_FRAME_LEN, 1, dna_fp);
            fflush(dna_fp);
            d2++;
