@@ -14,7 +14,7 @@ const static size_t DNA_HEADER_LEN = 48;
 struct dna_header{
     uint32_t pad1;
     uint32_t media_len;
-    uint32_t pad2[10];
+    unsigned char pad2[40];
 };
 
 struct dna_frame{
@@ -148,12 +148,12 @@ int merge_dna( unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos
     char filename[512];
     sprintf(filename, "./t.%lld.%lld.vdna", begin_ts, end_ts);
     dna_fp = fopen(filename, "w");
-    fwrite(&dh, sizeof(dna_control_block), 1, dna_fp);
+    fwrite(&dh, DNA_HEADER_LEN, 1, dna_fp);
     fflush(dna_fp);
     vector<dna_frame>::const_iterator it = dvec.begin();
     while(it != dvec.end())
     {
-        fwrite(&(*it), sizeof(dna_frame), 1, dna_fp);
+        fwrite(&(*it), DNA_FRAME_LEN, 1, dna_fp);
         fflush(dna_fp);
         ++it;
     }
