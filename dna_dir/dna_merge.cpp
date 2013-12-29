@@ -93,10 +93,13 @@ unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)
 
 int merge_dna( unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos2)
 {
+    FILE *dna_fp;
     dna_control_block *cb1 = (dna_control_block *)addr1;
     dna_control_block *cb2 = (dna_control_block *)addr2;
     dna_frame *last_dna = (dna_frame *) (addr1 + pos1 - CB_LEN - DNA_FRAME_LEN);
+    dna_frame *clast_dna = (dna_frame *) (addr2 + pos2 - CB_LEN - DNA_FRAME_LEN);
     long long n_ts = last_dna->dna_ts - 60000;
+    long long begin_ts = 0;
     long long off_ts = 0;
     long p_end_ts = cb1->timestamp + last_dna->dna_ts;
     cout <<"xxx" <<  last_dna->dna_ts << endl;
@@ -105,35 +108,76 @@ int merge_dna( unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos
     unsigned char *p1, *p2;
     dna_frame *d1, *d2;
     bool flag = false;
-    p1 = p2 = addr1 + CB_LEN + DNA_FRAME_LEN;
+    p1 = addr1 + CB_LEN + DNA_HEADER_LEN;
     dna_control_block *cb = (dna_control_block *) p1;
     while( cb->length != 0)
     {
         p1 += CB_LEN;
-        d1 = d2 = (dna_frame *) p1;
+        d1 = (dna_frame *) p1;
         
-        while( d1 != p1 + cb->length)
+        while( d1 != (dna_frame *)(p1 + cb->length))
         {
             if (d1->dna_ts <= n_ts)
             {
                 ++d1;
-                d2 = d1;
             }
             else
             {
                 if (off_ts == 0)
                 {
-                    off_ts = cb1->timestamp - last_dna->dna_ts - d2->dna_ts;
+                    dna_frame *p_d = d1 - 1;
+                    //off_ts = cb1->timestamp - last_dna->dna_ts + p_d->dna_ts;
+                    off_ts = p_d->dna_ts + (cb2->timestamp - cb1->timestamp - last_dna->dna_ts);
+                    begin_ts = cb1->timestamp + off_ts;
                 }
                 dna_frame d = *d1;
                 d.dna_ts -= off_ts;
                 dvec.push_back(d);
+                ++d1;
             }
         }
         p1 += cb->length;
         cb = (dna_control_block *) p1;
     }
-    
+
+    d1--;
+    long long new_off = d1->dna_ts + (cb2->timestamp - cb1->timestamp -last_dna->dna_ts) - off_ts;
+    dh.media_len = (new_off + clast_dna->dna_ts) / 1000;
+    long long end_ts = cb2->timestamp + clast_dna->dna_ts;
+    char filename[512];
+    sprintf(filename, "./t.%lld.%lld.vdna", begin_ts, end_ts);
+    dna_fp = fopen(filename, "w");
+    fwrite(&dh, sizeof(dna_control_block), 1, dna_fp);
+    fflush(dna_fp);
+    vector<dna_frame>::const_iterator it = dvec.begin();
+    while(it != dvec.end())
+    {
+        fwrite(&(*it), sizeof(dna_frame), 1, dna_fp);
+        fflush(dna_fp);
+        ++it;
+    }
+
+    // curr dna file
+
+   p2 = addr2 + CB_LEN + DNA_HEADER_LEN;
+   cb = (dna_control_block *)p2;
+   while (cb->length != 0)
+   {
+       p2 += CB_LEN;
+       d2 = (dna_frame *)p2; 
+       while( d2 != (dna_frame  *)(p2 + cb->length))
+       {
+           dna_frame d = *d2;
+           d.dna_ts += off_ts;
+           fwrite(&d, DNA_FRAME_LEN, 1, dna_fp);
+           fflush(dna_fp);
+           d2++;
+       }
+       p2 += cb->length;
+       cb = (dna_control_block *)p2;
+   }
+
+   fclose(dna_fp);
 }
 
 int main ( int argc, char *argv[] )
