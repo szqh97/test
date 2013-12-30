@@ -46,7 +46,7 @@ int parse_option(int argc, char *argv[])
     usage += " -p prev_dnafile -c curr_dnafile -s prev_begin_ts -e curr_begin_ts";
     
     if (argc != 9)
-        cout << usage << endl;
+        cerr<< usage << endl;
 
     while((opt = getopt(argc, argv, "p:c:s:e:")) != -1)
     {
@@ -102,7 +102,6 @@ int merge_dna( unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos
     long long begin_ts = 0;
     long long off_ts = 0;
     long p_end_ts = cb1->timestamp + last_dna->dna_ts;
-    cout <<"xxx" <<  last_dna->dna_ts << endl;
     dna_header dh = *(dna_header *) (addr1 + CB_LEN);
 
     unsigned char *p1, *p2;
@@ -132,7 +131,6 @@ int merge_dna( unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos
                 }
                 dna_frame d = *d1;
                 d.dna_ts -= off_ts;
-                cout << d.dna_ts << endl;
                 dvec.push_back(d);
                 ++d1;
             }
@@ -170,7 +168,6 @@ int merge_dna( unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos
        {
            dna_frame d = *d2;
            d.dna_ts += new_off;
-           cout << d.dna_ts << endl;
            fwrite(&d, DNA_FRAME_LEN, 1, dna_fp);
            fflush(dna_fp);
            d2++;
@@ -187,7 +184,7 @@ int main ( int argc, char *argv[] )
     //int ret = parse_option(argc, argv);
     int ret  =0;
     if (ret != 0)
-        cout << "p_dnaf: " << p_dnaf << " c_dnaf: " << c_dnaf
+        cerr<< "p_dnaf: " << p_dnaf << " c_dnaf: " << c_dnaf
             << " p_begin_ts: " << p_begin_ts << " c_begin_ts: " << c_begin_ts << endl;
 
     string p_dnaf = "./2.1388041199.cdna";
