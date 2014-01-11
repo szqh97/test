@@ -22,7 +22,6 @@ from apscheduler.scheduler import Scheduler
 import xml.dom.minidom
 from xml.dom.minidom import parse, parseString
 
-from pprint import pprint
 
 logger = logging
 config_parser = re.compile(
@@ -33,6 +32,9 @@ lock_file = './var/run/taskgenerator.lock'
 pid_file = './var/run/taskgenerator.pid'
 
 V_DNA_VERSION = 2
+CB_LEN = 24
+DNA_FRAME_LEN = 40
+DNA_HEADER_LEN = 48
 def install_logger():
     global logger
     logger.config.fileConfig('./etc/logging.conf')
@@ -51,18 +53,12 @@ class task_generator(threading.Thread):
         self.dnafiles = []
         self.dna_dir = '/opt/rtfp/var/cache/dna_dir'
         self.ltime = None
-        self.dna_fd = None
         self.channel_id = channel_id 
-        self.new_dna_file = ""
         self.channel_uuid = channel_uuid
         self.channel_name = channel_name
         self.dma = dma 
         self.network = network
         self.dna_len= 0
-        self.n_dnafiles = []
-        self.n_shotfiles = []
-        self.shot_begin_ts = -1 
-        self.shot_end_ts = -1
         self.dna_begin_ts = -1
         self.dna_end_ts = -1
         self.taskDNA=[]
@@ -72,7 +68,6 @@ class task_generator(threading.Thread):
         self.task_duration =3600 
         self.jobtrackerurl = ""
         self.vmurl = ""
-
 
     def load_conf(self):
         path = "/opt/rtfp/etc/live_box.conf"
@@ -121,82 +116,143 @@ class task_generator(threading.Thread):
             except Exception, err:
                 logger.error("open config file failed: %s", err)
 
-    
+
+    def merge_dna(self, dnaf_pair):
+        if len(dnaf_pair) != 1 :
+            logger.error("dnaf_pair is error")
+            raise Exception("dna_pair is error")
+        prev_dnaf = dnaf_pair.keys()[0]
+        curr_dnaf = dnaf_pair.values()[0]
+        if os.path.exists(prev_dnaf) is not True or os.path.exists(curr_dnaf) is not True:
+            logger.error("%s or %s not exists", prev_dnaf, curr_dnaf)
+            raise Exception ("dna file not exists")
+
+        channel_id = prev_dnaf.split(os.sep)[-1].split('.')[0]
+
+        pfd = file(prev_dnaf, 'r')
+        cfd = file(curr_dnaf, 'r')
+        h = cfd.read(CB_LEN)
+        h = struct.unpack('4iq', h)
+        c_begin_ts = h[4]
+        cfd.seek(-(CB_LEN + DNA_FRAME_LEN), 2)
+        dna = cfd.read(DNA_FRAME_LEN)
+        last_ts = struct.unpack('I', dna[0:4])[0]
+        new_end_ts = c_begin_ts + last_ts
+
+        # get end td
+        pfd.seek(-(CB_LEN + DNA_FRAME_LEN), 2)
+        dna = pfd.read(DNA_FRAME_LEN)
+        end_ts = struct.unpack('I', dna[0:4])[0]
+        tmp_start_ts = end_ts - self.redunt_time * 1000
+
+        pfd.seek(-(CB_LEN + DNA_FRAME_LEN), 2);
+        dna = pfd.read(DNA_FRAME_LEN)
+        last_dnats = struct.unpack('I', dna[0:4])[0]
+
+        pfd.seek(CB_LEN)
+        dna_header = pfd.read(DNA_HEADER_LEN)
+        h = pfd.read(CB_LEN)
+        h = struct.unpack('4iq', h)
+        begin_ts = h[4]
+        dt = c_begin_ts - begin_ts - last_dnats
+
+        ts1 = ts2 = 0
+        off_ts = 0
+        new_start_ts = 0
+        newfd = lambda: None
+        new_dna_file = ""
+        buff = ""
+        while h[2] != 0:
+            dnasbuff = pfd.read(h[2])
+            while len(dnasbuff) != 0:
+                dna = dnasbuff[0:DNA_FRAME_LEN]
+                dnasbuff = dnasbuff[DNA_FRAME_LEN:]
+                ts1 = struct.unpack('I', dna[0:4])[0]
+                if ts1 <= tmp_start_ts:
+                    # drop dna whose ts is smaller than tmp_start_ts
+                    ts2 = ts1
+                else:
+                    # get the offset ts
+                    if off_ts == 0:
+                        off_ts = ts2 + dt
+                        new_start_ts = begin_ts + off_ts 
+                        if self.dna_begin_ts == -1:
+                            self.dna_begin_ts = new_start_ts
+                        self.dna_end_ts = last_ts + c_begin_ts
+                        new_dna_file = "".join((channel_id, ".", str(new_start_ts), ".", str(self.dna_end_ts), ".vdna"))
+                        new_dna_file = os.path.normpath(os.path.join(self.down_dir, new_dna_file))
+                        logger.info("new dna file: %s", new_dna_file)
+                        media_len = end_ts - off_ts + last_ts
+                        media_len = int(round((media_len + 500) / 1000))
+                        media_len = struct.pack('I', media_len)
+                        dna_header = dna_header[0:4] + media_len + dna_header[8:]
+                        newfd = file(new_dna_file, 'w')
+                        newfd.write(dna_header)
+                        newfd.flush()
+
+                    nts = ts1 - ts2 
+                    if nts >= 0:
+                        off_ts = nts
+                        nts = struct.pack('I', nts)
+                        dna = nts + dna[4:]
+                        buff += dna
+                    else:
+                        logger.info("timestamp error")
+                if len(buff) >= 8192:
+                    newfd.write(buff[0:8192])
+                    newfd.flush()
+                    buff = buff[8192:]
+            h = pfd.read(CB_LEN)
+            h = struct.unpack('4iq', h)
+        #off_ts = nts
+
+        # merge curr dna file
+        cfd.seek(CB_LEN + DNA_HEADER_LEN )
+        h = cfd.read(CB_LEN)
+        h = struct.unpack('4iq', h)
+        while h[2] != 0:
+            dnasbuff = cfd.read(h[2])
+            while len(dnasbuff) != 0:
+                dna =  dnasbuff[0:DNA_FRAME_LEN]
+                dnasbuff = dnasbuff[DNA_FRAME_LEN:]
+                ts = struct.unpack('I', dna[0:4])[0]
+                ts += off_ts 
+                ts = struct.pack('I', ts)
+                dna = ts + dna[4:]
+                buff += dna
+            if len(buff) >= 8192:
+                newfd.write(buff[0:8192])
+                newfd.flush()
+                buff = buff[8192:]
+            h = cfd.read(CB_LEN)
+            h = struct.unpack('4iq', h)
+
+        if len(buff) > 0:
+            newfd.write(buff)
+            newfd.flush()
+            del buff
+
+        newfd.close()
+        pfd.close()
+        cfd.close()
+        return (0, new_dna_file)
+
     def dna_shot_merge(self, dna_shot_pairs):
 
         n_dna_shot_pairs = {}
-        self.dna_end_ts = 0
-        self.dna_begin_ts = 0
-        for dnafile, shotfile in dna_shot_pairs.iteritems():
-            logger.info("dnafile: %s, shotfile: %s", dnafile.split(os.sep)[-1], shotfile.split(os.sep)[-1])
-            #dna file
-            if not os.path.exists(dnafile):
-                logger.fatal("dna file %s not exist", dnafile )
+        vdnafile = ""
+        for shotfile, dnafiles in dna_shot_pairs.iteritems():
+
+            logger.info("dnafiles prev:%s, curr:%s shotfile: %s", dnafiles.keys()[0].split(os.sep)[-1], \
+                    dnafiles.values()[0].split(os.sep)[-1], shotfile.split(os.sep)[-1])
+            try:
+                ret, vdnafile= self.merge_dna(dnafiles)
+            except Exception, err:
+                logger.error("merge_dna error: %s", str(traceback.format_exc()))
+
+            if ret != 0 or vdnafile == "":
+                logger.error("merge dna file failed!")
                 return (-1, None)
-
-            begin_ts = 0
-            end_ts = 0
-            dnabuf = ""
-            channel_id = dnafile.split(os.sep)[-1].split('.')[0]
-            df = file(dnafile, 'r')
-            df.seek(-64, 2)
-            dna = df.read(40)
-            last_ts = struct.unpack('I', dna[0:4])[0]
-            df.seek(0)
-            h = df.read(24)
-            if len(h) != 24:
-                logger.error("read header error!")
-                return (-1, None)
-            h = struct.unpack('4iq', h)
-            begin_ts = h[4]
-            end_ts = begin_ts + last_ts
-            self.dna_len += last_ts
-            if self.dna_begin_ts == 0:
-                self.dna_begin_ts = begin_ts
-
-            self.dna_end_ts = end_ts
-
-            vdnafile = "".join((channel_id, ".",  str(begin_ts), ".", str(end_ts), ".vdna"))
-            vdnafile = os.path.normpath(os.path.join(self.down_dir, vdnafile))
-            logger.info("new vdna file is %s", vdnafile)
-            newfd = file(vdnafile, 'w')
-
-            dna_header = df.read(48)
-            newfd.write(dna_header)
-            newfd.flush()
-
-            if len(dna_header) != 48:
-                logger.error("read dna header error!")
-                return (-1, None)
-            h = df.read(24)
-            if len(h) != 24:
-                logger.error("read cb error")
-            h = struct.unpack('4iq', h)
-            dna_len = h[2]
-            while dna_len != 0:
-                buf = df.read(dna_len)
-                dnabuf += buf
-                if len(dnabuf) >= 8192:
-                    newfd.write(dnabuf[0:8192])
-                    newfd.flush()
-                    dnabuf = dnabuf[8192:]
-                h = df.read(24)
-                h = struct.unpack('4iq', h)
-                dna_len = h[2]
-
-            newfd.write(dnabuf)
-            newfd.flush()
-            del dnabuf
-
-
-            df.close()
-            newfd.close()
-             
-            with file(vdnafile, 'r+') as f:
-                media_len = int(round(last_ts / 1000.0))
-                media_len = struct.pack('I', media_len)
-                f.seek(4)
-                f.write(media_len)
 
             # shot file 
             if not os.path.exists(shotfile):
@@ -220,30 +276,31 @@ class task_generator(threading.Thread):
         # get dna files
         # invoke this every time generate task jobs
         self.ltime = int(time.time())
-        t_begin_time = self.ltime - self.task_duration * (self.task_len + 1)
-        t_begin_time *= 1000
-        logger.info("t begin time: %d", t_begin_time)
-        for f in os.listdir(self.dna_dir):
-            if f[0] == self.channel_id :
-                if f[-3:] == "xml" and int(f[2:15])/1000 * 1000 > t_begin_time:
-                    f = os.path.normpath(os.path.join(self.dna_dir, f))
-                    self.shotfiles.append(f)
-                # TODO the dna file is 2.1386813600.cdna
-                elif f[-3:] == "dna" and int(f[2:12])*1000 > t_begin_time:
-                    f = os.path.normpath(os.path.join(self.dna_dir, f))
-                    self.dnafiles.append(f)
-        # sort by create time
+        t1 = self.ltime - self.task_duration * (self.task_len + 1)
+        t2 = self.ltime - self.task_duration * (self.task_len + 2)
+
+        t1 *= 1000
+        t2 *= 1000
+        files = os.listdir(self.dna_dir)
+        self.shotfiles = [x for x in files if x[-3:] == 'xml' and x.split('.')[0] == self.channel_id and int(x.split('.')[1]) / 1000 * 1000 > t1]
         self.shotfiles.sort()
-        self.shotfiles = self.shotfiles[0:-1]
+        self.shotfiles = self.shotfiles[0:self.task_len]
+        self.dnafiles = [x for x in files if x[-3:] == 'dna' and x.split('.')[0] == self.channel_id and int(x.split('.')[1]) * 1000 > t2]
         self.dnafiles.sort()
-        self.dnafiles = self.dnafiles[0:-1]
+        self.dnafiles = self.dnafiles[0:self.task_len + 1]
+
+        add_path = lambda x: os.path.normpath(os.path.join(self.dna_dir, x))
+        self.shotfiles = map(add_path, self.shotfiles)
+        self.dnafiles = map(add_path, self.dnafiles)
         logger.info("shotfiles: %s", str(self.shotfiles))
         logger.info("dnafiles: %s", str(self.dnafiles))
-        if len(self.shotfiles) != len(self.dnafiles):
-            logger.error("shot files and dna files not matched!!")
+        dna_pairs = [{self.dnafiles[i]:self.dnafiles[i+1]} for i in xrange(len(self.dnafiles) -1)]
+
+        if len(self.shotfiles) != len(dna_pairs):
+            logger.error("shot files and dna pairs not matched!!")
             return -1
         try:
-            dna_shot_pairs = dict(zip(self.dnafiles, self.shotfiles))
+            dna_shot_pairs = dict(zip(self.shotfiles, dna_pairs))
             ret, n_dsp = self.dna_shot_merge(dna_shot_pairs)
             if ret != 0 or n_dsp is None:
                 logger.error("map dna and shot file failed ret %d", ret)
@@ -296,7 +353,7 @@ class task_generator(threading.Thread):
                     "dma": self.dma},\
                     "beginTimestamp": self.dna_begin_ts, \
                     "endTimestamp": self.dna_end_ts, \
-                    "duration": self.dna_len, \
+                    "duration": self.dna_end_ts - self.dna_begin_ts, \
                     "taskDNA": self.taskDNA
                     }
 
@@ -306,6 +363,9 @@ class task_generator(threading.Thread):
         try:
             headers = {"Content-Type": "application/json"}
             http = httplib2.Http(disable_ssl_certificate_validation = True)
+            xml_stream = ""
+            response = lambda: None
+            response.status = 0
             response, xml_stream = http.request(url, "POST", headers = headers, body=post_data)
             if response and response.status == 200:
                 logger.info("xml stream is : %s", xml_stream)
@@ -385,7 +445,7 @@ class task_manager():
                 channel_uuid = channel_info[0]
                 channel_name = channel_info[1]
                 dma = channel_info[2]
-                network = channel_info[3]
+                network = channel_info[3] 
                 g = task_generator(str(channel_id), channel_uuid, channel_name, dma, network)
                 g.start()
         except Exception, err:
@@ -402,5 +462,4 @@ if __name__ == "__main__":
     sched.start()
     logger.info('end ...')
     lock_handler.close()
-
 
