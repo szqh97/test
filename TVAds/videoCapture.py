@@ -26,9 +26,9 @@ urls = (
 
 class default:
     def GET(self):
-        return "xx"
+        return "default GET"
     def POST(self):
-        return "post"
+        return "default post"
 
 
 def log(data):
@@ -102,7 +102,7 @@ class VideoCapture:
                 web.debug("load conf error %s:" % str(err))
 
 
-    def varify_params(self, begin_ts, end_ts, media_type, channel_uuid):
+    def varify_params(self, requestId, begin_ts, end_ts, media_type, channel_uuid):
         if begin_ts >= end_ts:
             err_info = {"requestId":requestId, "error": {"code": 400, "message": "begin_ts is larger or equal to end_ts"}}
             web.debug("error: %s"% str(err_info))
@@ -117,6 +117,7 @@ class VideoCapture:
             raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "begin_ts is not in reserved time"), err_info
 
         if media_type.lower() not in ('video', 'screenshot'):
+
             err_info = {"requestId":requestId, "error": {"code": 400, "message": "type is error"}}
             web.debug("error: %s"% str(err_info))
             err_info = simplejson.dumps(err_info)
@@ -129,7 +130,7 @@ class VideoCapture:
             err_info = simplejson.dumps(err_info)
             raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the channel uuid is not using"), err_info
 
-    def get_channleid(self, channel_uuid):
+    def get_channleid(self, requestId, channel_uuid):
         dbhost = ':'.join(("localhost", "3306"))
         dbname = "LiveBox"
         dbuser = "LiveBox"
@@ -146,7 +147,6 @@ class VideoCapture:
                 if d_ids != None :
                     channel_id = str(d_ids['id'])
                 else:
-                    web.debug("ssssss")
                     raise Exception( "channel uuid is null")
             except Exception, err:
                 if conn is not None:
@@ -157,7 +157,7 @@ class VideoCapture:
                 raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the channel uuid is not using"), err_info
         return channel_id
 
-    def check_retried_request(self, begin_ts, end_ts, media_type, channel_id):
+    def check_retried_request(self, requestId, begin_ts, end_ts, media_type, channel_id):
 
         if media_type.lower() == 'screenshot':
             snapshot_tgz = channel_id + "." + str(begin_ts) + "." + str(end_ts) + ".tgz"
@@ -187,7 +187,8 @@ class VideoCapture:
                 return (True, resp)
         return (False, "")
 
-    def get_video4split(self, begin_ts, end_ts, channel_id):
+    def get_video4split(self, requestId, begin_ts, end_ts, channel_id):
+        videofiles = []
         allfiles = os.listdir(self.video_dir)
         re_parser = re.compile('\d+\.\d+\.\d+\.mp4', re.IGNORECASE)
         for f in allfiles:
@@ -220,9 +221,9 @@ class VideoCapture:
 
         if needmerge == True:
             if video4split1 == "" or video4split2 == "":
-                err_info = {"requestId":requestId, "error": {"code": 400, "message": "the beginTimestamp or endTimeStamp is illegal"}}
+                err_info = {"requestId":requestId, "error": {"code": 400, "message": "the ts block is illegal"}}
                 err_info = simplejson.dumps(err_info)
-                raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the beginTimestamp or endTimeStamp is illegal"), err_info
+                raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the ts block is illegal"), err_info
             c = video4split1.split('.')[0]
             s = video4split1.split('.')[1]
             e = video4split2.split('.')[2]
@@ -230,7 +231,8 @@ class VideoCapture:
             video4split = os.path.normpath(os.path.join(self.video_dir, video4split))
             video4split1 = os.path.normpath(os.path.join(self.video_dir, video4split1))
             video4split2 = os.path.normpath(os.path.join(self.video_dir, video4split2))
-            tmpf = os.tempnam()
+            #tmpf = os.tempnam()
+            tmpf = "/tmp/file" + ''.join(random.sample(string.ascii_letters + string.digits, 4))
             try:
                 with file(tmpf, 'w') as f:
                     f.write("file %s\n" % video4split1)
@@ -239,17 +241,19 @@ class VideoCapture:
                     f.flush()
             except Exception, err:
                 web.debug( "write input file error: %s"% err)
+                # raise exception herex
+
             mergecmd = "ffmpeg -y -f concat  -i %s -codec copy %s >/dev/null 2>&1" % (tmpf, video4split)
             ret = os.system(mergecmd)
             if ret != 0:
-                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % mergecmd}}
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "concat videos failed!"}}
                 web.debug("error: %s"% str(err_info))
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
             cmd = "rm -f %s" % tmpf
             ret = os.system(cmd)
             if ret != 0:
-                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % cmd}}
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "rm temp files failed!"}}
                 web.debug("error: %s"% str(err_info))
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
@@ -257,12 +261,15 @@ class VideoCapture:
             if video4split != "":
                 video4split = os.path.normpath(os.path.join(self.video_dir, video4split))
             else:
+                web.debug("video4split: %s" % video4split)
                 err_info = {"requestId":requestId, "error": {"code": 400, "message": "the beginTimestamp or endTimeStamp is illegal"}}
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the beginTimestamp or endTimeStamp is illegal"), err_info
         return (needmerge, video4split)
 
-    def snapshot_video_split(self, video4split, outvideo):
+    def snapshot_video_split(self, requestId, begin_ts, end_ts, media_type,  video4split, outvideo):
+
+        snapshot_tgz = outvideo[0:-3] + "tgz"
         ret = -1
         f_begin_ts = int(video4split.split(os.sep)[-1].split('.')[1])
         f_end_ts = int(video4split.split(os.sep)[-1].split('.')[2])
@@ -314,13 +321,16 @@ class VideoCapture:
 
         # request video
         if media_type == 'video':
-            downurl = self.down_prex + '/' + outvideo.split(os.sep)[-1]
+            if os.path.exists(outvideo): 
+                downurl = self.down_prex + '/' + outvideo.split(os.sep)[-1]
+            else:
+                web.debug("outvideo not exists: %s" % outvideo)
+
         return (ret, downurl)
 
     def POST(self):
         self.load_conf()
         requestId = str(uuid.uuid4())
-        videofiles = []
         channel_id = ""
         cmd = ""
         raw_data = web.data()
@@ -329,10 +339,10 @@ class VideoCapture:
         end_ts = post_data.get('endTimestamp')
         channel_uuid = post_data.get('channelUuid')
         media_type = post_data.get('type')
-        self.varify_params(begin_ts, end_ts, channel_uuid, media_type)
-        self.channel_id = self.get_channleid(channel_uuid)
+        self.varify_params(requestId, begin_ts, end_ts, media_type, channel_uuid)
+        channel_id = self.get_channleid(requestId, channel_uuid)
 
-        b, resp = self.check_retried_request(begin_ts, end_ts, media_type, channel_id)
+        b, resp = self.check_retried_request(requestId, begin_ts, end_ts, media_type, channel_id)
         if b is True:
             return resp
             
@@ -342,9 +352,9 @@ class VideoCapture:
         outvideo = channel_id + "." + str(begin_ts) + "." + str(end_ts) + '.mp4'
         outvideo = os.path.normpath(os.path.join(self.down_dir, outvideo))
 
-        merged, video4split = self.get_video4split(begin_ts, end_ts, channel_id)
+        merged, video4split = self.get_video4split(requestId, begin_ts, end_ts, channel_id)
 
-        ret, downurl = self.snapshot_video_split(video4split, outvideo)
+        ret, downurl = self.snapshot_video_split(requestId, begin_ts, end_ts, media_type, video4split, outvideo)
         if ret != 0:
             err_info = {"requestId":requestId, "error": {"code": 503, "message": "split video/screenshot error"}}
             web.debug("error: %s" % str(err_info))
@@ -356,7 +366,7 @@ class VideoCapture:
             cmd = "rm -f %s" % video4split
             ret = os.system(cmd)
             if ret !=0:
-                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % cmd}}
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "rm temp files error!"}}
                 web.debug("error: %s" % str(err_info))
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
