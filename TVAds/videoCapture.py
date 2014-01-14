@@ -164,11 +164,15 @@ class VideoCapture:
         end_ts = request_info.end_ts
         media_type = request_info.media_type
         channel_id = request_info.channel_id
+        down_dir = request_info.down_dir
+        days = str(int(begin_ts/1000/3600/24))
 
         if media_type.lower() == 'screenshot':
             snapshot_tgz = channel_id + "." + str(begin_ts) + "." + str(end_ts) + ".tgz"
-            snapshot_tgz = os.path.normpath(os.path.join(self.down_dir, snapshot_tgz))
-            downurl = self.down_prex + '/' + snapshot_tgz.split(os.sep)[-1]
+            snapshot_tgz = os.path.normpath(os.path.join(down_dir, snapshot_tgz))
+            #downurl = self.down_prex + '/' + snapshot_tgz.split(os.sep)[-1]
+            downurl = '/'.join([self.down_prex, ] + snapshot_tgz.split(os.sep)[-3:])
+
             if os.path.exists(snapshot_tgz):
                 response_info = {
                         "requestId":requestId,
@@ -180,8 +184,9 @@ class VideoCapture:
                 return (True, resp)
         elif media_type.lower() == 'video':
             outvideo = channel_id + "." + str(begin_ts) + "." + str(end_ts) + '.mp4'
-            outvideo = os.path.normpath(os.path.join(self.down_dir, outvideo))
-            downurl = self.down_prex + '/' + outvideo.split(os.sep)[-1]
+            outvideo = os.path.normpath(os.path.join(down_dir, outvideo))
+            #downurl = self.down_prex + '/' + outvideo.split(os.sep)[-1]
+            downurl = '/'.join([self.down_prex, ] + outvideo.split(os.sep)[-3:])
             if os.path.exists(outvideo):
                 response_info = {
                         "requestId":requestId,
@@ -284,6 +289,7 @@ class VideoCapture:
         end_ts = request_info.end_ts
         channel_id = request_info.channel_id
         media_type = request_info.media_type
+        down_dir = request_info.down_dir
 
         snapshot_tgz = outvideo[0:-3] + "tgz"
         ret = -1
@@ -308,7 +314,7 @@ class VideoCapture:
             prex = ''.join(random.sample(string.ascii_letters + string.digits, 4))
             snapshots = prex + "-%09d.jpg"
             jpgfiles = prex + "-*.jpg"
-            snapshots = os.path.normpath(os.path.join(self.down_dir, snapshots))
+            snapshots = os.path.normpath(os.path.join(down_dir, snapshots))
             cmd = "ffmpeg -y -i %s -q:v 1 -r %s -s %sx%s %s >/dev/null 2>&1" % (outvideo, self.snapshot_rate, self.weight, self.height, snapshots)
 
             ret = os.system(cmd)
@@ -318,14 +324,14 @@ class VideoCapture:
 
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
-            cmd = "cd %s; tar cvzf %s %s" % (self.down_dir, snapshot_tgz, jpgfiles)
+            cmd = "cd %s; tar cvzf %s %s" % (down_dir, snapshot_tgz, jpgfiles)
             ret = os.system(cmd)
             if ret != 0:
                 err_info = {"requestId":requestId, "error": {"code": 503, "message": "pack snapshots error!"}}
                 web.debug("error: %s" % str(err_info))
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
-            cmd = "rm -f %s %s" % (os.path.normpath(os.path.join(self.down_dir, jpgfiles)), outvideo)
+            cmd = "rm -f %s %s" % (os.path.normpath(os.path.join(down_dir, jpgfiles)), outvideo)
             ret = os.system(cmd)
             if ret != 0:
                 err_info = {"requestId":requestId, "error": {"code": 503, "message": "delete temp files failed!"}}
@@ -333,12 +339,14 @@ class VideoCapture:
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
             else:
-                downurl = self.down_prex + '/' + snapshot_tgz.split(os.sep)[-1]
+                #downurl = self.down_prex + '/' + snapshot_tgz.split(os.sep)[-1]
+                downurl = '/'.join([self.down_prex, ] + snapshot_tgz.split(os.sep)[-3:])
 
         # request video
         if media_type == 'video':
             if os.path.exists(outvideo): 
-                downurl = self.down_prex + '/' + outvideo.split(os.sep)[-1]
+                #downurl = self.down_prex + '/' + outvideo.split(os.sep)[-1]
+                downurl = '/'.join([self.down_prex, ] + outvideo.split(os.sep)[-3:])
             else:
                 web.debug("outvideo not exists: %s" % outvideo)
 
@@ -357,9 +365,17 @@ class VideoCapture:
         media_type = post_data.get('type')
         self.varify_params(requestId, begin_ts, end_ts, media_type, channel_uuid)
         channel_id = self.get_channleid(requestId, channel_uuid)
-        request_info = collections.namedtuple("request_info", "begin_ts end_ts media_type channel_uuid requestId channel_id")
+
+        d =  int(begin_ts / 1000 / 3600 / 24)
+        down_dir = os.path.normpath(os.path.join(self.down_dir, str(d), str(channel_id)))
+        if not os.path.exists(down_dir):
+            try:
+                os.makedirs(down_dir)
+            except Exception, err:
+                web.debug("make dir: %s error: %s" %(down_dir, err))
+        request_info = collections.namedtuple("request_info", "begin_ts end_ts media_type channel_uuid requestId channel_id down_dir")
         info = request_info(begin_ts=begin_ts, end_ts=end_ts, media_type=media_type, \
-                channel_uuid = channel_uuid, requestId = requestId, channel_id = channel_id)
+                channel_uuid = channel_uuid, requestId = requestId, channel_id = channel_id, down_dir = down_dir)
 
         b, resp = self.check_retried_request(info)
         if b is True:
@@ -369,7 +385,7 @@ class VideoCapture:
         snapshot_tgz = ""
         outvideo = ""
         outvideo = channel_id + "." + str(begin_ts) + "." + str(end_ts) + '.mp4'
-        outvideo = os.path.normpath(os.path.join(self.down_dir, outvideo))
+        outvideo = os.path.normpath(os.path.join(down_dir, outvideo))
 
         merged, video4split = self.get_video4split(info)
 
