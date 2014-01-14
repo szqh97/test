@@ -146,6 +146,7 @@ class VideoCapture:
                 if d_ids != None :
                     channel_id = str(d_ids['id'])
                 else:
+                    web.debug("ssssss")
                     raise Exception( "channel uuid is null")
             except Exception, err:
                 if conn is not None:
