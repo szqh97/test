@@ -14,6 +14,7 @@ import uuid
 import random 
 import string
 import simplejson
+import collections
 from web import webapi
 
 sys.path.append(os.path.normpath(os.path.join(sys.path[0], "/opt/rtfp/bin")))
@@ -157,7 +158,12 @@ class VideoCapture:
                 raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the channel uuid is not using"), err_info
         return channel_id
 
-    def check_retried_request(self, requestId, begin_ts, end_ts, media_type, channel_id):
+    def check_retried_request(self, request_info):
+        requestId = request_info.requestId
+        begin_ts = request_info.begin_ts
+        end_ts = request_info.end_ts
+        media_type = request_info.media_type
+        channel_id = request_info.channel_id
 
         if media_type.lower() == 'screenshot':
             snapshot_tgz = channel_id + "." + str(begin_ts) + "." + str(end_ts) + ".tgz"
@@ -187,7 +193,11 @@ class VideoCapture:
                 return (True, resp)
         return (False, "")
 
-    def get_video4split(self, requestId, begin_ts, end_ts, channel_id):
+    def get_video4split(self, request_info):
+        requestId = request_info.requestId
+        begin_ts = request_info.begin_ts
+        end_ts = request_info.end_ts
+        channel_id = request_info.channel_id
         videofiles = []
         allfiles = os.listdir(self.video_dir)
         re_parser = re.compile('\d+\.\d+\.\d+\.mp4', re.IGNORECASE)
@@ -267,7 +277,13 @@ class VideoCapture:
                 raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the beginTimestamp or endTimeStamp is illegal"), err_info
         return (needmerge, video4split)
 
-    def snapshot_video_split(self, requestId, begin_ts, end_ts, media_type,  video4split, outvideo):
+    def snapshot_video_split(self, request_info,  video4split, outvideo):
+
+        requestId = request_info.requestId
+        begin_ts = request_info.begin_ts
+        end_ts = request_info.end_ts
+        channel_id = request_info.channel_id
+        media_type = request_info.media_type
 
         snapshot_tgz = outvideo[0:-3] + "tgz"
         ret = -1
@@ -341,8 +357,11 @@ class VideoCapture:
         media_type = post_data.get('type')
         self.varify_params(requestId, begin_ts, end_ts, media_type, channel_uuid)
         channel_id = self.get_channleid(requestId, channel_uuid)
+        request_info = collections.namedtuple("request_info", "begin_ts end_ts media_type channel_uuid requestId channel_id")
+        info = request_info(begin_ts=begin_ts, end_ts=end_ts, media_type=media_type, \
+                channel_uuid = channel_uuid, requestId = requestId, channel_id = channel_id)
 
-        b, resp = self.check_retried_request(requestId, begin_ts, end_ts, media_type, channel_id)
+        b, resp = self.check_retried_request(info)
         if b is True:
             return resp
             
@@ -352,9 +371,9 @@ class VideoCapture:
         outvideo = channel_id + "." + str(begin_ts) + "." + str(end_ts) + '.mp4'
         outvideo = os.path.normpath(os.path.join(self.down_dir, outvideo))
 
-        merged, video4split = self.get_video4split(requestId, begin_ts, end_ts, channel_id)
+        merged, video4split = self.get_video4split(info)
 
-        ret, downurl = self.snapshot_video_split(requestId, begin_ts, end_ts, media_type, video4split, outvideo)
+        ret, downurl = self.snapshot_video_split(info, video4split, outvideo)
         if ret != 0:
             err_info = {"requestId":requestId, "error": {"code": 503, "message": "split video/screenshot error"}}
             web.debug("error: %s" % str(err_info))
