@@ -5,12 +5,20 @@
 
 import re
 import os
+import sys
+import logging
+import logging.config
 import web
-import simplejson
-import torndb
+import time
 import uuid
+import random 
+import string
+import simplejson
+from web import webapi
 
+sys.path.append(os.path.normpath(os.path.join(sys.path[0], "/opt/rtfp/bin")))
 
+import torndb
 urls = (
         "/videocapture", "VideoCapture",
         "/.*", "default",
@@ -22,21 +30,38 @@ class default:
     def POST(self):
         return "post"
 
+
+def log(data):
+    try:
+        f = open("/var/tmp/videocapture.log", "a+")
+        #f.write(str(web.ctx.method) + " " + str(web.ctx.path) + " : " + time.ctime() + "\n")
+        f.write("\n" + time.asctime() + " - ")
+        f.write(data)
+        f.flush()
+        f.close()
+    except Exception, err:
+        web.debug("write log file error: %s" % str(err))
+
 class VideoCapture:
     def __init__(self):
         self.conn = None
         self.channel_id = None
         self.video_dir = ""
-        self.snapshot_rate = 1
+        self.snapshot_rate = '1'
         self.height = -1
         self.weight = -1
         self.down_dir = ""
-        self.down_prex = "http://192.168.1.249/"
+        self.down_prex = "http://192.168.1.249"
+
 
     def load_conf(self):
+        config_parser = re.compile(
+                        "^[ \t]*([a-z0-9_]+)[ \t]*=[ \t]*([^#\n]+)[ \t]*(#.*)?$",
+                                re.IGNORECASE)
+
         path = "/opt/rtfp/etc/live_box.conf"
         if not os.path.exists(path):
-            print os.getcwd()
+            log(os.getcwd())
             return
         else:
             try:
@@ -57,40 +82,117 @@ class VideoCapture:
                     d = config["snapshot_rate"].strip()
                     if d is not None and len(d) != 0:
                         self.snapshot_rate = d 
-                if config.has_key("down_prex"):
-                    d = config["down_prex"].strip()
+                if config.has_key("download_prex"):
+                    d = config["download_prex"].strip()
                     if d is not None and len(d) != 0:
                         self.down_prex = d
-                if config.has_key("video_dir"):
-                    d = config["video_dir"].strip()
+                if config.has_key("video_path"):
+                    d = config["video_path"].strip()
                     if d is not None and len(d) != 0:
                         self.video_dir= d
+                if config.has_key("down_dir"):
+                    d = config["down_dir"].strip()
+                    if d is not None and len(d) != 0:
+                        self.down_dir= d
+                if config.has_key("max_reservetime"):
+                    d = config["max_reservetime"].strip()
+                    if d is not None and len(d) != 0:
+                        self.max_reservetime = int(d)
             except Exception, err:
-                 pass
+                web.debug("load conf error %s:" % str(err))
+
 
     def POST(self):
         self.load_conf()
+        requestId = str(uuid.uuid4())
         videofiles = []
+        channel_id = ""
         cmd = ""
         raw_data = web.data()
         post_data = simplejson.loads(raw_data)
-        begint_ts = post_data.get('begin_ts')
-        end_ts = post_data.get('end_ts')
-        channel_uuid = post_data.get('channel_uuid')
+        begin_ts = post_data.get('beginTimestamp')
+        end_ts = post_data.get('endTimestamp')
+
+        if begin_ts >= end_ts:
+            err_info = {"requestId":requestId, "error": {"code": 400, "message": "begin_ts is larger or equal to end_ts"}}
+            web.debug("error: %s"% str(err_info))
+            err_info = simplejson.dumps(err_info)
+            raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "begin_ts is larger or equal to end_ts"), err_info
+        
+        ltime = int(time.time())
+        if begin_ts < ltime - self.max_reservetime * 3600:
+            err_info = {"requestId":requestId, "error": {"code": 400, "message": "begin_ts is not in reserved time"}}
+            web.debug("error: %s"% str(err_info))
+            err_info = simplejson.dumps(err_info)
+            raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "begin_ts is not in reserved time"), err_info
+
+        channel_uuid = post_data.get('channelUuid')
         media_type = post_data.get('type')
+        if media_type.lower() not in ('video', 'screenshot'):
+            err_info = {"requestId":requestId, "error": {"code": 400, "message": "type is error"}}
+            web.debug("error: %s"% str(err_info))
+            err_info = simplejson.dumps(err_info)
+            raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "type is error"), err_info
         if channel_uuid != None:
-            sql = "select id from videoSource where channel_uuid = %s" % channel_uuid
+            sql = "select id from videoSource where channel_uuid = '%s' " % (channel_uuid,)
+            conn = None
             try:
                 conn = torndb.Connection('localhost', 'LiveBox', user='LiveBox', password='123')
-                d_ids = conn.gt(sql)
-                channel_id = str(d_ids['id'])
+                d_ids = conn.get(sql)
+                conn.close()
+                if d_ids != None :
+                    channel_id = str(d_ids['id'])
+                else:
+                    raise Exception( "channel uuid is null")
             except Exception, err:
-                print "xx"
+                if conn is not None:
+                    conn.close()
+                err_info = {"requestId":requestId, "error": {"code": 400, "message": str(err)}}
+                web.debug("error: %s"% str(err_info))
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the channel uuid is not using"), err_info
         else:
-            print " channel uuid is null"
+            web.debug(" channel uuid is null")
+            err_info = {"requestId":requestId, "error": {"code": 400, "message": "the channel uuid is not error"}}
+            web.debug("error: %s"% str(err_info))
+            err_info = simplejson.dumps(err_info)
+            raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the channel uuid is not using"), err_info
+
+
+        # if the shot file and mp4 required is exists, return them
+        snapshot_tgz = ""
+        outvideo = ""
+        if media_type.lower() == 'screenshot':
+            outvideo = channel_id + "." + str(begin_ts) + "." + str(end_ts) + '.mp4'
+            outvideo = os.path.normpath(os.path.join(self.down_dir, outvideo))
+            snapshot_tgz = channel_id + "." + str(begin_ts) + "." + str(end_ts) + ".tgz"
+            snapshot_tgz = os.path.normpath(os.path.join(self.down_dir, snapshot_tgz))
+            downurl = self.down_prex + '/' + snapshot_tgz.split(os.sep)[-1]
+            if os.path.exists(snapshot_tgz):
+                response_info = {
+                        "requestId":requestId,
+                        "error":None,
+                        "resultUrl":downurl
+                        }
+                #web.debug("resp is %s" % str(response_info))
+                resp = simplejson.dumps(response_info)
+                return resp
+        elif media_type.lower() == 'video':
+            outvideo = channel_id + "." + str(begin_ts) + "." + str(end_ts) + '.mp4'
+            outvideo = os.path.normpath(os.path.join(self.down_dir, outvideo))
+            downurl = self.down_prex + '/' + outvideo.split(os.sep)[-1]
+            if os.path.exists(outvideo):
+                response_info = {
+                        "requestId":requestId,
+                        "error":None,
+                        "resultUrl":downurl
+                        }
+                #web.debug("resp is %s" % str(response_info))
+                resp = simplejson.dumps(response_info)
+                return resp
 
         allfiles = os.listdir(self.video_dir)
-        re_parser = re.comple('\d+\.\d+\.\d+\.mp4', re.IGNORECASE)
+        re_parser = re.compile('\d+\.\d+\.\d+\.mp4', re.IGNORECASE)
         for f in allfiles:
             if re_parser.match(f):
                 videofiles.append(f)
@@ -105,76 +207,135 @@ class VideoCapture:
             f_begin_ts = int(f.split('.')[1])
             f_end_ts = int(f.split('.')[2])
 
-            # 1. .. f_begint_ts .. begin_ts .. end_ts .. f_end_ts
-            if f_begint_ts <= begin_ts and end_ts<= f_end_ts:
+            # 1. .. f_begin_ts .. begin_ts .. end_ts .. f_end_ts
+            if f_channel_id == channel_id and f_begin_ts <= begin_ts and end_ts<= f_end_ts:
                 video4split = f
                 break
-            # 2. .. f_begint_ts .. begin_ts .. f_end_ts ..
-            if f_begint_ts <= begin_ts and f_end_ts < end_ts:
+            # 2. .. f_begin_ts .. begin_ts .. f_end_ts .. end_ts
+            if f_channel_id == channel_id and f_begin_ts < begin_ts and f_end_ts < end_ts and begin_ts < f_end_ts :
                 video4split1 = f
                 needmerge = True
-            # 3. ... begin_ts .. f_begint_ts .. end_ts .. f_end_ts ..
-            if begin_ts > f_begint_ts and f_begint_ts < end_ts:
+            # 3. ... begin_ts .. f_begin_ts .. end_ts .. f_end_ts ..
+            if f_channel_id == channel_id and begin_ts < f_begin_ts and f_begin_ts < end_ts and end_ts < f_end_ts:
                 video4split2 = f
                 needmerge = True
                 break
 
         if needmerge == True:
+            if video4split1 == "" or video4split2 == "":
+                err_info = {"requestId":requestId, "error": {"code": 400, "message": "the beginTimestamp or endTimeStamp is illegal"}}
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the beginTimestamp or endTimeStamp is illegal"), err_info
             c = video4split1.split('.')[0]
             s = video4split1.split('.')[1]
             e = video4split2.split('.')[2]
             video4split = c + '.' + s + '.' + e + '.mp4'
-            mergecmd = "ffmpeg -y -i %s -i %s -acodec copy -vcodec copy %s" % (video4split1, video4split2, video4split)
+            video4split = os.path.normpath(os.path.join(self.video_dir, video4split))
+            video4split1 = os.path.normpath(os.path.join(self.video_dir, video4split1))
+            video4split2 = os.path.normpath(os.path.join(self.video_dir, video4split2))
+            tmpf = os.tempnam()
+            try:
+                with file(tmpf, 'w') as f:
+                    f.write("file %s\n" % video4split1)
+                    f.flush()
+                    f.write("file %s\n" % video4split2)
+                    f.flush()
+            except Exception, err:
+                web.debug( "write input file error: %s"% err)
+            mergecmd = "ffmpeg -y -f concat  -i %s -codec copy %s >/dev/null 2>&1" % (tmpf, video4split)
             ret = os.system(mergecmd)
             if ret != 0:
-                print "merge video error!"
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % mergecmd}}
+                web.debug("error: %s"% str(err_info))
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("503 Service Unavailable"), err_info
+            cmd = "rm -f %s" % tmpf
+            ret = os.system(cmd)
+            if ret != 0:
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % cmd}}
+                web.debug("error: %s"% str(err_info))
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("503 Service Unavailable"), err_info
+        else:
+            if video4split != "":
+                video4split = os.path.normpath(os.path.join(self.video_dir, video4split))
+            else:
+                err_info = {"requestId":requestId, "error": {"code": 400, "message": "the beginTimestamp or endTimeStamp is illegal"}}
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("400 Bad Request", web.webapi.BadRequest, "the beginTimestamp or endTimeStamp is illegal"), err_info
 
-        f_begin_ts = int(video4split.split('.')[1])
-        f_end_ts = int(video4split.split('.')[2])
-        ss = begin_ts - f_begin_ts
-        t = end_ts - begin_ts
+        f_begin_ts = int(video4split.split(os.sep)[-1].split('.')[1])
+        f_end_ts = int(video4split.split(os.sep)[-1].split('.')[2])
+        ss = (begin_ts - f_begin_ts)/1000.0
+        t = (end_ts - begin_ts)/1000.0
+        if t > 30:
+            self.snapshot_rate = str(0.5)
         downurl = ""
 
+        cmd = "ffmpeg -y -i %s -acodec copy -vcodec copy -ss %s -t %s %s >/dev/null 2>&1" % (video4split, str(ss), str(t), outvideo)
+        ret = os.system(cmd)
+        if ret != 0:
+            err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % cmd}}
+            web.debug("error: %s" % str(err_info))
+            err_info = simplejson.dumps(err_info)
+            raise web.webapi._status_code("503 Service Unavailable"), err_info
+
         # request snap shot
-        if media_type == 'snapshot':
-            snapshots = "s-%%05d.jpg"
+        if media_type.lower() == 'screenshot':
+            prex = ''.join(random.sample(string.ascii_letters + string.digits, 4))
+            snapshots = prex + "-%09d.jpg"
+            jpgfiles = prex + "-*.jpg"
             snapshots = os.path.normpath(os.path.join(self.down_dir, snapshots))
-            cmd = "ffmpeg -y -i %s -q:v 1 -ss %s -t %s -r %s -s %sx%s %s" \
-                    % (video4split, ss, t, self.snapshot_rate, self.weight, self.height, snapshots)
-            ret = os.sytem(cmd)
-            if ret != 0:
-                print "ffmegp error"
-            snapshot_tgz = channel_id + "." + begin_ts + "." + end_ts + ".tgz"
-            snapshot_tgz = os.path.normpath(os.path.join(self.down_dir, snapshot_tgz))
-            cmd = "cd %s; tar cvzf %s s-*.jpg" % (self.down_dir, snapshot_tgz)
+            cmd = "ffmpeg -y -i %s -q:v 1 -r %s -s %sx%s %s >/dev/null 2>&1" % (outvideo, self.snapshot_rate, self.weight, self.height, snapshots)
+
             ret = os.system(cmd)
             if ret != 0:
-                print "tar cvzf error"
-            cmd = "cd %s; rm s-*.jpg"
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % cmd}}
+                web.debug("error: %s" % str(err_info))
+
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("503 Service Unavailable"), err_info
+            cmd = "cd %s; tar cvzf %s %s" % (self.down_dir, snapshot_tgz, jpgfiles)
             ret = os.system(cmd)
             if ret != 0:
-                pass
-            downurl = self.donw_prex + '/' + snapshot_tgz.split(os.sep)[-1]
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % cmd}}
+                web.debug("error: %s" % str(err_info))
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("503 Service Unavailable"), err_info
+            cmd = "rm -f %s %s" % (os.path.normpath(os.path.join(self.down_dir, jpgfiles)), outvideo)
+            ret = os.system(cmd)
+            if ret != 0:
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % cmd}}
+                web.debug("error: %s" % str(err_info))
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("503 Service Unavailable"), err_info
+            else:
+                downurl = self.down_prex + '/' + snapshot_tgz.split(os.sep)[-1]
 
         # request video
         if media_type == 'video':
-            outvideo = channel_id + '.' + begin_ts + '.' + end_ts + '.mp4'
-            outvideo = os.path.normpath(os.path.join(self.down_dir, outvideo))
-            cmd = "ffmpeg -y -i %s -acodec copy -vcodec copy -ss %s -t %s %s" % (f, ss, t, outvideo)
-            ret = os.system(cmd)
-            if ret != 0:
-                print "ffmpeg split video serror"
             downurl = self.down_prex + '/' + outvideo.split(os.sep)[-1]
-        requsetid = str(uuid.uuid4())
+        # rm the merged file
+        if needmerge == True:
+            cmd = "rm -f %s" % video4split
+            ret = os.system(cmd)
+            if ret !=0:
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "cmd %s failed!" % cmd}}
+                web.debug("error: %s" % str(err_info))
+                err_info = simplejson.dumps(err_info)
+                raise web.webapi._status_code("503 Service Unavailable"), err_info
         response_info = {
                 "requestId":requestId,
-                "error":null,
-                "resultUrlList":[downurl,]
+                "error":None,
+                "resultUrl":downurl
                 }
+        #web.debug("resp is %s" % str(response_info))
         resp = simplejson.dumps(response_info)
+        
         return resp
         
 
-if __name__ == '__main__':
-    app = web.application(urls, globals())
-    app.run()
+#if __name__ == '__main__':
+#    app = web.application(urls, globals())
+#    app.run()
+application = web.application(urls, globals()).wsgifunc()
