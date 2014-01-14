@@ -8,6 +8,8 @@ struct OpNewCreator
     {
         return new T;
     }
+protected:
+    ~OpNewCreator() {}
 };
 
 template <class T>
