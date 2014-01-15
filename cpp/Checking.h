@@ -14,4 +14,12 @@ template <class T> struct EnforceNotNULL
         if (!ptr) throw NullPointerException()
     }
 };
+
+template <class > struct EnsureNotNull
+{
+    static void Check(T*& ptr)
+    {
+        if (!ptr) ptr = GetDefaultValue();
+    }
+};
 #endif
