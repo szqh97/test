@@ -226,10 +226,12 @@ class VideoCapture:
                 break
             # 2. .. f_begin_ts .. begin_ts .. f_end_ts .. end_ts
             if f_channel_id == channel_id and f_begin_ts < begin_ts and f_end_ts < end_ts and begin_ts < f_end_ts :
+                web.debug("video4split1 %s" % f)
                 video4split1 = f
                 needmerge = True
             # 3. ... begin_ts .. f_begin_ts .. end_ts .. f_end_ts ..
             if f_channel_id == channel_id and begin_ts < f_begin_ts and f_begin_ts < end_ts and end_ts < f_end_ts:
+                web.debug("video4split2 %s" % f)
                 video4split2 = f
                 needmerge = True
                 break
@@ -261,14 +263,14 @@ class VideoCapture:
             mergecmd = "ffmpeg -y -f concat  -i %s -codec copy %s >/dev/null 2>&1" % (tmpf, video4split)
             ret = os.system(mergecmd)
             if ret != 0:
-                err_info = {"requestId":requestId, "error": {"code": 503, "message": "concat videos failed!"}}
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "concat videos failed! %s" % mergecmd}}
                 web.debug("error: %s"% str(err_info))
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
             cmd = "rm -f %s" % tmpf
             ret = os.system(cmd)
             if ret != 0:
-                err_info = {"requestId":requestId, "error": {"code": 503, "message": "rm temp files failed!"}}
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "rm temp files failed! %s" % cmd }}
                 web.debug("error: %s"% str(err_info))
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
@@ -304,7 +306,8 @@ class VideoCapture:
         cmd = "ffmpeg -y -i %s -acodec copy -vcodec copy -ss %s -t %s %s >/dev/null 2>&1" % (video4split, str(ss), str(t), outvideo)
         ret = os.system(cmd)
         if ret != 0:
-            err_info = {"requestId":requestId, "error": {"code": 503, "message": "get video4split error!"}}
+            web.debug("begin_ts %d, end_ts %d, channel_id %d" %(begin_ts, end_ts, channel_id))
+            err_info = {"requestId":requestId, "error": {"code": 503, "message": "get video4split error! %s" % cmd}}
             web.debug("error: %s" % str(err_info))
             err_info = simplejson.dumps(err_info)
             raise web.webapi._status_code("503 Service Unavailable"), err_info
@@ -319,7 +322,7 @@ class VideoCapture:
 
             ret = os.system(cmd)
             if ret != 0:
-                err_info = {"requestId":requestId, "error": {"code": 503, "message": "ffmpeg get screenshots failed!"}}
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "ffmpeg get screenshots failed! %s" % cmd }}
                 web.debug("error: %s" % str(err_info))
 
                 err_info = simplejson.dumps(err_info)
@@ -327,14 +330,14 @@ class VideoCapture:
             cmd = "cd %s; tar cvzf %s %s" % (down_dir, snapshot_tgz, jpgfiles)
             ret = os.system(cmd)
             if ret != 0:
-                err_info = {"requestId":requestId, "error": {"code": 503, "message": "pack snapshots error!"}}
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "pack snapshots error! %s" % cmd}}
                 web.debug("error: %s" % str(err_info))
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
             cmd = "rm -f %s %s" % (os.path.normpath(os.path.join(down_dir, jpgfiles)), outvideo)
             ret = os.system(cmd)
             if ret != 0:
-                err_info = {"requestId":requestId, "error": {"code": 503, "message": "delete temp files failed!"}}
+                err_info = {"requestId":requestId, "error": {"code": 503, "message": "delete temp files failed! %s" % cmd}}
                 web.debug("error: %s" % str(err_info))
                 err_info = simplejson.dumps(err_info)
                 raise web.webapi._status_code("503 Service Unavailable"), err_info
