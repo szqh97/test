@@ -306,8 +306,8 @@ class VideoCapture:
         cmd = "ffmpeg -y -i %s -acodec copy -vcodec copy -ss %s -t %s %s >/dev/null 2>&1" % (video4split, str(ss), str(t), outvideo)
         ret = os.system(cmd)
         if ret != 0:
-            web.debug("begin_ts %d, end_ts %d, channel_id %d" %(begin_ts, end_ts, channel_id))
             err_info = {"requestId":requestId, "error": {"code": 503, "message": "get video4split error! %s" % cmd}}
+            web.debug("begin_ts %d, end_ts %d, channel_id %s" %(begin_ts, end_ts, channel_id))
             web.debug("error: %s" % str(err_info))
             err_info = simplejson.dumps(err_info)
             raise web.webapi._status_code("503 Service Unavailable"), err_info
