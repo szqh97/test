@@ -19,7 +19,8 @@ airing_log_Q_url = "http://54.219.239.245/api/queues/%2F/tv_ads_airing_log_queue
 dbpc_interval = "600"
 dbpc_host = "192.168.1.146"
 dbpc_port = "5800"
-dbpc_service = "MQMonitor"
+dbpc_service = "tvads"
+dbpc_component = "Dead_MQ"
 
 def get_Q_info(username, passwd, url):
     try:
@@ -34,18 +35,12 @@ def get_Q_info(username, passwd, url):
     return False
 
 def dbpc_fun():
-    detect_Q_cmd = "./bin/heartbeat -h %s -p %s -s %s -c %s" % (dbpc_host, dbpc_port, dbpc_service, "detect_Q")
-    query_Q_cmd = "./bin/heartbeat -h %s -p %s -s %s -c %s" % (dbpc_host, dbpc_port, dbpc_service, "query_Q")
-    airing_log_Q_cmd = "./bin/heartbeat -h %s -p %s -s %s -c %s" % (dbpc_host, dbpc_port, dbpc_service, "airing_log_Q")
-    if get_Q_info(user, passwd, detect_Q_url):
+    detect_Q_cmd = "./heartbeat -h %s -p %s -s %s -c %s" % (dbpc_host, dbpc_port, dbpc_service, dbpc_component)
+    d = get_Q_info(user, passwd, detect_Q_url)
+    q = get_Q_info(user, passwd, query_Q_url)
+    a = get_Q_info(user, passwd, airing_log_Q_url)
+    if d and q and a:
         os.system(detect_Q_cmd)
-
-    if get_Q_info(user, passwd, query_Q_url):
-        os.system(query_Q_cmd)
-
-    if get_Q_info(user, passwd, detect_Q_url):
-        os.system(airing_log_Q_cmd)
-
 
 if __name__ == '__main__':
     while True:
