@@ -1,4 +1,5 @@
 #include <iostream>
+#include <typeinfo>
 using namespace std;
 
 struct NullType;
@@ -22,15 +23,56 @@ template <>struct Length<NullType>
 {
     enum { value = 0};
 };
+
 template <class T, class U>
 struct Length<Typelist<T, U> >
 {
     enum {value = 1 + Length<U>::value};
 };
+
+// TypeAt :
+template <class Tlist, unsigned int index> struct TypeAt;
+template <class Head, class Tail>
+struct TypeAt<Typelist<Head, Tail>, 0 >
+{
+    typedef Head Result;
+};
+
+template <class Head, class Tail, unsigned int i>
+struct TypeAt<Typelist<Head, Tail>, i>
+{
+    typedef typename TypeAt<Tail, i-1>::Result Result;
+};
+
+// Index of type
+template <class TList, class T> struct IndexOf;
+
+template <class T>
+struct IndexOf<NullType, T>
+{
+    enum {value = -1};
+};
+
+template <class Tail, class T>
+struct IndexOf<Typelist<T,Tail>, T>
+{
+    enum {value = 0};
+};
+
+template <class Head, class Tail, class T>
+struct IndexOf<Typelist<Head, Tail>, T>
+{
+    private:
+        enum {temp = IndexOf<Tail, T>::value};
+    public:
+        enum {value = temp == -1? -1 : 1 + temp};
+};
+
 int main ( int argc, char *argv[] )
 {
-
     cout << "length of SignedIntegrals: " << Length<SignedIntegrals>::value << endl;
+    TypeAt<SignedIntegrals, 3> a;
+    cout <<typeid(TypeAt<SignedIntegrals, 3>).name() << endl;
+    cout << IndexOf<SignedIntegrals, int>::value << endl;
     return 0;
 }			/* ----------  end of function main  ---------- */
-
