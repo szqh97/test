@@ -93,6 +93,29 @@ struct Append<Typelist<Head, Tail>, T >
             typename Append<Tail, T>::Result > Result;
 };
 
+// Erase
+template <class Tlist, class T> struct Erase;
+
+template <class T>
+struct Erase<NullType, T>
+{
+    typedef NullType Result;
+};
+
+template <class T, class Tail>
+struct Erase<Typelist<T, Tail>, T>
+{
+    typedef Tail Result;
+};
+
+template <class Head, class Tail, class T>
+struct Erase<typelist<Head, Tail>, T>
+{
+    typedef Typelist<Head, 
+            typename Erase<Tail, T>::Result >
+        Result;
+
+
 
 int main ( int argc, char *argv[] )
 {
@@ -115,7 +138,7 @@ int main ( int argc, char *argv[] )
     typedef Append<SignedIntegrals, 
             TYPELIST_3(float, double, long double) >::Result 
                 SignedTypes;
-
+    typedef Erase<SignedTypes, int> Noint;
     
 
     return 0;
