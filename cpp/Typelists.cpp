@@ -16,7 +16,6 @@ typedef Typelist<char, Typelist<signed char, unsigned char > > CharList;
 #define TYPELIST_3(T1, T2, T3) Typelist<T1, TYPELIST_2(T2, T3) >
 #define TYPELIST_4(T1, T2, T3, T4) Typelist<T1, TYPELIST_3(T2, T3, T4) >
 
-typedef TYPELIST_4(signed char, short int, int, long int) SignedIntegrals;
 
 template <class Tlist> struct Length;
 template <>struct Length<NullType>
@@ -67,12 +66,57 @@ struct IndexOf<Typelist<Head, Tail>, T>
     public:
         enum {value = temp == -1? -1 : 1 + temp};
 };
+  
+// Append
+template <class Tlist, class T> struct Append;
+
+template <> struct Append<NullType, NullType>
+{
+    typedef NullType Result;
+};
+
+template <class T> struct Append<NullType, T>
+{
+    typedef TYPELIST_1(T) Result;
+};
+
+template <class Head, class Tail> 
+struct Append <NullType, Typelist<Head, Tail> >
+{
+    typedef Typelist<Head, Tail> Result;
+};
+
+template <class Head, class Tail, class T>
+struct Append<Typelist<Head, Tail>, T >
+{
+    typedef Typelist<Head, 
+            typename Append<Tail, T>::Result > Result;
+};
+
 
 int main ( int argc, char *argv[] )
 {
+    typedef TYPELIST_4(signed char, short int, int, long int) SignedIntegrals;
     cout << "length of SignedIntegrals: " << Length<SignedIntegrals>::value << endl;
     TypeAt<SignedIntegrals, 3> a;
+    // typeat
     cout <<typeid(TypeAt<SignedIntegrals, 3>).name() << endl;
+    // indexof
     cout << IndexOf<SignedIntegrals, int>::value << endl;
+    // append
+    //
+    typedef Append<NullType, NullType> n_n;
+    typedef Append<NullType, int> n_i;
+    typedef Append<NullType, n_n> n_n_n;
+    typedef Append<int, int> i_i;
+    typedef Append<i_i, int> i_i_i;
+    typedef Append<i_i_i, char> iiic;
+    
+    typedef Append<SignedIntegrals, 
+            TYPELIST_3(float, double, long double) >::Result 
+                SignedTypes;
+
+    
+
     return 0;
 }			/* ----------  end of function main  ---------- */
