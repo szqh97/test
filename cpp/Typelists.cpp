@@ -109,12 +109,13 @@ struct Erase<Typelist<T, Tail>, T>
 };
 
 template <class Head, class Tail, class T>
-struct Erase<typelist<Head, Tail>, T>
+struct Erase<Typelist<Head, Tail>, T>
 {
     typedef Typelist<Head, 
             typename Erase<Tail, T>::Result >
         Result;
 
+};
 
 
 int main ( int argc, char *argv[] )
