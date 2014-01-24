@@ -11,7 +11,7 @@ class GenScatterHierarchy;
 
 // GenScatterHierarchy specialization: TypeList to Unit
 template <class T1, class T2, template <class> class Unit>
-class GenScatterHierarchy <TYPELIST_2<T1, T2>, Unit>
+class GenScatterHierarchy <TYPELIST_2(T1, T2), Unit>
     : public GenScatterHierarchy<T1, Unit>
     , public GenScatterHierarchy<T2, Unit>
 {
