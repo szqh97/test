@@ -1,9 +1,11 @@
 #include <iostream>
+#include <string>
 #include "Typelist.h"
 using namespace std;
 
 struct Widget 
 {
+    int i;
 };
 
 template <class Tlist, template<class> class Unit>
@@ -11,7 +13,8 @@ class GenScatterHierarchy;
 
 // GenScatterHierarchy specialization: TypeList to Unit
 template <class T1, class T2, template <class> class Unit>
-class GenScatterHierarchy <TYPELIST_2(T1, T2), Unit>
+//class GenScatterHierarchy <TYPELIST_2(T1, T2), Unit>
+class GenScatterHierarchy <Typelist<T1, T2>, Unit>
     : public GenScatterHierarchy<T1, Unit>
     , public GenScatterHierarchy<T2, Unit>
 {
@@ -47,8 +50,10 @@ int main ( int argc, char *argv[] )
             TYPELIST_3(int, string, Widget), 
             Holder> 
         WidgetInfo;
-    WidgetInfo wi;
-    //cout << wi.value_ << endl;
+    WidgetInfo obj;
+    string name = (static_cast<Holder<string>&>(obj)).value_;
+
+    cout << name << endl;
      
     return 0;
 }			/* ----------  end of function main  ---------- */
