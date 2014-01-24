@@ -142,6 +142,22 @@ struct EraseAll<Typelist<Head, Tail>, T>
         Result;
 };
 
+// NoDuplicates
+template <class Tlist> struct NoDuplicates;
+template <> struct NoDuplicates<NullType>
+{
+    typedef NullType Result;
+};
+
+template <class Head, class Tail>
+struct NoDuplicates<Typelist<Head, Tail> >
+{
+private:
+    typedef typename NoDuplicates<Tail>::Result L1;
+    typedef typename Erase<L1, Head>::Result L2;
+public:
+    typedef Typelist<Head, L2> Result;
+};
 
 int main ( int argc, char *argv[] )
 {
@@ -165,7 +181,8 @@ int main ( int argc, char *argv[] )
             TYPELIST_3(float, double, long double) >::Result 
                 SignedTypes;
     typedef TYPELIST_4(char, int,char, int) cici;
-    typedef EraseAll<cici, int> noint;
+    typedef TYPELIST_3(int, int, int) iii;
+    typedef EraseAll<iii, int> noint;
     
 
     return 0;
