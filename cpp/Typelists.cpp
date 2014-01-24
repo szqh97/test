@@ -181,8 +181,11 @@ int main ( int argc, char *argv[] )
             TYPELIST_3(float, double, long double) >::Result 
                 SignedTypes;
     typedef TYPELIST_4(char, int,char, int) cici;
+    typedef TYPELIST_4(char, char,char, int) ccci;
     typedef TYPELIST_3(int, int, int) iii;
     typedef EraseAll<iii, int> noint;
+    typedef NoDuplicates<iii> noi;
+    typedef NoDuplicates<ccci> in;
     
 
     return 0;
