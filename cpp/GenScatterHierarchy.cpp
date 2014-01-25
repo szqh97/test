@@ -58,16 +58,16 @@ struct Int2Type
 };
 
 template <class TList, template <class> class Unit>
-Unit<TList::Head>& FieldHelper(GenScatterHierarchy<TList,Unit>& obj, Int2Type<0>)
+Unit<typename TList::Head>& FieldHelper(GenScatterHierarchy<TList,Unit>& obj, Int2Type<0>)
 {
-    GenScatterHierarchy<TList::Head, Unit>& leftBase = obj;
+    GenScatterHierarchy<typename TList::Head, Unit>& leftBase = obj;
     return leftBase;
 }
 
 template <int i, class TList, template<class>class Unit>
-Unit<TypeAt<Tlist, index>::Result>& FieldHelper(GenScatterHierarchy<TList,  Unit>& obj, Int2Type<i>)
+Unit<TypeAt<TList, i>::Result>& FieldHelper(GenScatterHierarchy<TList,  Unit>& obj, Int2Type<i>)
 {
-    GenScatterHierarchy<TList::Tail, Unit>& rightBase = obj;
+    GenScatterHierarchy<typename TList::Tail, Unit>& rightBase = obj;
     return FieldHelper(rightBase, Int2Type<i-1>());
 }
 template<int i, class TList, template <class>class Unit>
