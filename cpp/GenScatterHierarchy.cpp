@@ -6,7 +6,7 @@ using namespace std;
 
 struct Widget 
 {
-    int i;
+//    int i;
 };
 
 template <class T>
@@ -44,13 +44,50 @@ class GenScatterHierarchy<NullType, Unit>
     GenScatterHierarchy(){cout << "GenScatterHierarchy<NullType, Unit>" << endl;}
 };
 
+// Access a base class by type name
+template <class T, class TList, template<class>class Unit>
+Unit<T>& Field(GenScatterHierarchy<TList, Unit>& obj)
+{
+    return obj;
+}
+
+template <int v>
+struct Int2Type
+{
+    enum {value = v};
+};
+
+template <class TList, template <class> class Unit>
+Unit<TList::Head>& FieldHelper(GenScatterHierarchy<TList,Unit>& obj, Int2Type<0>)
+{
+    GenScatterHierarchy<TList::Head, Unit>& leftBase = obj;
+    return leftBase;
+}
+
+template <int i, class TList, template<class>class Unit>
+Unit<TypeAt<Tlist, index>::Result>& FieldHelper(GenScatterHierarchy<TList,  Unit>& obj, Int2Type<i>)
+{
+    GenScatterHierarchy<TList::Tail, Unit>& rightBase = obj;
+    return FieldHelper(rightBase, Int2Type<i-1>());
+}
+template<int i, class TList, template <class>class Unit>
+Unit<TypeAt<TList, index>::Result >&
+Field(GenScatterHierarchy<TList, Unit>& obj)
+{
+    return FieldHelper(obj, Int2Type<i>());
+}
+
+
 int main ( int argc, char *argv[] )
 {
     typedef GenScatterHierarchy<
-            TYPELIST_3(int, string, Widget), 
+            TYPELIST_3(int, char, Widget), 
             Holder> 
         WidgetInfo;
     WidgetInfo obj;
+    cout << sizeof(Holder<Widget>) << endl;
+    cout << "sizeof(obj) " << sizeof(obj) << endl;
+    char name = (static_cast<Holder<char>&>(obj)).value_;
 
      
     return 0;
