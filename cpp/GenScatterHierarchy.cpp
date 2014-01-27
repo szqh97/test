@@ -51,9 +51,7 @@ int main ( int argc, char *argv[] )
             Holder> 
         WidgetInfo;
     WidgetInfo obj;
-    string name = (static_cast<Holder<string>&>(obj)).value_;
 
-    cout << name << endl;
      
     return 0;
 }			/* ----------  end of function main  ---------- */
