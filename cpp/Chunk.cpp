@@ -41,6 +41,7 @@ void Chunk::Deallocate(void* p, std::size_t blockSize)
     assert(firstAvailableBlock_ == (toRelease - pData_) / blockSize);
     ++blocksAvailable_;
 }
+
 void Chunk::Release()
 {
     delete []pData_;
