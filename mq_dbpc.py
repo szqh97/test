@@ -28,7 +28,8 @@ def get_MQ_info(username, passwd, url):
         http.add_credentials(user, passwd)
         resp, content = http.request(url)
         if resp.status == 200:
-            if simplejson.loads(content).has_key("messages"):
+            result_d = simplejson.loads(content)
+            if result_d.has_key("messages") and int(result_d["messages"]) != 0:
                 return False
     except Exception, err:
         pass

@@ -18,6 +18,7 @@ def signal_handler_for_tem(signum, frame):
     global g_quit 
     g_quit = True
 
+def install_log(
 def get_monitor_path():
     global monitor_path
     path = "./../etc/live_box.conf"

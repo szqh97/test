@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 using namespace std;
 template <typename InIt, typename OutIt>
 OutIt Copy(InIt first, InIt last, OutIt result)
@@ -23,8 +24,19 @@ class TypeTraits
             enum {result = true};
             typedef U PointeeType;
         };
+
+        template <class U> struct PToMTraits
+        {
+            enum { result = false };
+        };
+        template <class U, class V >
+        struct PToMTraits<U V::*>
+        {
+            enum { result = true };
+        };
     public:
         enum {isPointer = PointerTraits<T>::result };
+        enum {isMemberPointer = PToMTraits<T>::result };
         typedef typename PointerTraits<T>::PointeeType PointeeType;
 
 };
@@ -32,6 +44,18 @@ class TypeTraits
 
 int main ( int argc, char *argv[] )
 {
+class A{
+    public:
+    typedef int Int;
+    int a;
+    int* p;
+};
+A k;
+cout << TypeTraits<A::Int>::isMemberPointer << endl;
+    const bool iterIsPtr = 
+        TypeTraits<vector<int>::iterator>::isPointer;
+    cout << iterIsPtr << endl;
+    //cout << "vector<int>::iterator is " << iterIsPtr ? "fast" : "smart" << endl;
     TypeTraits<int* > a;
     cout << a.isPointer << endl;
 

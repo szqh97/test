@@ -85,9 +85,12 @@ int main ( int argc, char *argv[] )
             Holder> 
         WidgetInfo;
     WidgetInfo obj;
+<<<<<<< HEAD
+=======
     cout << sizeof(Holder<Widget>) << endl;
     cout << "sizeof(obj) " << sizeof(obj) << endl;
     char name = (static_cast<Holder<char>&>(obj)).value_;
+>>>>>>> b53a24e9e552db5f4f2f70d7e8d02ab9c1800773
 
      
     return 0;
