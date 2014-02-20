@@ -106,61 +106,6 @@ unsigned char *map_file(FILE * fp, size_t size, size_t & mapped_size)
     return addr;
 }
 
-int merge_dna(dna_buffer &dnabuf, unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos2, int channel_id);
-
-int main ( int argc, char *argv[] )
-{
-    int ret = parse_option(argc, argv);
-    if (ret != 0)
-    {
-        cerr<< "p_dnaf: " << p_dnaf << " c_dnaf: " << c_dnaf
-            << c_begin_ts << " channel_id: " << channel_id << " dir:" <<dir << endl;;
-    }
-
-    //string p_dnaf = "./2.1388041199.cdna";
-    //string c_dnaf = "./2.1388044799.cdna";
-    FILE *fp1 = fopen(p_dnaf.c_str(), "r");
-    if (!fp1)
-    {
-        cerr << "open file: " << p_dnaf << "failed" << endl;
-        return -1;
-    }
-    ret = fseek(fp1, 0, SEEK_END);
-    off_t pos1 = ftello(fp1);
-
-    FILE *fp2 = fopen(c_dnaf.c_str(), "r");
-    if (!fp2)
-    {
-        cerr << "open file: " << c_dnaf << "failed" << endl;
-        return -1;
-    }
-    ret = fseek(fp2, 0, SEEK_END);
-    off_t pos2 = ftello(fp2);
-
-    size_t s1, s2;
-    s1 = s2 =0;
-    unsigned char* addr1 = map_file(fp1, pos1, s1);
-    unsigned char* addr2 = map_file(fp2, pos2, s2);
-
-    dna_buffer dnabuf;
-    memset(&dnabuf, 0, sizeof(dna_buffer));
-    size_t buflen = 8192;
-    dnabuf.buf_cur = dnabuf.buf = new unsigned char[buflen];
-    dnabuf.buflen = dnabuf.byte_counter = 0;
-    dnabuf.buf_end = dnabuf.buf + buflen;
-
-    merge_dna(dnabuf, addr1, pos1, addr2, pos2, channel_id);
-
-    delete dnabuf.buf;
-    dnabuf.buf = dnabuf.buf_cur = dnabuf.buf_end = NULL;
-    
-    munmap(addr1, s1);
-    fclose(fp1);
-    munmap(addr2, s2);
-    fclose(fp2);
-    return 0;
-}			/* ----------  end of function main  ---------- */
-
 int merge_dna(dna_buffer &dnabuf, unsigned char *addr1, off_t pos1, unsigned char *addr2, off_t pos2, int channel_id)
 {
     FILE *dna_fp;
@@ -260,3 +205,58 @@ int merge_dna(dna_buffer &dnabuf, unsigned char *addr1, off_t pos1, unsigned cha
    cout << filename << endl;
    return 0;
 }
+
+int main ( int argc, char *argv[] )
+{
+    int ret = parse_option(argc, argv);
+    if (ret != 0)
+    {
+        cerr<< "p_dnaf: " << p_dnaf << " c_dnaf: " << c_dnaf
+            << c_begin_ts << " channel_id: " << channel_id << " dir:" <<dir << endl;;
+    }
+
+    //string p_dnaf = "./2.1388041199.cdna";
+    //string c_dnaf = "./2.1388044799.cdna";
+    FILE *fp1 = fopen(p_dnaf.c_str(), "r");
+    if (!fp1)
+    {
+        cerr << "open file: " << p_dnaf << "failed" << endl;
+        return -1;
+    }
+    ret = fseek(fp1, 0, SEEK_END);
+    off_t pos1 = ftello(fp1);
+
+    FILE *fp2 = fopen(c_dnaf.c_str(), "r");
+    if (!fp2)
+    {
+        cerr << "open file: " << c_dnaf << "failed" << endl;
+        return -1;
+    }
+    ret = fseek(fp2, 0, SEEK_END);
+    off_t pos2 = ftello(fp2);
+
+    size_t s1, s2;
+    s1 = s2 =0;
+    unsigned char* addr1 = map_file(fp1, pos1, s1);
+    unsigned char* addr2 = map_file(fp2, pos2, s2);
+
+    dna_buffer dnabuf;
+    memset(&dnabuf, 0, sizeof(dna_buffer));
+    size_t buflen = 8192;
+    dnabuf.buf_cur = dnabuf.buf = new unsigned char[buflen];
+    dnabuf.buflen = dnabuf.byte_counter = 0;
+    dnabuf.buf_end = dnabuf.buf + buflen;
+
+    merge_dna(dnabuf, addr1, pos1, addr2, pos2, channel_id);
+
+    delete dnabuf.buf;
+    dnabuf.buf = dnabuf.buf_cur = dnabuf.buf_end = NULL;
+    
+    munmap(addr1, s1);
+    fclose(fp1);
+    munmap(addr2, s2);
+    fclose(fp2);
+    return 0;
+}			/* ----------  end of function main  ---------- */
+
+

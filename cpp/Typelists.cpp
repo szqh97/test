@@ -159,6 +159,7 @@ public:
     typedef Typelist<Head, L2> Result;
 };
 
+#if 0
 int main ( int argc, char *argv[] )
 {
     typedef TYPELIST_4(signed char, short int, int, long int) SignedIntegrals;
@@ -190,3 +191,4 @@ int main ( int argc, char *argv[] )
 
     return 0;
 }			/* ----------  end of function main  ---------- */
+#endif

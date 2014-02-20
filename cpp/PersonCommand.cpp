@@ -5,11 +5,16 @@ class Person;
 class Command
 {
 public:
-    Command(Person *obj = NULL, void(Person:: *meth)() = NULL)
+    Command(Person *obj = NULL, void(Person:: *meth)() = NULL): object(obj), method(meth)
+    {
+
+    }
+#if 0
     {
         object = obj;
         method = meth;
     }
+#endif
     void execute()
     {
         (object->*method)();
