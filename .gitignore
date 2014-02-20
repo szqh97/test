@@ -1,4 +1,6 @@
 *.o
+dna
+dna_dir/
 .*.sw*
 a.out
 *.video
