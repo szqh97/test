@@ -28,11 +28,11 @@ class taskMgr(threading.Thread):
                 print "the length of items is ", len(items)
             except Exception, err:
                 print traceback.format_exc()
-            time.sleep(4)
+            #time.sleep(4)
 
 def func(testdb):
     while True:
-        time.sleep(4)
+        #time.sleep(4)
         try:
             conn = sqlite3.connect(testdb)
             cursor = conn.cursor()
