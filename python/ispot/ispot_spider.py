@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import urllib2
 import BeautifulSoup
+import cPickle
 
 home = "http://www.ispot.tv"
 browseurl = "http://www.ispot.tv/browse"
@@ -68,6 +69,17 @@ def get_last_categories(categories2_list):
 
 def get_brands(categories_list):
     pass;
+
+if __name__ == '__main__':
+    soup = get_browse(browseurl)
+    c1 = get_tv_ad_categories1(soup)
+    c2 = get_tv_ad_categories2(c1)
+    all_brands, products = get_last_categories(c2)
+    with file('call_brands.pk', 'w') as f:
+        cPickle.dump(all_brands, f)
+    with file('products.pk', 'w') as f:
+        cPickle.dump(products.f)
+
 
 
 
