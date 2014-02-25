@@ -44,7 +44,7 @@ def get_tv_ad_categories2(categories1_list):
     return categories2_list
 
 def get_last_categories(categories2_list):
-    all_barnds_list = {}
+    all_barnds_page_list = {}
     products_page_list = {}
     for category, url in categories2_list.iteritems():
         res = urllib2.urlopen(url)
@@ -54,18 +54,18 @@ def get_last_categories(categories2_list):
         # current page can find all brands
         if pos == -1:
             all_barnds_list.update({category : url + "?view-all=true"})
-        else:
-            soup = BeautifulSoup.BeautifulSoup(html)
-            spl = soup.body.find('div',{"class":"span3 pull-left"})
-            alldivs = spl.div.findAll('div', {"class":"span3"})
-            for d in alldivs:
-                if d.h2 and d.h2.text == 'Product Categories':
-                    i = alldivs.index(d)
-                    alldivs = alldivs[i+1:]
-                    break
-            for d in alldivs:
-                products_page_list.update({'/'.join((category, d.a.text)): home + d.a['href']})
-    return all_barnds_list, products_page_list
+#        else:
+#            soup = BeautifulSoup.BeautifulSoup(html)
+#            spl = soup.body.find('div',{"class":"span3 pull-left"})
+#            alldivs = spl.div.findAll('div', {"class":"span3"})
+#            for d in alldivs:
+#                if d.h2 and d.h2.text == 'Product Categories':
+#                    i = alldivs.index(d)
+#                    alldivs = alldivs[i+1:]
+#                    break
+#            for d in alldivs:
+#                products_page_list.update({'/'.join((category, d.a.text)): home + d.a['href']})
+    return all_barnds_page_list
 
 def get_brands(categories_list):
     pass;
@@ -78,6 +78,7 @@ if __name__ == '__main__':
     c2 = get_tv_ad_categories2(c1)
     print len(c2)
     print c2
+    os.exit(0)
     all_brands, products = get_last_categories(c2)
     with file('call_brands.pk', 'w') as f:
         cPickle.dump(all_brands, f)
