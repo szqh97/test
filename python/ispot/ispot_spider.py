@@ -72,13 +72,17 @@ def get_brands(categories_list):
 
 if __name__ == '__main__':
     soup = get_browse(browseurl)
+    print "a"
     c1 = get_tv_ad_categories1(soup)
+    print c1
     c2 = get_tv_ad_categories2(c1)
+    print len(c2)
+    print c2
     all_brands, products = get_last_categories(c2)
     with file('call_brands.pk', 'w') as f:
         cPickle.dump(all_brands, f)
     with file('products.pk', 'w') as f:
-        cPickle.dump(products.f)
+        cPickle.dump(products, f)
 
 
 
