@@ -127,6 +127,8 @@ def get_all_spots(brand_list):
     for category, url in brand_list.iteritems():
         spots = get_a_brand_spots(category, url)
         all_spots.update(spots)
+        with file( 'tmp_all_spots.pk', 'w') as f :
+            cPickle.dump(all_spots, f)
     return all_spots
 
 
