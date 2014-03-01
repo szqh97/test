@@ -1,19 +1,46 @@
 #!/usr/bin/env python
+import os
 import urllib2
 import BeautifulSoup
+import time
 import traceback
+import logging
+import logging.config
 import cPickle
+logger = logging
+def install_logger():
+    global logger
+    
+    logger.config.fileConfig("./logging.conf")
+    logger = logger.getLogger("ispot")
+install_logger()
+
+
 
 home = "http://www.ispot.tv"
 browseurl = "http://www.ispot.tv/browse"
+retry_times = 5
+
+def urlopen_wrap(url):
+    i = 1
+    while True:
+    #    if i > retry_times:
+    #        raise Exception("Exception: retried several times to connect %S" % url)
+        try:
+            res = urllib2.urlopen(url)
+            return res
+        except Exception, err:
+            logger.error('retry to connect: %s', url)
+            time.sleep(0.5* (2 ** (i-1)))
+            i+=1
 
 def get_browse(browseurl):
     try:
-        res = urllib2.urlopen(browseurl)
+        res = urlopen_wrap(browseurl)
         html = res.read()
         soup = BeautifulSoup.BeautifulSoup(html)
     except Exception, err:
-        print traceback.format_exc()
+        logger.error("get_browe Error%s", str(traceback.format_exc()))
     return soup
 
 def get_tv_ad_categories1(soup):
@@ -48,7 +75,7 @@ def get_last_categories(categories2_list):
     all_barnds_page_list = {}
     #products_page_list = {}
     for category, url in categories2_list.iteritems():
-        res = urllib2.urlopen(url)
+        res = urlopen_wrap(url)
         html = res.read()
         pos = html.find('Product Categories')
 
@@ -80,24 +107,24 @@ def get_brands(brands_page_list):
             for d in alldivs:
                 brands_list.update({'/'.join((category, d.a.text)): home + d.a['href']})
         except Exception, err:
-            print category, url
-            print traceback.format_exc()
+            logger.error("%s, %s", category, url)
+            logger.error("get brands error:%s, ", str(traceback.format_exc()))
 
     return brands_list
 
 def get_a_brand_spots(brand, brand_url):
 
-    print "get_a_brand_spots ...", brand_url
+    logger.info("get_a_brand_spots ... %s", brand_url)
 
     soup = None
     spots_list = {}
-    res = urllib2.urlopen(brand_url)
+    res = urlopen_wrap(brand_url)
     html = res.read()
     pos = html.find("Show all Commercials")
 
     # if you can view all commercials
     if pos != -1:
-        res = urllib2.urlopen(brand_url + "?view-all=true")
+        res = urlopen_wrap(brand_url + "?view-all=true")
         html = res.read()
     else:
         soup = BeautifulSoup.BeautifulSoup(html)
@@ -122,7 +149,7 @@ def get_a_brand_spots(brand, brand_url):
     return spots_list
 
 def get_all_spots(brand_list):
-    print "get_all_spots ...."
+    logger.info("get_all_spots ....")
     all_spots = {}
     for category, url in brand_list.iteritems():
         spots = get_a_brand_spots(category, url)
@@ -135,7 +162,7 @@ def get_all_spots(brand_list):
 
 if __name__ == '__main__':
 #    soup = get_browse(browseurl)
-#    print "a"
+#    "a"
 #    c1 = get_tv_ad_categories1(soup)
 #    print c1
 #    c2 = get_tv_ad_categories2(c1)
