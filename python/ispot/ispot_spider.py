@@ -16,6 +16,7 @@ def install_logger():
 install_logger()
 
 
+spots_file = "./all_spots_url.txt"
 
 home = "http://www.ispot.tv"
 browseurl = "http://www.ispot.tv/browse"
@@ -33,11 +34,25 @@ def urlopen_wrap(url):
             logger.error('retry to connect: %s', url)
             time.sleep(0.5* (2 ** (i-1)))
             i+=1
+def get_html(url):
+    i = 1
+    while True:
+        #if i > retry_times:
+        #    raise Exception("Exception, get html from: %s, out of time " % url)
+        try:
+            res = urlopen_wrap(url)
+            html = res.read()
+            return html
+        except Exception, err:
+            logger.error("retryed to get html: %s", url) 
+            time.sleep(0.5* (2 ** (i-1)))
+            i+=1
 
 def get_browse(browseurl):
     try:
-        res = urlopen_wrap(browseurl)
-        html = res.read()
+        #res = urlopen_wrap(browseurl)
+        #html = res.read()
+        html = get_html(browseurl)
         soup = BeautifulSoup.BeautifulSoup(html)
     except Exception, err:
         logger.error("get_browe Error%s", str(traceback.format_exc()))
@@ -75,8 +90,9 @@ def get_last_categories(categories2_list):
     all_barnds_page_list = {}
     #products_page_list = {}
     for category, url in categories2_list.iteritems():
-        res = urlopen_wrap(url)
-        html = res.read()
+        #res = urlopen_wrap(url)
+        #html = res.read()
+        html = get_html(url)
         pos = html.find('Product Categories')
 
         # current page can find all brands
@@ -118,14 +134,16 @@ def get_a_brand_spots(brand, brand_url):
 
     soup = None
     spots_list = {}
-    res = urlopen_wrap(brand_url)
-    html = res.read()
+    #res = urlopen_wrap(brand_url)
+    #html = res.read()
+    html = get_html(brand_url)
     pos = html.find("Show all Commercials")
 
     # if you can view all commercials
     if pos != -1:
-        res = urlopen_wrap(brand_url + "?view-all=true")
-        html = res.read()
+        #res = urlopen_wrap(brand_url + "?view-all=true")
+        #html = res.read()
+        html = get_html(brand_url + "?view-all=true")
     else:
         soup = BeautifulSoup.BeautifulSoup(html)
         clearfix = soup.find("div", {"class":"clearfix"})
@@ -135,6 +153,11 @@ def get_a_brand_spots(brand, brand_url):
                 spot = brand + "/" + d.a.text
                 spot_url = home + d.a.get("href")
                 spots_list.update({spot:spot_url})
+                with file (spots_file, 'a') as f:
+                    spot_info = spot + u" | " + spot_url + "\n"
+                    if spot_info.__class__ == unicode:
+                        spot_info = spot_info.encode('utf-8')
+                    f.write(spot_info)
 
     if not soup:
         soup = BeautifulSoup.BeautifulSoup(html)
@@ -146,6 +169,12 @@ def get_a_brand_spots(brand, brand_url):
                 spot = brand + "/" + d.a.text
                 spot_url = home + href
                 spots_list.update({spot:spot_url})
+                with file(spots_file, 'a') as f:
+                    spot_info = spot + u" | " + spot_url + "\n"
+                    if spot_info.__class__ == unicode:
+                        spot_info = spot_info.encode('utf-8')
+                    f.write(spot_info)
+
     return spots_list
 
 def get_all_spots(brand_list):
@@ -161,9 +190,11 @@ def get_all_spots(brand_list):
 
 
 if __name__ == '__main__':
-#    soup = get_browse(browseurl)
-#    "a"
-#    c1 = get_tv_ad_categories1(soup)
+    soup = get_browse(browseurl)
+    "a"
+    c1 = get_tv_ad_categories1(soup)
+    with file('industries.pk', 'w') as f:
+        cPickle.dump(c1, f)
 #    print c1
 #    c2 = get_tv_ad_categories2(c1)
 #    print len(c2)
@@ -176,13 +207,14 @@ if __name__ == '__main__':
 #    all_brands = get_brands(all_brands_page_list)
 #    with file ('all_brands.pk', 'w') as p:
 #        cPickle.dump(all_brands, p)
-    all_brands = None
-    with file ('all_brands.pk', 'r') as f:
-        all_brands = cPickle.load(f)
-    all_spots = get_all_spots(all_brands)
-
-    with file ('all_spots.pk', 'w') as f:
-        cPickle.dump(all_spots, f)
+#    all_brands = None
+#    with file ('all_brands.pk', 'r') as f:
+#        all_brands = cPickle.load(f)
+#    all_spots = get_all_spots(all_brands)
+#
+#    with file ('all_spots.pk', 'w') as f:
+#        cPickle.dump(all_spots, f)
+#    logger.info("complete ...")
     
 
 
