@@ -11,7 +11,7 @@ import os
 #tab completion
 readline.parse_and_bind('tab: complete')
 # history file
-hisfile = os.path.join(os.environ['HOME'], '.pythonhistory')
+histfile = os.path.join(os.environ['HOME'], '.pythonhistory')
 try:
     readline.read_history_file(hisfile)
 except IOError:
