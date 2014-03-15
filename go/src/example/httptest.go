@@ -1,14 +1,15 @@
 package main
+
 import (
-    "net/http"
+	"net/http"
 )
 
 //type Hello struct {}
 type String string
 type Struct struct {
-    Greeting string
-    Punct    string
-    Who      string
+	Greeting string
+	Punct    string
+	Who      string
 }
 
 //func (h Hello) ServeHTTP (w http.ResponseWriter, r *http.Request) {
@@ -16,8 +17,7 @@ type Struct struct {
 //}
 
 func main() {
-    http.Handle("/string", String("I'm a frayed knot."))
-    http.Handle("/struct", &Struct{"Hello", ":", "GOO"})
-    http.ListenAndServe("localhost:4000", nil)
+	http.Handle("/string", String("I'm a frayed knot."))
+	http.Handle("/struct", &Struct{"Hello", ":", "GOO"})
+	http.ListenAndServe("localhost:4000", nil)
 }
-

@@ -1,27 +1,28 @@
 package main
-import(
-    "os"
-    "flag"
+
+import (
+	"flag"
+	"os"
 )
 
 var mitNewline = flag.Bool("n", false, "don't print final newline")
 
-const(
-    Space = " "
-    Newline = "\n"
+const (
+	Space   = " "
+	Newline = "\n"
 )
 
-func main(){
-    flag.Parse()
-    var s string = ""
-    for i := 0; i < flag.NArg(); i++ {
-        if i > 0{
-            s += Space
-        }
-        s += flag.Arg(i)
-    }
-    if !*mitNewline{
-        s += Newline
-    }
-    os.Stdout.WriteString(s)
+func main() {
+	flag.Parse()
+	var s string = ""
+	for i := 0; i < flag.NArg(); i++ {
+		if i > 0 {
+			s += Space
+		}
+		s += flag.Arg(i)
+	}
+	if !*mitNewline {
+		s += Newline
+	}
+	os.Stdout.WriteString(s)
 }
