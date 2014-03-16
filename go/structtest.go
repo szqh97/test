@@ -15,6 +15,7 @@ func Older(p1, p2 person) (person, int) {
 	return p2, p2.age - p1.age
 }
 
+
 func main() {
 	tom := person{"Tom", 18}
 	var bob person
