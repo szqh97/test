@@ -1,6 +1,6 @@
 package main
 import (
-    "./file"
+    "file"
     "fmt"
     "os"
 )
