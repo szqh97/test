@@ -1,7 +1,10 @@
 package main
 import (
 //    "flag"
-    "encoding/binary"
+    //"encoding/binary"
+    "fmt"
+    "encoding/gob"
+    "bytes"
     "os"
     "log"
 )
@@ -14,6 +17,7 @@ type control_block struct {
     ts uint64
 }
 
+/*
 type dna_heaer struct {
     pad [48]byte
 }
@@ -22,6 +26,29 @@ type dna struct {
     ts uint32
     pad [36]byte
 }
+*/
+
+func (cb *control_block) GobDecode(buf []byte) error {
+    r := bytes.NewBuffer(buf)
+    decoder := gob.NewDecoder(r)
+    err := decoder.Decode(&cb.ser_num)
+    if err != nil {
+        return err
+    }
+    err = decoder.Decode(&cb.dna_type)
+    if err != nil {
+        return err
+    }
+    err = decoder.Decode(&cb.length)
+    if err != nil {
+        return err
+    }
+    err = decoder.Decode(&cb.pad)
+    if err != nil {
+        return err
+    }
+    return decoder.Decode(&cb.ts)
+}
 
 func extract_ts(dnafile string) error {
     file, err := os.Open(dnafile)
@@ -29,18 +56,21 @@ func extract_ts(dnafile string) error {
         log.Fatal(err)
     }
 
-    var cb control_block
     cb_bytes := make ([]byte, 24)
     count, err := file.Read(cb_bytes)
-    err = nil
     if err != nil {
         log.Fatal(err)
     }
-    //log.Println(count, dna_cb.length)
+    fmt.Println(cb_bytes, count)
+
+    buffer := bytes.NewBuffer(cb_bytes)
+    dna_cb := new (control_block)
+    dec := gob.NewDecoder(buffer)
+    err = dec.Decode(dna_cb)
+    fmt.Println(dna_cb, err)
 
     defer file.Close()
     return nil
-
 }
 
 func main() {
