@@ -45,7 +45,7 @@ func main() {
     if err != nil {
         log.Fatal( "encode error:", err)
     }
-    log.Println(buffer)
+    log.Println(buffer.Bytes())
     log.Println("xxxxx")
 
 
