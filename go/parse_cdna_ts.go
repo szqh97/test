@@ -1,53 +1,30 @@
 package main
 import (
-//    "flag"
-    //"encoding/binary"
+    "flag"
+    "encoding/binary"
     "fmt"
-    "encoding/gob"
-    "bytes"
     "os"
     "log"
 )
 
 type control_block struct {
-    ser_num uint32
-    dna_type uint32
-    length uint32
-    pad uint32
-    ts uint64
+    Ser_num uint32
+    Dna_type uint32
+    Length uint32
+    Pad uint32
+    Ts uint64
 }
 
-/*
 type dna_heaer struct {
-    pad [48]byte
+    Version uint32
+    Media_length uint32
+    Pad [40]byte
+
 }
 
 type dna struct {
-    ts uint32
-    pad [36]byte
-}
-*/
-
-func (cb *control_block) GobDecode(buf []byte) error {
-    r := bytes.NewBuffer(buf)
-    decoder := gob.NewDecoder(r)
-    err := decoder.Decode(&cb.ser_num)
-    if err != nil {
-        return err
-    }
-    err = decoder.Decode(&cb.dna_type)
-    if err != nil {
-        return err
-    }
-    err = decoder.Decode(&cb.length)
-    if err != nil {
-        return err
-    }
-    err = decoder.Decode(&cb.pad)
-    if err != nil {
-        return err
-    }
-    return decoder.Decode(&cb.ts)
+    Ts uint32
+    Pad [36]byte
 }
 
 func extract_ts(dnafile string) error {
@@ -55,26 +32,58 @@ func extract_ts(dnafile string) error {
     if err != nil {
         log.Fatal(err)
     }
-
-    cb_bytes := make ([]byte, 24)
-    count, err := file.Read(cb_bytes)
-    if err != nil {
-        log.Fatal(err)
-    }
-    fmt.Println(cb_bytes, count)
-
-    buffer := bytes.NewBuffer(cb_bytes)
-    dna_cb := new (control_block)
-    dec := gob.NewDecoder(buffer)
-    err = dec.Decode(dna_cb)
-    fmt.Println(dna_cb, err)
-
     defer file.Close()
+    var (
+        cb control_block
+        dh dna_heaer
+        //dnaframe dna
+    )
+
+    err = binary.Read(file, binary.LittleEndian, &cb)
+    if err != nil {
+        log.Fatal("read cb error: ", err)
+        return err
+    }
+    err = binary.Read(file, binary.LittleEndian, &dh)
+    if err != nil {
+        log.Fatal("read dna header error: ", err)
+        return err
+    }
+    err = binary.Read(file, binary.LittleEndian, &cb)
+    if err != nil {
+        log.Fatal("read cb error: ", err)
+        return err
+    }
+    for ;cb.Length != 0; {
+        dna_cnts := cb.Length / 40
+        dnas := make ([]dna, dna_cnts)
+        err = binary.Read(file, binary.LittleEndian, &dnas)
+        for i := 0; i < int(dna_cnts); i++ {
+            //fmt.Printf( "%x\n", dnas[i].Pad)
+            fmt.Println(dnas[i].Ts)
+        }
+        err = binary.Read(file, binary.LittleEndian, &cb)
+        if err != nil {
+            log.Fatal("read cb error 2: ", err)
+            return err
+        }
+
+    }
+
+
     return nil
 }
 
 func main() {
-    dnafile := "./2.1386403800.cdna"
-    //dnafile := flag.NArg(1)
-    extract_ts(dnafile)
+    flag.Parse()
+    if flag.NArg() == 0 {
+        log.Println("Usage : ./parse_cdna_ts 16.xx.cdna")
+    }else {
+
+        dnafile := flag.Arg(0)
+
+        //dnafile := "./16.1394089199.cdna"
+        //dnafile := flag.NArg(1)
+        extract_ts(dnafile)
+    }
 }
