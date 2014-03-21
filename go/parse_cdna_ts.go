@@ -5,6 +5,7 @@ import (
     "fmt"
     "os"
     "log"
+//    "strconv"
 )
 
 type control_block struct {
@@ -35,10 +36,16 @@ func extract_ts(dnafile string) error {
     defer file.Close()
     var (
         cb control_block
-        dh dna_heaer
         //dnaframe dna
     )
 
+    pos, err := file.Seek(72, os.SEEK_SET)
+
+    if err != nil {
+        log.Fatal("set pos: ", pos, err)
+    }
+
+    /*
     err = binary.Read(file, binary.LittleEndian, &cb)
     if err != nil {
         log.Fatal("read cb error: ", err)
@@ -49,6 +56,8 @@ func extract_ts(dnafile string) error {
         log.Fatal("read dna header error: ", err)
         return err
     }
+    */
+    ts_slice := make([]uint32,100,512)
     err = binary.Read(file, binary.LittleEndian, &cb)
     if err != nil {
         log.Fatal("read cb error: ", err)
@@ -60,7 +69,8 @@ func extract_ts(dnafile string) error {
         err = binary.Read(file, binary.LittleEndian, &dnas)
         for i := 0; i < int(dna_cnts); i++ {
             //fmt.Printf( "%x\n", dnas[i].Pad)
-            fmt.Println(dnas[i].Ts)
+            //fmt.Println( dnas[i].Ts)
+            append(ts_slice, dnas[i].Ts)
         }
         err = binary.Read(file, binary.LittleEndian, &cb)
         if err != nil {
@@ -69,6 +79,8 @@ func extract_ts(dnafile string) error {
         }
 
     }
+
+    fmt.Println(ts_slice)
 
 
     return nil
