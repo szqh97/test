@@ -1,5 +1,6 @@
 package main
 import "fmt"
+import "runtime"
 
 var a interface{}
 func f() interface{} {
@@ -13,5 +14,7 @@ func main() {
     a = s
     fmt.Println(a)
     fmt.Println(f())
+    fmt.Println(runtime.GOOS)
+    fmt.Println(runtime.GOARCH)
 }
 
