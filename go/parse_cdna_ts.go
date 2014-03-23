@@ -2,7 +2,7 @@ package main
 import (
     "flag"
     "encoding/binary"
-    "fmt"
+ //   "fmt"
     "os"
     "log"
 //    "strconv"
@@ -57,7 +57,6 @@ func extract_ts(dnafile string) error {
         return err
     }
     */
-    ts_slice := make([]uint32,100,512)
     err = binary.Read(file, binary.LittleEndian, &cb)
     if err != nil {
         log.Fatal("read cb error: ", err)
@@ -70,7 +69,7 @@ func extract_ts(dnafile string) error {
         for i := 0; i < int(dna_cnts); i++ {
             //fmt.Printf( "%x\n", dnas[i].Pad)
             //fmt.Println( dnas[i].Ts)
-            append(ts_slice, dnas[i].Ts)
+            //append(ts_slice, dnas[i].Ts)
         }
         err = binary.Read(file, binary.LittleEndian, &cb)
         if err != nil {
@@ -80,7 +79,6 @@ func extract_ts(dnafile string) error {
 
     }
 
-    fmt.Println(ts_slice)
 
 
     return nil
