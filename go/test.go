@@ -1,4 +1,5 @@
 package main
+<<<<<<< HEAD
 import "fmt"
 import "os"
 
@@ -28,6 +29,32 @@ func main() {
     buf := make([]byte, 128)
     file.Read(buf)
     ch<-buf
+=======
+import (
+    "fmt"
+    "os"
+)
+func readfile(ch chan []byte){
+    b := make([]byte, 1024)
+    f, err := os.Open("pc.go")
+    if err  != nil {
+    }
+    f.Read(b)
+    
+    ch <- b
+}
+
+
+var a interface{}
+func main() {
+
+    //ch := make(chan []byte, 1024)
+    ch := make(chan []byte, 1024)
+    buf := make ([]byte, 512)
+    go readfile(ch)
+    buf =<- ch 
+    fmt.Println(buf)
+>>>>>>> eba67460dbf0cb736230f0ce66717f4460ab5e43
     
 
 }
