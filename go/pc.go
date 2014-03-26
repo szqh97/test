@@ -5,12 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	//    "reflect"
-	// "io/ioutil"
-	//   "encoding/gob"
-	//   "bytes"
 	"os"
-	//"log"
 )
 
 type control_block struct {
@@ -55,15 +50,14 @@ func (d *dna) Parse_dna(dna_buf []byte) error {
 
 func extract_ts(filename string) error {
 	file, err := os.Open(filename)
+	defer file.Close()
 	if err != nil {
-
+		return errors.New("open file error")
 	}
 	file.Seek(24+48, os.SEEK_SET)
 	cb_buf := make([]byte, 24)
-	var (
-		cb        control_block
-		dna_frame dna
-	)
+	cb := new(control_block)
+	dna_frame := new(dna)
 	file.Read(cb_buf)
 	cb.Parse_cb(cb_buf)
 	dna_buf := make([]byte, cb.Length)
@@ -71,24 +65,18 @@ func extract_ts(filename string) error {
 		file.Read(dna_buf)
 		for i := 0; i < int(cb.Length/40); i++ {
 			dna_frame.Parse_dna(dna_buf[i*40 : (i+1)*40])
-			//fmt.Println(dna_frame.Ts)
+			fmt.Println(dna_frame.Ts)
 		}
 		file.Read(cb_buf)
 		cb.Parse_cb(cb_buf)
 	}
 
-	file.Close()
 	return nil
 
 }
 
 func main() {
-	//l := intDataSize(dnas)
-
-	//dnafile := "./16.1394089199.cdna"
 	flag.Parse()
 	dnafile := flag.Arg(0)
-	fmt.Println(dnafile)
 	extract_ts(dnafile)
-	//extract_ts(dnafile)
 }
