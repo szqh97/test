@@ -8,7 +8,7 @@ import (
 
 func main() {
     const n = 1
-    finish := make(chan bool)
+    finish := make(chan struct {})
     var done sync.WaitGroup
     for i := 0; i < n; i++ {
         done.Add(1)
