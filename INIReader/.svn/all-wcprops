@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/AdsTracker/!svn/ver/1105/ads/VideoCapture/trunk/livebox/src/processor/INIReader
+END
+INIReadertest_livebox.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/AdsTracker/!svn/ver/1105/ads/VideoCapture/trunk/livebox/src/processor/INIReader/INIReadertest_livebox.cpp
+END
+ini.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/AdsTracker/!svn/ver/1105/ads/VideoCapture/trunk/livebox/src/processor/INIReader/ini.c
+END
+INIReader.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/AdsTracker/!svn/ver/1105/ads/VideoCapture/trunk/livebox/src/processor/INIReader/INIReader.cpp
+END
+ini.h
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/AdsTracker/!svn/ver/1105/ads/VideoCapture/trunk/livebox/src/processor/INIReader/ini.h
+END
+INIReader.h
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/AdsTracker/!svn/ver/1105/ads/VideoCapture/trunk/livebox/src/processor/INIReader/INIReader.h
+END
