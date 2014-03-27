@@ -64,7 +64,7 @@ type FileEvent struct {
 
 // IsCreate reports whether the FileEvent was triggered by a creation
 func (e *FileEvent) IsCreate() bool {
-	return (e.mask&sys_IN_CREATE) == sys_IN_CREATE || (e.mask&sys_IN_MOVED_TO) == sys_IN_MOVED_TO
+	return (e.mask&sys_IN_CREATE) == sys_IN_CREATE 
 }
 
 // IsDelete reports whether the FileEvent was triggered by a delete
@@ -79,12 +79,22 @@ func (e *FileEvent) IsModify() bool {
 
 // IsRename reports whether the FileEvent was triggered by a change name
 func (e *FileEvent) IsRename() bool {
-	return ((e.mask&sys_IN_MOVE_SELF) == sys_IN_MOVE_SELF || (e.mask&sys_IN_MOVED_FROM) == sys_IN_MOVED_FROM)
+	return (e.mask&sys_IN_MOVE_SELF) == sys_IN_MOVE_SELF
+}
+
+// IsMovedTo reports whether the fileEvent was triggered by a moved_to action
+func (e *FileEvent) IsMovedTo() bool {
+    return ((e.mask&sys_IN_MOVED_TO) == sys_IN_MOVED_TO)
 }
 
 // IsAttrib reports whether the FileEvent was triggered by a change in the file metadata.
 func (e *FileEvent) IsAttrib() bool {
 	return (e.mask & sys_IN_ATTRIB) == sys_IN_ATTRIB
+}
+
+// IsMovedFrom reports whether the fileEvent was triggered by a moved_From action
+func (e *FileEvent) IsMovedFrom() bool {
+    return ((e.mask&sys_IN_MOVED_FROM) == sys_IN_MOVED_FROM)
 }
 
 type watch struct {
