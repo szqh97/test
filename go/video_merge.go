@@ -1,20 +1,30 @@
 package main
 
 import (
-    "fsnotify"
-    "goconfig"
     "log"
     "os"
     "os/exec"
     "strings"
+    "time"
+
+    "logger"
+    "fsnotify"
+    "goconfig"
 )
 
 type av_list map[string]string
 
+func install_logger() {
+    logger.SetConsole(true)
+    logger.SetRollingFile("./var/log", "video_merge.log", 20, 20, logger.MB)
+    logger.SetRollingDaily("./var/log", "video_merge.log")
+    logger.SetLevel(logger.DEBUG)
+}
+
 func getMonitorPath() (mpath string, err error) {
     cfg, err := goconfig.LoadConfigFile("./etc/live_box.conf")
     if err != nil {
-        log.Println("load config file live_box.conf failed!")
+        logger.Fatal("load config file live_box.conf failed!")
         return "", err
     }
     return cfg.GetValue("taskGenerator", "video_path")
@@ -32,7 +42,7 @@ func (avl *av_list) process_in_moved_to(file string) error {
     if len(splitedfile) == 5 {
         channel_id = splitedfile[0]
     } else {
-        log.Printf("file %s is error", file)
+        logger.Warn("file %s is error", file)
     }
 
     if f, ok := (*avl)[channel_id]; ok {
@@ -47,19 +57,21 @@ func (avl *av_list) process_in_moved_to(file string) error {
             f_a = f
             outf = strings.Join(strings.Split(f, ".")[0:3], ".") + ".mp4"
         }
-        log.Println(f_v, f_a, outf)
+        logger.Info("f_v: " + f_v + ", f_a: " + f_a + ", outf: " + outf)
 
+        time.Sleep(time.Duration(time.Second*5))
         // merge video and audio
         cmd := exec.Command("ffmpeg", "-y", "-i", f_v, "-i", f_a, "-codec", "copy", outf)
         //cmd := exec.Command("ffmpeg", " -y -i ", f_v, "-i ", f_a, " -codec copy ", outf, " >/dev/null 2>&1 ")
+        logger.Info("cmd's args is: ", cmd.Args)
         err := cmd.Run()
         if err != nil {
-            log.Fatal("ffmpeg merge video error:", err)
+            logger.Fatal("ffmpeg merge video error:", err)
         } else {
             cmd = exec.Command("rm", "-f", f_v, " ", f_a)
             err = cmd.Run()
             if err != nil {
-                log.Println("rm files error", err)
+                logger.Warn("rm files error: %s", err)
             }
         }
     } else {
@@ -69,16 +81,17 @@ func (avl *av_list) process_in_moved_to(file string) error {
 }
 
 func main() {
+    install_logger()
     //monitorpath := "/home/li_yun/Projects/test/go"
     monitorpath, err := getMonitorPath()
     if err != nil {
-        log.Fatal("get monitor path error: ", err)
+        logger.Fatal("get monitor path error: %s", err)
         os.Exit(1)
     }
     log.Println(monitorpath)
     watcher, err := fsnotify.NewWatcher()
     if err != nil {
-        log.Fatal(err)
+        logger.Fatal("newWatcher error: %s", err)
     }
 
     done := make(chan bool)
@@ -90,7 +103,7 @@ func main() {
             case ev := <-watcher.Event:
                 (&avfile_list).process_in_moved_to(ev.Name)
             case err := <-watcher.Error:
-                log.Println("error:", err)
+                logger.Warn("errror: %s", err)
             }
         }
     }()
@@ -98,7 +111,7 @@ func main() {
     // only monitor FSN_RENAME event
     err = watcher.WatchFlags(monitorpath, fsnotify.FSN_MOVEDTO)
     if err != nil {
-        log.Fatal(err)
+        logger.Fatal("add watch flags error: %s", err)
     }
 
     <-done
