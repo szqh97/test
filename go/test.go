@@ -1,35 +1,21 @@
 package main
+
 import (
-    "fmt"
-    "os"
+	"fmt"
+	"os"
 )
-func readfile(ch chan []byte){
-    defer close(ch) 
-    b := make([]byte, 1024)
-    f, err := os.Open("pc.go")
-    if err  != nil {
-    }
-    f.Read(b)
-    
-    ch <- b
-}
 
-
-var a interface{}
 func main() {
+	var m map[int]int
+	fmt.Println(len(m))
+	fmt.Println(m[4])
+	if v, ok := m[4]; ok {
+		fmt.Println("map has this key", v)
+	} else {
+		fmt.Println("map not has this key")
+	}
+	fmt.Println("x", os.Getpid())
+	var a interface{}
+	fmt.Println(fmt.Sprintf("xx", a))
 
-    //ch := make(chan []byte, 1024)
-    ch := make(chan []byte, 1024)
-    go readfile(ch)
-    ok := true
-    for ok {
-        if buf, ok := <-ch; ok {
-            fmt.Println(buf)
-
-    }
 }
-
-
-}
-
-
