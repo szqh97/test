@@ -7,6 +7,7 @@ import (
     "strings"
     "time"
 
+    "pidlock"
     "logger"
     "fsnotify"
     "goconfig"
@@ -81,6 +82,9 @@ func (avl *av_list) process_in_moved_to(file string) error {
 }
 
 func main() {
+    pid_file := "./var/run/taskgenerator.pid"
+    pid_locker, err := pidlock.Lock_write_pid_file(pid_file)
+    logger.Info("starting ...")
     install_logger()
     //monitorpath := "/home/li_yun/Projects/test/go"
     monitorpath, err := getMonitorPath()
@@ -117,4 +121,7 @@ func main() {
     <-done
     /* ... do stuff ... */
     watcher.Close()
+    pid_locker.Close()
+    logger.Info("done ...")
+
 }
