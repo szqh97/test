@@ -17,5 +17,6 @@ func main() {
 	fmt.Println("x", os.Getpid())
 	var a interface{}
 	fmt.Println(fmt.Sprintf("xx", a))
+    fmt.Println(float64(7/9.0))
 
 }
