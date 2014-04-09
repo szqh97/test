@@ -2,17 +2,59 @@ package main
 import (
     _ "github.com/go-sql-driver/mysql"
     "database/sql"
+    "encoding/json"
     "fmt"
     //"pidlock"
     //"time"
 )
+type network struct {
+    Name string `json:"string"`
+}
 
 type channel_info struct {
-    Channel_id int
-    Channel_uuid string
-    Channel_name string
-    Dma string
-    Network string
+    Channel_id int `json:"-"`
+    Channel_uuid string `json:"uuid"`
+    Channel_name string `json:"name"`
+    Dma string `json:"dma"`
+    network `json:"string"`
+    //Network string
+    TimeZone string `json:"timezone"`
+    CaptureId string `json:"captureId"`
+}
+/*
+        post_info = {
+                "requestId": request_id, \
+                "videoManagerUrl": videoManagerUrl, \
+                "mainCapture": mainCapture, \
+                "channel":{ \
+                    "uuid": self.channel_uuid, \
+                    "name": self.channel_name, \
+                    "timezone": timezone, \
+                    "network":{ \
+                        "name": self.network},
+                    "captureId": self.captureId, \
+                    "dma": self.dma},\
+                    "beginTimestamp": beginTimestamp, \
+                    "endTimestamp": endTimestamp, \
+                    "duration": duration, \
+                    "taskDNA": self.taskDNA
+                    }
+
+*/
+type task_info struct {
+    BeginTimestamp uint64 `json:"beginTimestamp"`
+    EndTimestamp uint64 `json:"endTimestamp"`
+    BeginTimestampOfDNA uint64 `json:"beginTimestampOfDNA"`
+    DownloadUrl string `json:"downloadUrl"`
+}
+
+type post_info struct {
+    RequestId string `json:"requestId"`
+    VideoManagerUrl string `json:"videoManagerUrl"`
+    MainCapture string `json:"mainCapture"`
+    EndTimestamp uint64 `json:"endTimestamp"`
+    Duration uint64 `json:"duration"`
+    TaskDNA []taskinfo `json:"taskDNA"`
 }
 
 
@@ -22,6 +64,7 @@ func checkError(err error) {
         panic (err)
     }
 }
+
 
 func GetChannelInfos(dbinfo string) (infos []channel_info, err error) {
     db, err := sql.Open("mysql", dbinfo)

@@ -82,10 +82,10 @@ func (avl *av_list) process_in_moved_to(file string) error {
 }
 
 func main() {
-    pid_file := "./var/run/taskgenerator.pid"
+    install_logger()
+    pid_file := "./var/run/video_merge.pid"
     pid_locker, err := pidlock.Lock_write_pid_file(pid_file)
     logger.Info("starting ...")
-    install_logger()
     //monitorpath := "/home/li_yun/Projects/test/go"
     monitorpath, err := getMonitorPath()
     if err != nil {

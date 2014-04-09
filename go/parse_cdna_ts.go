@@ -16,7 +16,7 @@ type control_block struct {
 	Ts       uint64
 }
 
-type dna_heaer struct {
+type dna_header struct {
 	Version      uint32
 	Media_length uint32
 	Pad          [40]byte
