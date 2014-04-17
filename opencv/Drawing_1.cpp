@@ -30,6 +30,7 @@ int main( void ){
   Mat atom_image = Mat::zeros( w, w, CV_8UC3 );
   Mat rook_image = Mat::zeros( w, w, CV_8UC3 );
 
+
   /// 1. Draw a simple atom:
   /// -----------------------
 

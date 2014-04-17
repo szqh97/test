@@ -1,3 +1,8 @@
+#include <iostream>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+using namespace std;
+using namespace cv;
 int main ( int argc, char *argv[] )
 {
     Mat image;
@@ -5,12 +10,14 @@ int main ( int argc, char *argv[] )
         cout << argc << "no image data\n";
         return -1;
     }
-    image = imread(argv[1], 1);
+    image = imread(argv[1], 0);
     Mat c (image, Rect(10, 10, 100, 100));
     int sz[3] = {2,2,2};
     //Mat E (200, 200, CV_8UC3, Scalar(0,0,255));
     Mat M = Mat(3, 3, CV_8UC3);
     randu(M, Scalar::all(0), Scalar::all(255));
+    cout << image.cols << endl;
+    cout << image.rows << endl;
     cout << image.channels() << endl;
     cout << image.depth() << endl;
     cout << image.cols << ", " << image.rows << endl;
@@ -21,7 +28,7 @@ int main ( int argc, char *argv[] )
     int divideWith = 10;
 
     for (int i = 0; i < 256; ++i)
-       table[i] = (uchar)(divideWith * ((255-i)/divideWith));
+      table[i] = (uchar)(divideWith * ((255-i)/divideWith));
 
     Mat lookUpTable(1, 256, CV_8U);
     uchar* p = lookUpTable.data;
@@ -31,6 +38,7 @@ int main ( int argc, char *argv[] )
 
     //namedWindow("Display Image",CV_WINDOW_AUTOSIZE);
     imshow("display image",J);
+    
     waitKey(0);
 
     return 0;

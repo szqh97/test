@@ -18,7 +18,7 @@ int main(int argc, char** argv)
     const char* filename1 = argc >= 2 ? argv[1] : "pic1.png";
     const char* filename2 = argc >= 2 ? argv[2] : "pic2.png";
     double alpha = 0.5; 
-    double beta;
+    double beta = 0.5;
 
     Mat src1 = imread(filename2 );
     if(src1.empty())
@@ -36,13 +36,14 @@ int main(int argc, char** argv)
     }
     Mat dst;
     beta = (1.0 - alpha);
+    namedWindow("Lin", 1);
     cout << alpha << ",, " << beta;
-    addWeighted(src1, alpha, src2, beta, 0.5, dst);
+    addWeighted(src1, alpha, src2, beta, 0.0, dst);
 
 
     //Mat s = 0.5*src1 + 0.5*src2;
     imshow("average", dst);
-    waitKey();
+    waitKey(0);
     return 0;
 }
 
