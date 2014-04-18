@@ -14,7 +14,7 @@ int main ( int argc, char *argv[] )
     }
     image = imread(argv[1], 0);
 
-    if (image.isContinuous()) 
+    if (!image.isContinuous()) 
     {
     }
     Mat J;
@@ -33,7 +33,7 @@ int main ( int argc, char *argv[] )
 
     cv::threshold(J, I, 0, 255, cv::THRESH_BINARY|cv::THRESH_OTSU);
 
-    //imshow("1", image); 
+    //imshow("1",I); 
     //waitKey();
     uchar *data =I.data;
 
@@ -47,6 +47,19 @@ int main ( int argc, char *argv[] )
         }
         pixs.push_back(p);
     }
+
+    vector<uchar> cpos;
+    for (int c = 0; c < I.cols; ++c)
+    {
+        uchar p = 0;
+        for (int r = 0; r < I.rows; ++r)
+        {
+           p |=  uchar(data[r * I.cols  +c]);
+        }
+        cpos.push_back(p);
+    }
+
+#if 0
     for (size_t i = 0;  i < pixs.size()-1; ++i)
     {
         if (pixs[i] != pixs[i+1])
@@ -55,48 +68,15 @@ int main ( int argc, char *argv[] )
         }
 
     }
-
-#if 0
-    cout << pixs.size() << endl;
-    for (vector<uchar>::const_iterator it = pixs.begin(); it != pixs.end(); ++it)
-    {
-        cout << int(*it) << endl ; 
-    }
 #endif
- 
+
+    for (size_t i = 0; i < cpos.size() -1; ++i)
+    {
+        if (cpos[i] != cpos[i+1])
+        {
+            cout << i+1 << endl;
+        }
+    }
 
     return 0;
 }
-#if 0
-
-void colorReduce(const cv::Mat& image, cv::Mat& result, int div)
-{
-    int nl = image.rows;
-    int nc = image.cols * image.channels();
-
-    if (image.isContinuous()) {
-        nc = nc * nl;
-        nl = 1;
-    }
-
-    int n = static_cast<int>(
-        log(static_cast<double>(div)) / log(2.0));
-
-    for (int j = 0; j < nl; j++) {
-        // get the addresses of input and output row
-        const uchar *data_in = image.ptr<uchar>(j); //give you the address of an image row
-        uchar *data_out = result.ptr<uchar>(j);
-
-        for (int i = 0; i < nc; i++) {
-            
-            //slowest
-            data[i] = data[i] - data[i] % div + div / 2;
-            //middle
-            data[i] = data[i] / div * div + div / 2;
-            //best
-            uchar mask = 0xFF << n; //div = 16, n = 4, mask = 0xF0
-            data_out[i] = (data_in[i] & mask) + div / 2; //data[i] - data[i] % div + div / 2
-        }
-    }
-}
-#endif
