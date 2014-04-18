@@ -3,8 +3,10 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
 using namespace std;
 using namespace cv;
+
 int main ( int argc, char *argv[] )
 {
     Mat image;
@@ -23,7 +25,7 @@ int main ( int argc, char *argv[] )
     uchar table[256];
     int divideWith = 10;
     for (int i = 0; i < 256; ++i)
-      table[i] = (uchar)(divideWith * ((255-i)/divideWith));
+        table[i] = (uchar)(divideWith * ((255-i)/divideWith));
 
     Mat lookUpTable(1, 256, CV_8U);
     uchar* p = lookUpTable.data;
@@ -37,46 +39,72 @@ int main ( int argc, char *argv[] )
     //waitKey();
     uchar *data =I.data;
 
-    vector<uchar> pixs;
-    for (int r = 0; r < I.rows; ++r)
+    vector<int> rpos;
     {
-        uchar p = 0;
-        for (int c = 0; c <I.cols; ++c)
-        {
-           p |=  uchar(data[r * I.cols  +c]);
-        }
-        pixs.push_back(p);
-    }
-
-    vector<uchar> cpos;
-    for (int c = 0; c < I.cols; ++c)
-    {
-        uchar p = 0;
+        uchar pprev =0, pcur = 0;
         for (int r = 0; r < I.rows; ++r)
         {
-           p |=  uchar(data[r * I.cols  +c]);
+            pcur = 0;
+            for (int c = 0; c <I.cols; ++c)
+            {
+                pcur |=  uchar(data[r * I.cols  +c]);
+            }
+            if (pprev != pcur)
+            {
+                rpos.push_back(r);
+            }
+            pprev = pcur;
         }
-        cpos.push_back(p);
     }
+
+    vector<int> cpos;
+    {
+        uchar pprev =0, pcur = 0;
+        for (int c = 0; c < I.cols; ++c)
+        {
+            pcur = 0;
+            for (int r = 0; r < I.rows; ++r)
+            {
+                pcur |=  uchar(data[r * I.cols  +c]);
+            }
+            if (pprev != pcur)
+            {
+                cpos.push_back(c);
+            }
+            pprev = pcur;
+        }
+    }
+
+#if 1
+    for (int i = 0; i < rpos.size(); i+=2)
+    {
+
+        for (int j = 0; j < cpos.size(); j+=2)
+        {
+            //cout << "[(" << rpos[i] << "," << cpos[j] << "), (" << rpos[i +1] << "," << cpos[j + 1] << ")]" << endl;
+            Point p1 = Point(double(rpos[i]), double(cpos[j]));
+            Point p2 = Point(double(rpos[i+1]), double(cpos[j+1]));
+            //rects.insert(pair<Point, Point>(Point(rpos[i], cpos[j]), Point(rpos[i+1], cpos[j+1])));
+            rectangle(:
+            
+        }
+    }
+#endif 
 
 #if 0
-    for (size_t i = 0;  i < pixs.size()-1; ++i)
+    for (size_t i = 0;  i < rpos.size(); ++i)
     {
-        if (pixs[i] != pixs[i+1])
-        {
-            cout << i+1 << endl;
-        }
+            cout << rpos[i] << endl;
 
     }
+
+    cout << "----------------" << endl;
+
+    for (size_t i = 0; i < cpos.size(); ++i)
+    {
+        cout << cpos[i] << endl;
+    }
+
 #endif
-
-    for (size_t i = 0; i < cpos.size() -1; ++i)
-    {
-        if (cpos[i] != cpos[i+1])
-        {
-            cout << i+1 << endl;
-        }
-    }
-
     return 0;
 }
