@@ -64,23 +64,28 @@ int main ( int argc, char *argv[] )
             }
         }
     }
+    vector<int> rpos;
     {
         for (int i=0; i < image.rows-1; ++i)
         {
 
             if(hist_h[i] != hist_h[i+1])
             {
-                line(image, Point(0, i), Point(image.cols , i), Scalar(0,0,255), 1, CV_AA);
+
+                rpos.push_back(i);
+                //line(image, Point(0, i), Point(image.cols , i), Scalar(0,0,255), 1, CV_AA);
             }
         
         }
     }
+    vector<int> cpos;
     {
         for (int i=0; i < image.cols-1; ++i)
         {
             if(hist_w[i] != hist_w[i+1])
             {
-                line(image, Point(i, 0), Point(i, image.rows ), Scalar(0,0,255), 1, CV_AA);
+                cpos.push_back(i);
+                //line(image, Point(i, 0), Point(i, image.rows ), Scalar(0,0,255), 1, CV_AA);
             }
 
         }
@@ -106,6 +111,12 @@ int main ( int argc, char *argv[] )
     }
 #endif
 
+    // get sub rect of word
+    Mat w;
+    CvMat cvimage = image;
+    CvMat cvw = w;
+    cvGetSubRect(&cvimage, &cvw, cvRect(cpos[0], rpos[0], cpos[1]-cpos[0], rpos[1]-rpos[0]));
+    imshow("2", Mat(&cvw));
 #if 0
     for (int i = 0; i < rpos.size(); i+=2)
     {
@@ -113,18 +124,21 @@ int main ( int argc, char *argv[] )
         for (int j = 0; j < cpos.size(); j+=2)
         {
             //cout << "[(" << rpos[i] << "," << cpos[j] << "), (" << rpos[i +1] << "," << cpos[j + 1] << ")]" << endl;
-            Point p1 = Point(double(rpos[i]), double(cpos[j]));
-            Point p2 = Point(double(rpos[i+1]), double(cpos[j+1]));
+            Point p1 = Point(double(cpos[j]), double(rpos[i]));
+            Point p2 = Point(double(cpos[j+1]), double(rpos[i+1]));
             //rects.insert(pair<Point, Point>(Point(rpos[i], cpos[j]), Point(rpos[i+1], cpos[j+1])));
-            cout << p1 << "|" <<p2 <<endl;
-            rectangle(image, p1, p2, Scalar(0,0,255), 0, 8);
+            //cout << p1 << "|" <<p2 <<endl;
+            rectangle(image, p2, p1, Scalar(0,0,255), 0, 1);
 
         }
     }
-#endif 
+#endif
+
+#if 0
     namedWindow("1"); 
     imshow("1",image); 
     waitKey();
+#endif
 
 
 #if 0
