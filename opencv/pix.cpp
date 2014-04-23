@@ -34,10 +34,13 @@ int main ( int argc, char *argv[] )
     LUT(image, lookUpTable, J);
 
     cv::threshold(J, I, 0, 255, cv::THRESH_BINARY|cv::THRESH_OTSU);
+    IplImage Iimpl= I;
 
     //imshow("1",I); 
     //waitKey();
-    uchar *data =I.data;
+    //uchar *data =I.data;
+    uchar *data =(uchar*)Iimpl.imageData;
+    int step = Iimpl.widthStep/sizeof(uchar);
 
     vector<int> rpos;
     {
@@ -47,7 +50,8 @@ int main ( int argc, char *argv[] )
             pcur = 0;
             for (int c = 0; c <I.cols; ++c)
             {
-                pcur |=  uchar(data[r * I.cols  +c]);
+                pcur |= I.at<uchar>(r, c);
+                //pcur |=  uchar(data[r * I.cols  +c]);
             }
             if (pprev != pcur)
             {
@@ -65,7 +69,8 @@ int main ( int argc, char *argv[] )
             pcur = 0;
             for (int r = 0; r < I.rows; ++r)
             {
-                pcur |=  uchar(data[r * I.cols  +c]);
+                pcur |= I.at<uchar>(r, c);
+                //pcur |=  uchar(data[r * I.cols  +c]);
             }
             if (pprev != pcur)
             {
@@ -85,11 +90,16 @@ int main ( int argc, char *argv[] )
             Point p1 = Point(double(rpos[i]), double(cpos[j]));
             Point p2 = Point(double(rpos[i+1]), double(cpos[j+1]));
             //rects.insert(pair<Point, Point>(Point(rpos[i], cpos[j]), Point(rpos[i+1], cpos[j+1])));
-            rectangle(:
+            cout << p1 << "|" <<p2 <<endl;
+            rectangle(image, p1, p2, Scalar(0,0,255), 0, 8);
             
         }
     }
 #endif 
+    namedWindow("1"); 
+    imshow("1",image); 
+    waitKey();
+
 
 #if 0
     for (size_t i = 0;  i < rpos.size(); ++i)
