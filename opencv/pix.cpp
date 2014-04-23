@@ -18,8 +18,8 @@ int main ( int argc, char *argv[] )
 
     int *hist_w = new int[image.cols];
     int *hist_h = new int[image.rows];
-    memset(hist_h, 0, image.cols * sizeof(int));
-    memset(hist_w, 0, image.rows * sizeof(int));
+    memset(hist_h, 0, image.rows* sizeof(int));
+    memset(hist_w, 0, image.cols* sizeof(int));
 
     if (!image.isContinuous()) 
     {
@@ -57,45 +57,20 @@ int main ( int argc, char *argv[] )
                 pcur |= I.at<uchar>(r, c);
                 if (I.at<uchar>(r,c) >0)
                 {
-                    ++hist_w[c];
-                    ++hist_h[r];
+                    hist_w[c] = 1;
+                    hist_h[r] = 1;
                 }
                 //pcur |=  uchar(data[r * I.cols  +c]);
             }
         }
     }
-    unsigned long long sum = 0;
-    for (int i=0; i < image.rows; ++i)
-    {
-        sum += hist_w[i];
-    }
-    for(int i = 0; i < image.rows; ++i)
-    {
-        if(hist_w[i] > sum/image.rows)
-            hist_w[i] = 1;
-        else
-            hist_w[i] = 0;
-    }
-    sum = 0;
-    for (int i=0; i < image.cols; ++i)
-    {
-        sum += hist_h[i];
-    }
-    for(int i = 0; i < image.cols; ++i)
-    {
-        if(hist_h[i] > sum/image.cols)
-            hist_h[i] = 1;
-        else
-            hist_h[i] = 0;
-    }
-    cout << endl;
     {
         for (int i=0; i < image.rows-1; ++i)
         {
 
             if(hist_h[i] != hist_h[i+1])
             {
-                line(image, Point(0, i), Point(image.cols -1, i), Scalar(0,0,255), 1, CV_AA);
+                line(image, Point(0, i), Point(image.cols , i), Scalar(0,0,255), 1, CV_AA);
             }
         
         }
@@ -105,7 +80,7 @@ int main ( int argc, char *argv[] )
         {
             if(hist_w[i] != hist_w[i+1])
             {
-                line(image, Point(i, 0), Point(i, image.rows-1 ), Scalar(0,0,255), 1, CV_AA);
+                line(image, Point(i, 0), Point(i, image.rows ), Scalar(0,0,255), 1, CV_AA);
             }
 
         }
@@ -167,5 +142,7 @@ int main ( int argc, char *argv[] )
     }
 
 #endif
+    delete []hist_w;
+    delete []hist_h;
     return 0;
 }
