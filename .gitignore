@@ -4,6 +4,7 @@ dna_dir/
 .*.sw*
 a.out
 *.video
+*.png
 *.pcm
 *.audio
 *.pyc
@@ -22,6 +23,9 @@ dna
 *.cdna
 *.log
 *.txt
+*.bmp 
+*.tif 
+*.jpg
 linux_386/code.google.com/
 code.google.com/
 pkg/linux_386/
