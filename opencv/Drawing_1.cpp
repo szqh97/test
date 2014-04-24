@@ -57,6 +57,7 @@ int main( void ){
          -1,
          8 );
 
+
   /// 2.c. Create a few lines
   MyLine( rook_image, Point( 0, 15*w/16 ), Point( w, 15*w/16 ) );
   MyLine( rook_image, Point( w/4, 7*w/8 ), Point( w/4, w ) );

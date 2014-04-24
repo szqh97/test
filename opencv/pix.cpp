@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdio.h>
 #include <vector>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/core/core.hpp>
@@ -73,7 +74,7 @@ int main ( int argc, char *argv[] )
             {
 
                 rpos.push_back(i);
-                //line(image, Point(0, i), Point(image.cols , i), Scalar(0,0,255), 1, CV_AA);
+                line(image, Point(0, i), Point(image.cols , i), Scalar(0,0,255), 1, CV_AA);
             }
         
         }
@@ -85,7 +86,7 @@ int main ( int argc, char *argv[] )
             if(hist_w[i] != hist_w[i+1])
             {
                 cpos.push_back(i);
-                //line(image, Point(i, 0), Point(i, image.rows ), Scalar(0,0,255), 1, CV_AA);
+                line(image, Point(i, 0), Point(i, image.rows ), Scalar(0,0,255), 1, CV_AA);
             }
 
         }
@@ -111,13 +112,11 @@ int main ( int argc, char *argv[] )
     }
 #endif
 
-    // get sub rect of word
+#if 1
     Mat w;
     CvMat cvimage = image;
     CvMat cvw = w;
-    cvGetSubRect(&cvimage, &cvw, cvRect(cpos[0], rpos[0], cpos[1]-cpos[0], rpos[1]-rpos[0]));
-    imshow("2", Mat(&cvw));
-#if 0
+    int wc = 0;
     for (int i = 0; i < rpos.size(); i+=2)
     {
 
@@ -128,18 +127,34 @@ int main ( int argc, char *argv[] )
             Point p2 = Point(double(cpos[j+1]), double(rpos[i+1]));
             //rects.insert(pair<Point, Point>(Point(rpos[i], cpos[j]), Point(rpos[i+1], cpos[j+1])));
             //cout << p1 << "|" <<p2 <<endl;
-            rectangle(image, p2, p1, Scalar(0,0,255), 0, 1);
+            //rectangle(image, p2, p1, Scalar(0,0,255), 0, 1);
+
+            // get sub rect of word
+            cvGetSubRect(&cvimage, &cvw, cvRect(p1.x, p1.y, p2.x - p1.x, p2.y - p1.y));
+            Size dsize = Size(Mat(&cvw).cols * 5 , Mat(&cvw).rows * 5);
+            Mat dstw = Mat(dsize,Mat(&cvw).type());
+            resize(Mat(&cvw), dstw, dsize, 0, 0, INTER_LANCZOS4);
+            ++wc;
+            {
+                char fname[18];
+                sprintf(fname,"a%07d.tif", wc);
+                //imwrite(fname, dstw);
+            }
+#if 0
+            imshow("2", Mat(&cvw));
+            imshow("3", dstw);
+            waitKey();
+#endif
 
         }
     }
 #endif
 
-#if 0
+#if 1
     namedWindow("1"); 
     imshow("1",image); 
     waitKey();
 #endif
-
 
 #if 0
     for (size_t i = 0;  i < rpos.size(); ++i)
