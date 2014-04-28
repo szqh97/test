@@ -53,7 +53,8 @@ int main ( int argc, char *argv[] )
         for (int r = 0; r < I.rows; ++r)
         {
             pcur = 0;
-            for (int c = 0; c <I.cols; ++c)
+            for (int c = 0; c <260; ++c)
+            //for (int c = 0; c <I.cols; ++c)
             {
                 pcur |= I.at<uchar>(r, c);
                 if (I.at<uchar>(r,c) >0)
@@ -65,6 +66,8 @@ int main ( int argc, char *argv[] )
             }
         }
     }
+
+#if 1
     vector<int> rpos;
     {
         for (int i=0; i < image.rows-1; ++i)
@@ -75,6 +78,7 @@ int main ( int argc, char *argv[] )
 
                 rpos.push_back(i);
                 line(image, Point(0, i), Point(image.cols , i), Scalar(0,0,255), 1, CV_AA);
+                cout << i << ", " ;
             }
         
         }
@@ -91,6 +95,8 @@ int main ( int argc, char *argv[] )
 
         }
     } 
+#endif
+
 #if 0 
     vector<int> cpos;
     {
@@ -111,17 +117,34 @@ int main ( int argc, char *argv[] )
         }
     }
 #endif
+    Mat blank = Mat(image.rows*3, image.cols* 3, image.type(), Scalar(255, 255, 255));
+    imshow("blank", blank);
+    waitKey();
+    for (size_t i = 0; i < cpos.size(); i +=2)
+    {
+        Mat w;
+        Rect ROI(cpos[i], 0, cpos[i+1] - cpos[i], image.rows);
+        image(ROI).copyTo(w);
+        Size dsize = Size(w.cols * 2, w.rows*2);
+        Mat rw = Mat(dsize, w.type());
+        resize(w, rw, dsize, 0, 0, INTER_CUBIC);
+        /*  
+        imshow("a", rw);
+        waitKey();
+        */
 
-#if 1
+
+    }
+
+#if 0
     Mat w;
-    CvMat cvimage = image;
-    CvMat cvw = w;
     int wc = 0;
     for (int i = 0; i < rpos.size(); i+=2)
     {
 
         for (int j = 0; j < cpos.size(); j+=2)
         {
+
             //cout << "[(" << rpos[i] << "," << cpos[j] << "), (" << rpos[i +1] << "," << cpos[j + 1] << ")]" << endl;
             Point p1 = Point(double(cpos[j]), double(rpos[i]));
             Point p2 = Point(double(cpos[j+1]), double(rpos[i+1]));
@@ -140,11 +163,6 @@ int main ( int argc, char *argv[] )
                 sprintf(fname,"a%07d.tif", wc);
                 //imwrite(fname, dstw);
             }
-#if 0
-            imshow("2", Mat(&cvw));
-            imshow("3", dstw);
-            waitKey();
-#endif
 
         }
     }
