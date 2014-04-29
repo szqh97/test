@@ -52,18 +52,22 @@ bool check_neighbors(int x, int y, LineList &lines)
 
 int gen_linechains(const Mat &m, LineList &lines)
 {
+    int i = 0; 
     for (int r = 0; r < m.rows; ++r)
     {
         for (int c = 0; c < m.cols; ++c)
         {
-            if (m.at<uchar>(c, r) > 0 )
+            if ((int)m.at<uchar>(c, r) == 255 )
             {
+                ++i;
+                cout << "(" << c << ", " << r << ") ";
                 check_neighbors(c, r, lines);
                 //cout << "aaaaaaaaaa " <<c << ", " << r << endl;
                 //cout << (int) m.at<uchar>(c,r) << endl;
             }
         }
     }
+    cout << "xx" << i << endl;
 }
 int main ( int argc, char *argv[] )
 {
@@ -76,11 +80,18 @@ int main ( int argc, char *argv[] )
 
     Mat dst;
     Canny(image, dst, 50, 150, 3);
+    imwrite("bb.png", dst);
+    cout <<  "aaaaaaaaaaaa" << dst.cols << ", " << dst.rows << endl;
 
-    showimage("sss", dst);
+//    showimage("sss", dst);
     LineList linecollections;
+
     gen_linechains(dst, linecollections);
     cout << linecollections.size() << endl;
+
+    vector<Point> p = *linecollections[3];
+    for (vector<Point>::iterator it = p.begin(); it != p.end(); ++it)
+        cout << *it << endl;
 
     return 0;
 }			/* ----------  end of function main  ---------- */
