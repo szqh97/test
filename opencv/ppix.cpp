@@ -7,6 +7,11 @@
 
 using namespace std;
 using namespace cv;
+void showimage(const char *des, Mat &m)
+{
+    imshow(des, m);
+    waitKey();
+}
 
 int main ( int argc, char *argv[] )
 {
@@ -28,22 +33,47 @@ int main ( int argc, char *argv[] )
     Mat J;
     Mat I;
 
-    uchar table[256];
-    int divideWith = 10;
-    for (int i = 0; i < 256; ++i)
-        table[i] = (uchar)(divideWith * ((255-i)/divideWith));
+    cv::threshold(image, J, 0, 255, cv::THRESH_BINARY|cv::THRESH_OTSU);
 
-    Mat lookUpTable(1, 256, CV_8U);
-    uchar* p = lookUpTable.data;
-    for( int i = 0; i < 256; ++i)
-        p[i] = table[i];
-    LUT(image, lookUpTable, J);
 
-    cv::threshold(J, I, 0, 255, cv::THRESH_BINARY|cv::THRESH_OTSU);
+    // cal the average pix value;
+    long long thre_values = 0;
+    for (int r = 0; r < J.rows; ++r)
+    {
+        for (int c = 0; c < J.cols; ++c)
+        {
+            if (J.at<uchar>(r, c) > 0 )
+            {
+                ++thre_values;
+            }
+        }
+    }
+
+    if (thre_values > J.cols * J.rows / 2)
+    {
+
+        uchar table[256];
+        int divideWith = 10;
+        for (int i = 0; i < 256; ++i)
+            table[i] = (uchar)(divideWith * ((255-i)/divideWith));
+
+        Mat lookUpTable(1, 256, CV_8U);
+        uchar* p = lookUpTable.data;
+        for( int i = 0; i < 256; ++i)
+            p[i] = table[i];
+        LUT(J, lookUpTable, I);
+
+        showimage("I", I);
+
+    }
+    else
+    {
+        I=J;
+    }
+
+    // hist detect words
     IplImage Iimpl= I;
 
-    //imshow("1",I); 
-    //waitKey();
     //uchar *data =I.data;
     uchar *data =(uchar*)Iimpl.imageData;
     int step = Iimpl.widthStep/sizeof(uchar);
@@ -53,8 +83,8 @@ int main ( int argc, char *argv[] )
         for (int r = 0; r < I.rows; ++r)
         {
             pcur = 0;
-            for (int c = 0; c <260; ++c)
-            //for (int c = 0; c <I.cols; ++c)
+            for (int c = 0; c <I.cols; ++c)
+                //for (int c = 0; c <I.cols; ++c)
             {
                 pcur |= I.at<uchar>(r, c);
                 if (I.at<uchar>(r,c) >0)
@@ -78,9 +108,8 @@ int main ( int argc, char *argv[] )
 
                 rpos.push_back(i);
                 line(image, Point(0, i), Point(image.cols , i), Scalar(0,0,255), 1, CV_AA);
-                cout << i << ", " ;
             }
-        
+
         }
     }
     vector<int> cpos;
@@ -96,7 +125,11 @@ int main ( int argc, char *argv[] )
         }
     } 
 #endif
-
+    cout << "-----------" << endl;
+    for (size_t i = 0; i < image.cols; ++i)
+        cout << hist_w[i] << " ";
+    cout << "-----------" << endl;
+    showimage("IIIII", I);
 #if 0 
     vector<int> cpos;
     {
@@ -117,24 +150,32 @@ int main ( int argc, char *argv[] )
         }
     }
 #endif
-    Mat blank = Mat(image.rows*3, image.cols* 3, image.type(), Scalar(255, 255, 255));
-    imshow("blank", blank);
-    waitKey();
-    for (size_t i = 0; i < cpos.size(); i +=2)
+    Mat blank = Mat(image.rows*3, image.cols* 3, image.type(), Scalar(0, 0, 0));
+    //Mat blank = Mat(image.rows*3, image.cols* 3, image.type(), Scalar(255, 255, 255));
+    Point p0(10, 10);
+    showimage("blank", blank);
+    cout << cpos.size() << "xxxxxxxxxx" << endl;
+    for (size_t i = 0; i < cpos.size() - 1; i +=2)
+    
     {
         Mat w;
-        Rect ROI(cpos[i], 0, cpos[i+1] - cpos[i], image.rows);
-        image(ROI).copyTo(w);
+        Rect ROI(cpos[i], 0, cpos[i+1] - cpos[i], I.rows);
+        I(ROI).copyTo(w);
         Size dsize = Size(w.cols * 2, w.rows*2);
         Mat rw = Mat(dsize, w.type());
         resize(w, rw, dsize, 0, 0, INTER_CUBIC);
+
+        Rect b_ROI(p0.x, p0.y, rw.cols, rw.rows);
+        rw.copyTo(blank(b_ROI));
+        p0.x += 10;
+        p0.x += rw.cols;
         /*  
-        imshow("a", rw);
-        waitKey();
-        */
-
-
+            imshow("a", rw);
+            waitKey();
+            */
     }
+    showimage("blank2", blank);
+    imwrite("blank2.png", blank);
 
 #if 0
     Mat w;
@@ -170,8 +211,7 @@ int main ( int argc, char *argv[] )
 
 #if 1
     namedWindow("1"); 
-    imshow("1",image); 
-    waitKey();
+    showimage("1",image); 
 #endif
 
 #if 0
