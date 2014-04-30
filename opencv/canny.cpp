@@ -5,13 +5,14 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
 #include <cmath>
 using namespace std;
 using namespace cv;
 #define SHOW 1
 
 typedef vector<Point> Line;
-typedef vector<Line*> LineList;
+typedef list<Line*> LineList;
 
 void showimage(const char *t, Mat& m)
 {
@@ -29,19 +30,57 @@ bool check_neighbors(int x, int y, LineList &lines)
     {
         for(Line::iterator lit = (*llit)->begin(); lit != (*llit)->end(); ++lit)
         {
+#if 0
             if (lit->x - x == 1 or lit->x -x == -1 or lit->y - y == 1 or lit->y - y == -1)
             {
-                Line *pl = new Line;
-                pl->push_back(Point(x, y));
+                cout << "BBBBBBBBBB " <<Point(x, y) << endl;
+                (*llit)->push_back(Point(x, y));
+                cout << "XX" << (*llit)->size() << " " << lines.size() <<endl;
                 //(*llit).push_back(Point(x, y));
                 bflag = true;
+                break;
                 //cout << "xxxxxxxx " << x <<", " << y << endl;
+
+            }
+#endif
+            // left
+            if (lit->x - x == -1 and lit->y == y)
+            {
+                cout << "left "<< Point(x, y) << endl;
+                (*llit)->push_back(Point(x, y));
+                bflag = true;
+                break;
+            } 
+            // top left
+            else if (lit->x - x == -1 and lit->y - y == -1)
+            {
+                cout << "top left "<< Point(x, y) << endl;
+                (*llit)->push_back(Point(x, y));
+                bflag = true;
+                break;
+            }
+            // top 
+            else if (lit->x == x and lit->y - y == -1)
+            {
+                cout << "top "<< Point(x, y) << endl;
+                (*llit)->push_back(Point(x, y));
+                bflag = true;
+                break;
+            }
+            // top right
+            else if (lit->x - x == 1 and lit->y - y == -1)
+            {
+                cout << "top right "<< Point(x, y) << endl;
+                (*llit)->push_back(Point(x, y));
+                bflag = true;
+                break;
             }
         }
     }
 
     if (!bflag)
     {
+        cout << "Create a new line " << Point(x, y)<< endl;
         Line *pl = new Line; 
         pl->push_back(Point(x, y));
         lines.push_back(pl);
@@ -66,7 +105,7 @@ int gen_linechains(const Mat &m, LineList &lines)
             }
         }
     }
-    cout << "xx" << i << endl;
+    cout << "the white point num is" << i << endl;
 }
 
 void print_linecollections(LineList &lines)
