@@ -27,7 +27,7 @@ bool check_neighbors(int x, int y, LineList &lines)
 {
     cout << Point(x,y) << endl;
     bool bleft = false, btopl = false, btop = false, btopr = false;
-    list<Line*> vlines;
+    list<Line::iterator> vlines;
     
     for (LineList::iterator llit = lines.begin(); llit != lines.end(); ++llit)
     {
@@ -65,7 +65,26 @@ bool check_neighbors(int x, int y, LineList &lines)
         }
         if (bleft or btopr or btop or btopl)
         {
-            (*llit)->push_back(Point(x,y));
+            vlines.push_back(llit);
+        }
+    }
+
+    if (vlines.sze() > 0)
+    {
+        list<Line*>::iterator lit = vlines.begin();
+        list<Line*>::iterator dstit = lit;
+        (*lit)->push_back(Point(x, y));
+        // merge lines 
+        ++lit;
+        while (lit != vlines.end())
+        {
+            for (Line::iterator it = (*lit)->begin(); it != (*lit)->end(); ++it)
+            {
+                (*dstit)->push_back(*it);
+            }
+            lines.erase(*lit);
+            delete *(*lit);
+            ++lit;
         }
     }
 
@@ -111,6 +130,7 @@ void print_linecollections(LineList &lines)
         {
             cout << *lit << " ";
         }
+        delete *llit;
         cout << endl <<"=============================" << endl;
     }
 #endif
