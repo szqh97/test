@@ -53,21 +53,35 @@ bool check_neighbors(int x, int y, LineList &lines)
 int gen_linechains(const Mat &m, LineList &lines)
 {
     int i = 0; 
+    cout << m.type() << endl; 
+    cout << m.channels() << endl;
     for (int r = 0; r < m.rows; ++r)
     {
         for (int c = 0; c < m.cols; ++c)
         {
-            if ((int)m.at<uchar>(c, r) == 255 )
+            if ((int)m.at<uchar>(r, c) == 255 )
             {
                 ++i;
-                cout << "(" << c << ", " << r << ") ";
                 check_neighbors(c, r, lines);
-                //cout << "aaaaaaaaaa " <<c << ", " << r << endl;
-                //cout << (int) m.at<uchar>(c,r) << endl;
             }
         }
     }
     cout << "xx" << i << endl;
+}
+
+void print_linecollections(LineList &lines)
+{
+    cout << "size: "<< lines.size() << endl;
+    for (LineList::iterator llit = lines.begin(); llit != lines.end(); ++llit)
+    {
+        for(Line::iterator lit = (*llit)->begin(); lit != (*llit)->end(); ++lit)
+        {
+            cout << *lit << " ";
+        }
+        cout << endl <<"=============================" << endl;
+    }
+ 
+
 }
 int main ( int argc, char *argv[] )
 {
@@ -82,17 +96,17 @@ int main ( int argc, char *argv[] )
     Canny(image, dst, 50, 150, 3);
     imwrite("bb.png", dst);
     cout <<  "aaaaaaaaaaaa" << dst.cols << ", " << dst.rows << endl;
+    cout << "xxxxxxxxxxxxxxxx" << endl;
+    cout << "xxxxxxxxxxxxxxxx" << endl;
 
-//    showimage("sss", dst);
     LineList linecollections;
 
     gen_linechains(dst, linecollections);
     cout << linecollections.size() << endl;
+    print_linecollections(linecollections);
 
-    vector<Point> p = *linecollections[3];
-    for (vector<Point>::iterator it = p.begin(); it != p.end(); ++it)
-        cout << *it << endl;
 
     return 0;
 }			/* ----------  end of function main  ---------- */
+
 
