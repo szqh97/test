@@ -18,7 +18,9 @@ int main(int argc, char** argv)
 {
     const char* filename = argc >= 2 ? argv[1] : "pic1.png";
 
-    Mat src = imread(filename, 0);
+    Mat src = imread(filename, CV_LOAD_IMAGE_GRAYSCALE);
+
+
     if(src.empty())
     {
         help();

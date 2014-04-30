@@ -70,7 +70,9 @@ bool check_neighbors(int x, int y, LineList &lines)
             }
         }
         if (f)
+        {
             (*llit)->push_back(Point(x,y));
+        }
     }
 
     if (!bflag)
