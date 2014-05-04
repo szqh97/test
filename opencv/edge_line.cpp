@@ -19,6 +19,7 @@ class Line{
         unsigned int n;
         double grey;
         friend bool operator < (const Line &ls, const Line &rs);
+        friend bool operator == (const Line &ls, const Line &rs);
 
 };
 inline bool operator < (const Line &ls, const Line &rs)
@@ -28,6 +29,26 @@ inline bool operator < (const Line &ls, const Line &rs)
             or (ls.n < rs.n )
             or (ls.grey < rs.grey)
         );
+}
+
+inline bool operator == (const Line &ls, const Line &rs)
+{
+    return ls.vertex.x == rs.vertex.x and ls.vertex.y == rs.vertex.y 
+        and ls.centriod.x == rs.centriod.x and ls.centriod.y == rs.centriod.y
+        and ls.width == rs.width 
+        and ls.height == rs.height
+        and ls.grey == rs.grey
+        and ls.n == rs.n;
+}
+
+double min(double d1, double d2)
+{
+    return d1 < d2 ? d1 : d2;
+}
+ 
+double max(double d1, double d2)
+{
+    return d1 > d2 ? d1 : d2;
 }
 
 void showimage(const char *t, Mat& m)
@@ -62,7 +83,7 @@ double line_length(const Point2f &p1, const Point2f &p2)
     return sqrt(dx*dx + dy*dy);
 }
 
-double get_average_grey(const Mat &orgin_m, Rect &roi)
+double get_average_grey(Mat &orgin_m, const Rect &roi)
 {
     Mat m(orgin_m, roi);
 
@@ -91,25 +112,30 @@ void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
         // get centriod
         long long x_sum, y_sum;
         x_sum = y_sum = 0;
+        bool allinside = true;
+        Rect text_roi(100, 250, 370, 85);
         for(vector<Point>::const_iterator pit = lit->begin(); pit != lit->end(); ++pit)
         {
             x_sum += pit->x;
             y_sum += pit->y;
+            if ((*pit).inside(text_roi))
+            {
+                allinside = false;
+            }
+            
         }
+
+        if (allinside)
+        {
+            continue;
+        }
+        
         int x = x_sum/lit->size();
         int y = y_sum/lit->size();
         l.centriod = Point(x, y);
 
         // get points number
         l.n = lit->size();
-
-        // get average grey
-        unsigned long long grey_sum = 0;
-        for (vector<Point>::const_iterator pit = lit->begin(); pit != lit->end(); ++pit)
-        {
-            grey_sum += orig_m.at<uchar>(*pit); 
-        }
-        l.grey = grey_sum/l.n;
 
         // get vertex
         RotatedRect rect = minAreaRect(Mat(*lit));
@@ -124,28 +150,28 @@ void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
 
             double w = line_length(verticals[0], verticals[1]);
             double h = line_length(verticals[2], verticals[1]);
-            if (w > m.cols/5 or h > m.rows/5 or w < 5 or h < 5)
+            if (w > m.cols/5 or h > m.rows/5 or w < 7 or h < 7)
             {
                 continue; 
             }
-            if (w/h >7 or h/w >7)
+            if (w/h >5 or h/w >5)
             {
                 continue;
             }
             l.width= w;
             l.height = h;
 
-            l.grey = get_average_grey(orig_m, verticals[2], w, h);
+            // get average grey
+            l.grey = get_average_grey(orig_m, rect.boundingRect());
 
-            rectangle(orig_m, rect.boundingRect(), Scalar(0,0,0));
 #if 0
             for (int i=0; i < 4; i++)
             {
                 line(orig_m, verticals[i], verticals[(i+1)%4], Scalar(0,0,0));
             }
-
 #endif
-            lchains.insert(make_pair(l, *lit));
+                rectangle(orig_m, rect.boundingRect(), Scalar(0,0,0));
+                lchains.insert(make_pair(l, *lit));
         }
     }
 #if 1
@@ -153,6 +179,36 @@ void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
     showimage("mmmm", m);
 #endif
 
+}
+
+
+//int gen_text_Region(map<Line, vector<Point> > &lchains, map<double, vector<Point> > &lchain)
+int gen_text_Region(map<Line, vector<Point> > &lchains)
+{
+    int i = 0;
+    for (map<Line, vector<Point> >::iterator mlit = lchains.begin();
+            mlit != lchains.end(); ++mlit)
+    {
+        Line li = mlit->first;
+        map<Line, vector<Point> >::iterator it = mlit;
+        for (++it; it != lchains.end(); ++it)
+        {
+            ++i;
+            Line lj = it->first;
+            double dx = li.centriod.x - lj.centriod.x;
+            double dy = li.centriod.y - lj.centriod.y;
+            double d_corr = sqrt(dx * dx + dy * dy) / sqrt(li.width * li.height + lj.width * lj.height);
+            double s_corr = 1 - min(li.width/li.height, lj.width/lj.height) / max(li.width/li.height, lj.width/lj.height);
+            double a_corr = 1 - min(li.width*li.height, lj.width*lj.height) / max(li.width*li.height, lj.width*lj.height);
+            double grey_corr = abs(li.grey -lj.grey);
+            cout << "m_corr: " <<d_corr << ", " << s_corr << ", " << a_corr << ", " << grey_corr << endl;
+
+
+        }
+    }
+    cout << "cccccccccccccc " << i << endl;
+    cout << lchains.size() << endl;
+    return 0;
 }
 
 int main ( int argc, char *argv[] )
@@ -172,6 +228,7 @@ int main ( int argc, char *argv[] )
     Mat tm;
     threshold(dst, tm, 0, 255, THRESH_BINARY| THRESH_OTSU);
     get_line(image, tm, lchains);
+    gen_text_Region(lchains);
 
     print_lchains(lchains);
 
