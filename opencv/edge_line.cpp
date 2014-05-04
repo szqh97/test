@@ -10,9 +10,15 @@
 using namespace std;
 using namespace cv;
 #define SHOW 1
+typedef struct {
+    Point2f centriod;
+    Point2f vertex;
+    double width;
+    double height;
+    unsigned int n;
+    double grey;
 
-typedef vector<Point> Line;
-typedef list<Line*> LineList;
+} Line;
 
 void showimage(const char *t, Mat& m)
 {
@@ -22,121 +28,96 @@ void showimage(const char *t, Mat& m)
 #endif
 }
 
-
-bool check_neighbors(int x, int y, LineList &lines)
+void print_lchains(const vector<Line> &lines)
 {
-    cout << Point(x,y) << endl;
-    bool bleft = false, btopl = false, btop = false, btopr = false;
-    list<Line::iterator> vlines;
+    for ( vector<Line>::const_iterator it = lines.begin(); it != lines.end(); ++it)
+    {
+        cout << "centriod: " << it->centriod << " "
+             << "vertex: " << it->vertex << " "
+             << "width: " << it->width << " "
+             << "height: " << it->height << " "
+             << "n: "<< it->n << " "
+             << "grey: " << it->grey << endl;
+    }
+}
+
+float line_length(const Point2f &p1, const Point2f &p2)
+{
+
+    double dx = p1.x - p2.x ;
+    double dy = p1.y - p2.y;
+    return sqrt(dx*dx + dy*dy);
+}
+void get_line(Mat &orig_m, Mat &m, vector<Line> &lchains)
+{
     
-    for (LineList::iterator llit = lines.begin(); llit != lines.end(); ++llit)
+    vector <vector<Point> > contours;
+    // findContours would modify the original mat, 
+    findContours(m, contours, CV_CHAIN_APPROX_NONE, 1);
+    
+
+
+    for (vector<vector<Point> >::const_iterator lit = contours.begin(); lit != contours.end(); ++lit)
     {
-        cout << "the line size is: " << (*llit)->size() << &(*(*llit)->begin()) <<  " " <<&(*(*llit)->end()) << endl;
-        int i = 0;
-        bool f = false;
-        for(Line::iterator lit = (*llit)->begin(); lit != (*llit)->end(); ++lit)
+        Line l;
+
+        // get centriod
+        long long x_sum, y_sum;
+        x_sum = y_sum = 0;
+        for(vector<Point>::const_iterator pit = lit->begin(); pit != lit->end(); ++pit)
         {
-            ++i;
-            // left
-            if (lit->x - x == -1 and lit->y == y)
-            {
-                bleft = true;
-                cout << "left "<< Point(x, y) << endl;
-            } 
-
-            // top left
-            if (lit->x - x == -1 and lit->y - y == -1)
-            {
-                btopl = true;
-                cout << "top left "<< Point(x, y) << endl;
-            }
-            // top 
-            if (lit->x == x and lit->y - y == -1)
-            {
-                btop = true;
-                cout << "top "<< Point(x, y) << endl;
-            }
-            // top right
-            if (lit->x - x == 1 and lit->y - y == -1)
-            {
-                btopr = true;
-                cout << "top right "<< Point(x, y) << endl;
-            }
+            x_sum += pit->x;
+            y_sum += pit->y;
         }
-        if (bleft or btopr or btop or btopl)
+        int x = x_sum/lit->size();
+        int y = y_sum/lit->size();
+        l.centriod = Point(x, y);
+
+        // get points number
+        l.n = lit->size();
+
+        // get average grey
+        unsigned long long grey_sum = 0;
+        for (vector<Point>::const_iterator pit = lit->begin(); pit != lit->end(); ++pit)
         {
-            vlines.push_back(llit);
+           grey_sum += orig_m.at<uchar>(*pit); 
         }
-    }
+        l.grey = grey_sum/l.n;
 
-    if (vlines.sze() > 0)
-    {
-        list<Line*>::iterator lit = vlines.begin();
-        list<Line*>::iterator dstit = lit;
-        (*lit)->push_back(Point(x, y));
-        // merge lines 
-        ++lit;
-        while (lit != vlines.end())
+        // get vertex
+        RotatedRect rect = minAreaRect(Mat(*lit));
+        Point2f verticals[4] ;
+        rect.points(verticals);
+        l.vertex = verticals[2];
+        
+        double w = line_length(verticals[0], verticals[1]);
+        double h = line_length(verticals[2], verticals[1]);
+        if (w > m.cols/5 or h > m.rows/5 or w < 5 or h < 5)
         {
-            for (Line::iterator it = (*lit)->begin(); it != (*lit)->end(); ++it)
-            {
-                (*dstit)->push_back(*it);
-            }
-            lines.erase(*lit);
-            delete *(*lit);
-            ++lit;
+           continue; 
         }
-    }
-
-    if (!bleft and !btopl and !btopr and !btop)
-    {
-        cout << "Create a new line " << Point(x, y)<< endl;
-        Line *pl = new Line(); 
-        pl->push_back(Point(x, y));
-        lines.push_back(pl);
-    }
-    return true;
-
-}
-
-int gen_linechains(const Mat &m, LineList &lines)
-{
-    int i = 0; 
-    cout << m.type() << endl; 
-    cout << m.channels() << endl;
-    for (int r = 0; r < m.rows; ++r)
-    {
-        for (int c = 0; c < m.cols; ++c)
+        if (w/h >7 or h/w >7)
         {
-            if ((int)m.at<uchar>(r, c) == 255 )
-            {
-                ++i;
-                cout << "invoke gen_linechains " << Point(c, r) << endl;
-                check_neighbors(c, r, lines);
-            }
+            continue;
         }
-    }
-    cout << "the white point num is" << i << endl;
-}
 
-void print_linecollections(LineList &lines)
-{
-#define PRINT_LINES 1
-#if PRINT_LINES
-    cout << "size: "<< lines.size() << endl;
-    for (LineList::iterator llit = lines.begin(); llit != lines.end(); ++llit)
-    {
-        for(Line::iterator lit = (*llit)->begin(); lit != (*llit)->end(); ++lit)
+#if 1
+        for (int i=0; i < 4; i++)
         {
-            cout << *lit << " ";
+            line(orig_m, verticals[i], verticals[(i+1)%4], Scalar(0,0,0));
         }
-        delete *llit;
-        cout << endl <<"=============================" << endl;
-    }
+
 #endif
- 
+        lchains.push_back(l);
+    }
+#if 1
+    showimage("oooo", orig_m);
+    imwrite("oo.png", orig_m);
+    showimage("mmmm", m);
+#endif
 
 }
+
 int main ( int argc, char *argv[] )
 {
     Mat image;
@@ -146,17 +127,15 @@ int main ( int argc, char *argv[] )
     }
     image = imread(argv[1], 0);
 
+
+    vector<Line> lchains;
     Mat dst;
     Canny(image, dst, 50, 150, 3);
-    imwrite("bb.png", dst);
-    cout <<  "aaaaaaaaaaaa" << dst.cols << ", " << dst.rows << endl;
+    Mat tm;
+    threshold(dst, tm, 0, 255, THRESH_BINARY| THRESH_OTSU);
+    get_line(image,tm, lchains);
 
-    LineList linecollections;
-
-    gen_linechains(dst, linecollections);
-    cout << linecollections.size() << endl;
-    print_linecollections(linecollections);
-
+    print_lchains(lchains);
 
     return 0;
 }			/* ----------  end of function main  ---------- */
