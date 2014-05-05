@@ -4,12 +4,12 @@
 #include "opencv2/imgproc/imgproc.hpp"
 
 #include <iostream>
+#include <stdio.h>
 #include <vector>
 #include <map>
 #include <cmath>
 using namespace std;
 using namespace cv;
-#define SHOW 1
 class Line{
     public:
         Point2f centriod;
@@ -53,6 +53,7 @@ double max(double d1, double d2)
 
 void showimage(const char *t, Mat& m)
 {
+#define SHOW 1
 #if SHOW 
     imshow(t, m);
     waitKey();
@@ -98,7 +99,8 @@ double get_average_grey(Mat &orgin_m, const Rect &roi)
     return (double)grey_sum/(m.cols * m.rows);
 }
 
-void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
+//void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
+void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
 {
 
     vector <vector<Point> > contours;
@@ -113,7 +115,9 @@ void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
         long long x_sum, y_sum;
         x_sum = y_sum = 0;
         bool allinside = true;
-        Rect text_roi(100, 250, 370, 85);
+        int roi_x = 95, roi_y = 305;
+        int roi_w = 350, roi_h = 35;
+        Rect text_roi(roi_x, roi_y, roi_w, roi_h);
         for(vector<Point>::const_iterator pit = lit->begin(); pit != lit->end(); ++pit)
         {
             x_sum += pit->x;
@@ -150,7 +154,7 @@ void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
 
             double w = line_length(verticals[0], verticals[1]);
             double h = line_length(verticals[2], verticals[1]);
-            if (w > m.cols/5 or h > m.rows/5 or w < 7 or h < 7)
+            if (w > roi_w/4 or h > roi_h/2 or w < 7 or h < 7)
             {
                 continue; 
             }
@@ -171,11 +175,15 @@ void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
             }
 #endif
                 rectangle(orig_m, rect.boundingRect(), Scalar(0,0,0));
+                //rectangle(orig_m, rect.boundingRect(), Scalar(255, 255, 255));
                 lchains.insert(make_pair(l, *lit));
         }
     }
-#if 1
-    showimage("oooo", orig_m);
+#if 0
+    char new_name[100];
+    sprintf(new_name, "%s.png", fname);
+    //showimage("oooo", orig_m);
+    imwrite(new_name, orig_m);
     showimage("mmmm", m);
 #endif
 
@@ -219,15 +227,22 @@ int main ( int argc, char *argv[] )
         return -1;
     }
     image = imread(argv[1], 0);
+    Mat blurred;
+    double sigma=1;
+    GaussianBlur(image, blurred, Size(), sigma, sigma);
 
 
     map<Line, vector<Point> > lchains;
     Mat dst;
-    //Canny(image, dst, 40, 120, 3);
-    Canny(image, dst, 50, 150, 3);
+    Canny(image, dst, 40, 120, 3);
+    showimage("oooo", dst);
+    //Canny(blurred, dst, 50, 150, 3);
     Mat tm;
     threshold(dst, tm, 0, 255, THRESH_BINARY| THRESH_OTSU);
-    get_line(image, tm, lchains);
+    showimage("oooo", tm);
+    imwrite("o1.jpg", tm);
+    //get_line(image, tm, lchains);
+    get_line(argv[1], image, tm, lchains);
     gen_text_Region(lchains);
 
     print_lchains(lchains);
