@@ -117,7 +117,7 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
         bool allinside = true;
         int roi_x = 95, roi_y = 305;
         int roi_w = 350, roi_h = 35;
-        Rect text_roi(roi_x, roi_y, roi_w, roi_h);
+        Rect text_roi(roi_x*2.3, roi_y*2.3, roi_w*2.3, roi_h*2.3);
         for(vector<Point>::const_iterator pit = lit->begin(); pit != lit->end(); ++pit)
         {
             x_sum += pit->x;
@@ -128,11 +128,13 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
             }
             
         }
+        /* 
 
         if (allinside)
         {
             continue;
         }
+        */
         
         int x = x_sum/lit->size();
         int y = y_sum/lit->size();
@@ -145,7 +147,8 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
         RotatedRect rect = minAreaRect(Mat(*lit));
 
         // only save the up-right rectangles.
-        if (abs(rect.angle) == 0 or abs(rect.angle) == 90 or abs(rect.angle) == 180 or abs(rect.angle) == 270)
+        //if (abs(rect.angle ) < 10 or abs(rect.angle -90) < 10 or abs(rect.angle - 180) < 10 or abs(rect.angle - 270) < 10)
+        if (1)
         {
 
             Point2f verticals[4] ;
@@ -154,7 +157,8 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
 
             double w = line_length(verticals[0], verticals[1]);
             double h = line_length(verticals[2], verticals[1]);
-            if (w > roi_w/4 or h > roi_h/2 or w < 7 or h < 7)
+            //if (w > roi_w/4 or h > roi_h/2 or w < 7 or h < 7)
+            if (w > 50 or h > 50 or w < 7 or h < 7)
             {
                 continue; 
             }
@@ -166,24 +170,24 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
             l.height = h;
 
             // get average grey
-            l.grey = get_average_grey(orig_m, rect.boundingRect());
+            //l.grey = get_average_grey(orig_m, rect.boundingRect());
 
-#if 0
+#if 1
             for (int i=0; i < 4; i++)
             {
                 line(orig_m, verticals[i], verticals[(i+1)%4], Scalar(0,0,0));
             }
 #endif
-                rectangle(orig_m, rect.boundingRect(), Scalar(0,0,0));
+        //        rectangle(orig_m, rect.boundingRect(), Scalar(0,0,0));
                 //rectangle(orig_m, rect.boundingRect(), Scalar(255, 255, 255));
                 lchains.insert(make_pair(l, *lit));
         }
     }
-#if 0
+#if 1
     char new_name[100];
     sprintf(new_name, "%s.png", fname);
-    //showimage("oooo", orig_m);
     imwrite(new_name, orig_m);
+    showimage("oooo", orig_m);
     showimage("mmmm", m);
 #endif
 
@@ -209,7 +213,7 @@ int gen_text_Region(map<Line, vector<Point> > &lchains)
             double s_corr = 1 - min(li.width/li.height, lj.width/lj.height) / max(li.width/li.height, lj.width/lj.height);
             double a_corr = 1 - min(li.width*li.height, lj.width*lj.height) / max(li.width*li.height, lj.width*lj.height);
             double grey_corr = abs(li.grey -lj.grey);
-            cout << "m_corr: " <<d_corr << ", " << s_corr << ", " << a_corr << ", " << grey_corr << endl;
+            //cout << "m_corr: " <<d_corr << ", " << s_corr << ", " << a_corr << ", " << grey_corr << endl;
 
 
         }
@@ -229,24 +233,55 @@ int main ( int argc, char *argv[] )
     image = imread(argv[1], 0);
     Mat blurred;
     double sigma=1;
-    GaussianBlur(image, blurred, Size(), sigma, sigma);
+    GaussianBlur(image, blurred, Size(1,1), sigma, sigma);
+    //blur(image, blurred, 
+
+    Size dsize = Size(blurred.cols * 2.3 , blurred.rows * 2.3);
+    Mat resized;
+    resized = Mat(dsize, blurred.type());
+    resize(blurred, resized, dsize, 0, 0, INTER_CUBIC);
 
 
     map<Line, vector<Point> > lchains;
     Mat dst;
-    Canny(image, dst, 40, 120, 3);
-    showimage("oooo", dst);
-    //Canny(blurred, dst, 50, 150, 3);
-    Mat tm;
-    threshold(dst, tm, 0, 255, THRESH_BINARY| THRESH_OTSU);
-    showimage("oooo", tm);
-    imwrite("o1.jpg", tm);
+    Canny(resized, dst, 40, 120, 3);
+    showimage("resized", resized);
+    showimage("canny", dst);
     //get_line(image, tm, lchains);
-    get_line(argv[1], image, tm, lchains);
+    get_line(argv[1], resized, dst, lchains);
     gen_text_Region(lchains);
 
     print_lchains(lchains);
 
     return 0;
 }			/* ----------  end of function main  ---------- */
+#if 0
+int main ( int argc, char *argv[] )
+{
+    Mat image;
+    if (argc != 2 ) {
+        cout << argc << "no image data\n";
+        return -1;
+    }
+    image = imread(argv[1], 0);
+    Mat blurred;
+    double sigma=1;
+    GaussianBlur(image, blurred, Size(), sigma, sigma);
+
+
+    map<Line, vector<Point> > lchains;
+    Mat dst;
+    Canny(image, dst, 40, 120, 3);
+    //Canny(blurred, dst, 50, 150, 3);
+    Mat tm;
+    threshold(dst, tm, 0, 255, THRESH_BINARY| THRESH_OTSU);
+    //get_line(image, tm, lchains);
+    get_line(argv[1], image, dst, lchains);
+    gen_text_Region(lchains);
+
+    print_lchains(lchains);
+
+    return 0;
+}			/* ----------  end of function main  ---------- */
+#endif
 
