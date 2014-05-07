@@ -158,7 +158,10 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
             double w = line_length(verticals[0], verticals[1]);
             double h = line_length(verticals[2], verticals[1]);
             //if (w > roi_w/4 or h > roi_h/2 or w < 7 or h < 7)
-            if (w > 50 or h > 50 or w < 7 or h < 7)
+            //if (w > 50 or h > 50 or w < 7 or h < 7)
+            //if (w > m.cols/4 or h > m.rows/2 or w < 7 or h < 7)
+            //if (w > m.cols/4 or h > m.rows/2 or w < 7 or h < 7)
+            if (w > 4*20*2.3 or h > 30*2.3 or w < 7 or h < 7)
             {
                 continue; 
             }
@@ -175,7 +178,8 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
 #if 1
             for (int i=0; i < 4; i++)
             {
-                line(orig_m, verticals[i], verticals[(i+1)%4], Scalar(0,0,0));
+                line(orig_m, verticals[i], verticals[(i+1)%4], Scalar(255,255,255));
+                //line(orig_m, verticals[i], verticals[(i+1)%4], Scalar(0,0,0));
             }
 #endif
         //        rectangle(orig_m, rect.boundingRect(), Scalar(0,0,0));
@@ -232,23 +236,30 @@ int main ( int argc, char *argv[] )
     }
     image = imread(argv[1], 0);
     Mat blurred;
-    double sigma=1;
-    GaussianBlur(image, blurred, Size(1,1), sigma, sigma);
     //blur(image, blurred, 
 
-    Size dsize = Size(blurred.cols * 2.3 , blurred.rows * 2.3);
+    Size dsize = Size(image.cols * 2.3 ,image.rows * 2.3);
     Mat resized;
-    resized = Mat(dsize, blurred.type());
-    resize(blurred, resized, dsize, 0, 0, INTER_CUBIC);
+    resized = Mat(dsize, image.type());
+    resize(image, resized, dsize, 0, 0, INTER_CUBIC);
+
 
 
     map<Line, vector<Point> > lchains;
     Mat dst;
-    Canny(resized, dst, 40, 120, 3);
+    GaussianBlur(resized, blurred, Size(5,5), 0, 0);
+    Mat b;
+    threshold( blurred, b, 0, 255, THRESH_OTSU|THRESH_BINARY);
+    Mat opened;
+    Mat element(3,3,CV_8U, cv::Scalar::all(255));
+    morphologyEx(b, opened, MORPH_OPEN, element);
+    Canny(opened, dst, 40, 120, 5);
     showimage("resized", resized);
     showimage("canny", dst);
     //get_line(image, tm, lchains);
-    get_line(argv[1], resized, dst, lchains);
+    Mat dd; 
+    dst.copyTo(dd);
+    get_line(argv[1],dd, dst, lchains);
     gen_text_Region(lchains);
 
     print_lchains(lchains);
