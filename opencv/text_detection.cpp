@@ -14,6 +14,7 @@ class Line{
     public:
         Point2f centriod;
         Point2f vertex;
+        Point2f verticals[4];
         double width;
         double height;
         unsigned int n;
@@ -60,25 +61,36 @@ void showimage(const char *t, Mat& m)
 #endif
 }
 
-void print_lchains(const map<Line, vector<Point> > &lines)
+void print_hist(const vector<int> &hist)
+{
+    for (int i = 0; i < hist.size(); ++i)
+    {
+        cout << i << ": "<< hist[i] << endl;
+    }
+}
+void print_lchains(const vector<Line> &lines)
 {
     cout << "sssss" << endl;
-    for (map<Line, vector<Point> >::const_iterator it = lines.begin(); it != lines.end(); ++it)
+    //for (map<Line, vector<Point> >::const_iterator it = lines.begin(); it != lines.end(); ++it)
+    for(vector<Line>::const_iterator it = lines.begin(); it != lines.end(); ++it)
     {
-        Line l = it->first;
+        Line l = *it;
         cout << "centriod: " << l.centriod << " "
             << "vertex: " << l.vertex << " "
             << "width: " << l.width << " "
             << "height: " << l.height << " "
             << "n: "<< l.n << " "
-            << "grey: " << l.grey << endl;
+            << "grey: " << l.grey << " "
+            << "verticals: " <<l.verticals[0] << ", " 
+            << l.verticals[1] << ", " 
+            << l.verticals[2] << ", "
+            << l.verticals[3] << endl;
     }
 }
 
 double line_length(const Point2f &p1, const Point2f &p2)
 {
 
-//    cout << " __________ " << p1 << " " << p2 << endl;
     double dx = p1.x - p2.x;
     double dy = p1.y - p2.y;
     return sqrt(dx*dx + dy*dy);
@@ -99,10 +111,42 @@ double get_average_grey(Mat &orgin_m, const Rect &roi)
     return (double)grey_sum/(m.cols * m.rows);
 }
 
-//void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
-void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
+/*
+ * function pro = kx-y+j, take two points a and b.
+ * compute the line argument k and j, then return the  pro value
+ * so that can be used to detemine whether the point p is on the left or right 
+ * of the line ab
+ */
+double computeProduct(Point &p, Point2f &a, Point2f &b)
 {
+    double k = (a.y-b.y)/(a.x-b.x);
+    double j = a.y-k*a.x;
+    return k*p.x - p.y + j;
+}
 
+/*
+ * decide whether point p is in the ROI.
+ * The ROI is a rotated rectangle whose 4 conrners are stored in roi[]
+ */
+bool isInROI(Point &p, Point2f roi[])
+{
+    double pro[4];
+    for (int i = 0; i < 4; ++i)
+    {
+        pro[i] = computeProduct(p, roi[i], roi[(i+1)%4]);
+    }
+    if (pro[0] * pro[2] < 0 and pro[1] * pro[3] < 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+
+//void get_line(Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
+//void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > &lchains)
+void get_line(const char* fname, Mat &orig_m, Mat &m, vector<Line> &lchains)
+{
     vector <vector<Point> > contours;
     // findContours would modify the original mat, 
     findContours(m, contours, CV_CHAIN_APPROX_NONE, 1);
@@ -126,15 +170,7 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
             {
                 allinside = false;
             }
-            
         }
-        /* 
-
-        if (allinside)
-        {
-            continue;
-        }
-        */
         
         int x = x_sum/lit->size();
         int y = y_sum/lit->size();
@@ -150,9 +186,9 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
         //if (abs(rect.angle ) < 10 or abs(rect.angle -90) < 10 or abs(rect.angle - 180) < 10 or abs(rect.angle - 270) < 10)
         if (1)
         {
-
             Point2f verticals[4] ;
             rect.points(verticals);
+            memcpy(l.verticals, verticals, sizeof(Point2f)*4);
             l.vertex = verticals[2];
 
             double w = line_length(verticals[0], verticals[1]);
@@ -182,19 +218,39 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, map<Line, vector<Point> > 
                 //line(orig_m, verticals[i], verticals[(i+1)%4], Scalar(0,0,0));
             }
 #endif
-        //        rectangle(orig_m, rect.boundingRect(), Scalar(0,0,0));
-                //rectangle(orig_m, rect.boundingRect(), Scalar(255, 255, 255));
-                lchains.insert(make_pair(l, *lit));
+            lchains.push_back(l);
         }
     }
 #if 1
     char new_name[100];
     sprintf(new_name, "%s.png", fname);
     imwrite(new_name, orig_m);
-    showimage("oooo", orig_m);
-    showimage("mmmm", m);
 #endif
 
+}
+
+void get_hist_h(const Mat& m, const Rect &rect, vector<Line>&lchains, vector<int> &hist_h)
+{
+    for (int r = 0; r < m.rows; ++r)
+    {
+        for (int c = 0; c < m.cols; ++c)
+        {
+
+            Point p(c, r);
+            if (p.inside(rect) and (int)m.at<uchar>(r,c) > 0)
+            {
+                for (vector<Line>::const_iterator lit = lchains.begin(); 
+                        lit != lchains.end(); ++lit)
+                {
+                    if (isInROI(p, (Point2f*)lit->verticals))
+                    {
+                        ++hist_h[r];
+                    }
+
+                }
+            }
+        }
+    }
 }
 
 
@@ -218,7 +274,6 @@ int gen_text_Region(map<Line, vector<Point> > &lchains)
             double a_corr = 1 - min(li.width*li.height, lj.width*lj.height) / max(li.width*li.height, lj.width*lj.height);
             double grey_corr = abs(li.grey -lj.grey);
             //cout << "m_corr: " <<d_corr << ", " << s_corr << ", " << a_corr << ", " << grey_corr << endl;
-
 
         }
     }
@@ -244,7 +299,7 @@ int main ( int argc, char *argv[] )
     resize(image, resized, dsize, 0, 0, INTER_CUBIC);
 
 
-    map<Line, vector<Point> > lchains;
+    vector<Line> lchains;
     Mat dst;
     GaussianBlur(resized, blurred, Size(5,5), 0, 0);
     Mat b;
@@ -253,45 +308,25 @@ int main ( int argc, char *argv[] )
     Mat element(3,3,CV_8U, cv::Scalar::all(255));
     morphologyEx(b, opened, MORPH_OPEN, element);
     Canny(opened, dst, 40, 120, 5);
-    showimage("resized", resized);
-    showimage("canny", dst);
     //get_line(image, tm, lchains);
-    Mat dd; 
+
+      
+    Mat dd, dd2; 
     dst.copyTo(dd);
+    dst.copyTo(dd2);
     get_line(argv[1],dd, dst, lchains);
-    gen_text_Region(lchains);
 
-    print_lchains(lchains);
+    vector<int> hist_h(dd.rows, 0);
 
-    return 0;
-}			/* ----------  end of function main  ---------- */
-#if 0
-int main ( int argc, char *argv[] )
-{
-    Mat image;
-    if (argc != 2 ) {
-        cout << argc << "no image data\n";
-        return -1;
-    }
-    image = imread(argv[1], 0);
-    Mat blurred;
-    double sigma=1;
-    GaussianBlur(image, blurred, Size(), sigma, sigma);
+    int roi_x = 95, roi_y = 305;
+    int roi_w = 350, roi_h = 35;
+    Rect text_roi(roi_x*2.3, roi_y*2.3, roi_w*2.3, roi_h*2.3);
+    get_hist_h(dd2, text_roi, lchains, hist_h);
+    //gen_text_Region(lchains);
 
-
-    map<Line, vector<Point> > lchains;
-    Mat dst;
-    Canny(image, dst, 40, 120, 3);
-    //Canny(blurred, dst, 50, 150, 3);
-    Mat tm;
-    threshold(dst, tm, 0, 255, THRESH_BINARY| THRESH_OTSU);
-    //get_line(image, tm, lchains);
-    get_line(argv[1], image, dst, lchains);
-    gen_text_Region(lchains);
-
-    print_lchains(lchains);
+    showimage("dd2", dd2);
+    //print_lchains(lchains);
+    print_hist(hist_h);
 
     return 0;
 }			/* ----------  end of function main  ---------- */
-#endif
-
