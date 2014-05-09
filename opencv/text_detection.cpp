@@ -193,11 +193,8 @@ void get_line(const char* fname, Mat &orig_m, Mat &m, vector<Line> &lchains)
 
             double w = line_length(verticals[0], verticals[1]);
             double h = line_length(verticals[2], verticals[1]);
-            //if (w > roi_w/4 or h > roi_h/2 or w < 7 or h < 7)
-            //if (w > 50 or h > 50 or w < 7 or h < 7)
             //if (w > m.cols/4 or h > m.rows/2 or w < 7 or h < 7)
-            //if (w > m.cols/4 or h > m.rows/2 or w < 7 or h < 7)
-            if (w > 4*20*2.3 or h > 30*2.3 or w < 7 or h < 7)
+            if (w > 4*20*2.3 or h > 40*2.3 or w < 7 or h < 7)
             {
                 continue; 
             }
@@ -251,6 +248,62 @@ void get_hist_h(const Mat& m, const Rect &rect, vector<Line>&lchains, vector<int
             }
         }
     }
+
+}
+
+// FIXME: end-begin is magic number
+void get_ypos(vector<pair<int, int> > &ypos, vector<int> &hist)
+{
+    int p_pos=-1, length = 0;
+    int prev = 0;
+    int cnt = 0;
+
+    long sum = 0;
+    int avg ;
+    for (size_t i = 0; i < hist.size(); ++i)
+    {
+        if (hist[i] != 0)
+        {
+            sum += hist[i];
+            ++cnt;
+        }
+    }
+    avg = sum/cnt;
+
+    bool istext ;
+    int begin = -1, end = -1;
+    for (size_t i = 0; i < hist.size(); ++i)
+    {
+        if (prev == 0 and hist[i] != 0)
+        {
+            begin = i;
+            if (hist[i] > avg)
+            {
+                istext = true;
+            }
+            else
+            {
+                istext = false;
+            }
+        }
+        if (hist[i] > avg)
+        {
+            istext = true;
+        }
+
+        if (prev != 0 and hist[i] == 0)
+        {
+            end = i+1 > hist.size() ? i : i+1;
+            if (istext and end - begin > 13)
+            {
+                ypos.push_back(make_pair<int, int> (begin, end));
+
+            }
+            istext = false;
+        }
+        prev = hist[i];
+
+    }
 }
 
 
@@ -277,7 +330,6 @@ int gen_text_Region(map<Line, vector<Point> > &lchains)
 
         }
     }
-    cout << "cccccccccccccc " << i << endl;
     cout << lchains.size() << endl;
     return 0;
 }
@@ -303,7 +355,7 @@ int main ( int argc, char *argv[] )
     Mat dst;
     GaussianBlur(resized, blurred, Size(5,5), 0, 0);
     Mat b;
-    threshold( blurred, b, 0, 255, THRESH_OTSU|THRESH_BINARY);
+    threshold(blurred, b, 0, 255, THRESH_OTSU|THRESH_BINARY);
     Mat opened;
     Mat element(3,3,CV_8U, cv::Scalar::all(255));
     morphologyEx(b, opened, MORPH_OPEN, element);
@@ -318,15 +370,32 @@ int main ( int argc, char *argv[] )
 
     vector<int> hist_h(dd.rows, 0);
 
-    int roi_x = 95, roi_y = 305;
-    int roi_w = 350, roi_h = 35;
+    int roi_x = 100, roi_y = 250;
+    int roi_w = 315, roi_h = 82;
     Rect text_roi(roi_x*2.3, roi_y*2.3, roi_w*2.3, roi_h*2.3);
     get_hist_h(dd2, text_roi, lchains, hist_h);
     //gen_text_Region(lchains);
 
-    showimage("dd2", dd2);
-    //print_lchains(lchains);
+    vector<pair<int, int> > y_edges; 
+
+    get_ypos(y_edges, hist_h);
     print_hist(hist_h);
+
+    Mat rgb_m;
+    cvtColor(blurred, rgb_m, CV_GRAY2BGR);
+    // output the text scope in y-pos;
+    for (vector<pair<int, int> >::const_iterator it = y_edges.begin();
+            it != y_edges.end(); ++it)
+    {
+        
+        line(rgb_m, Point(0, it->first), Point(blurred.cols, it->first), Scalar(255, 0,0), 3);
+        line(rgb_m, Point(0, it->second), Point(blurred.cols, it->second), Scalar(0, 0,255), 3);
+        cout << "ypos: " << it->first << ", " << it->second <<  " | " << it->second - it->first << endl;
+    }
+
+    showimage("blurred", rgb_m);
+    showimage("dd", dd);
+    //print_lchains(lchains);
 
     return 0;
 }			/* ----------  end of function main  ---------- */
