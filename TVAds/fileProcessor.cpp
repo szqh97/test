@@ -272,10 +272,12 @@ int FileProcessor::goto_init_state()
 
     if (m_vdna_buffer)
     {
-        delete [] m_vdna_buffer->buf;
+        //delete [] m_vdna_buffer->buf;
+        free(m_vdna_buffer->buf);
         m_vdna_buffer->vdna_buf_len = 0;
         m_vdna_buffer->cur_len = 0;
-        delete m_vdna_buffer;
+        //delete m_vdna_buffer;
+        free(m_vdna_buffer);
         m_vdna_buffer = NULL;
     }
     

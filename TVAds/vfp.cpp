@@ -489,10 +489,16 @@ int FileProcessor::fingerprint_vfp(FILE * fp, off_t pos, video_file_info * info)
 
     if (!m_vdna_buffer)
     {
-        m_vdna_buffer = new vdna_buffer;
-        m_vdna_buffer->buf = new unsigned char[info->frame_count * 40];
+        //m_vdna_buffer = new vdna_buffer();
+        //m_vdna_buffer->buf = new unsigned char[info->frame_count * 40];
+        m_vdna_buffer = (vdna_buffer*) malloc(sizeof(vdna_buffer));
+        if (m_vdna_buffer)
+        {
+        m_vdna_buffer->buf = (unsigned char*)malloc(info->frame_count * 40);
         m_vdna_buffer->cur = m_vdna_buffer->buf;
         m_vdna_buffer->vdna_buf_len = info->frame_count * 40;
+        m_vdna_buffer->cur_len = 0;
+        }
     }
 
     for (i = 0; i < (int)info->frame_count; i++)
@@ -522,6 +528,7 @@ int FileProcessor::fingerprint_vfp(FILE * fp, off_t pos, video_file_info * info)
 
         float frame_ts = (m_frame_count + 1) / fps;
 
+
         int count =
             vfp_process_frame(buffer_pointer, info->width, info->height, info->width * 2,
                     info->color_type,
@@ -530,17 +537,16 @@ int FileProcessor::fingerprint_vfp(FILE * fp, off_t pos, video_file_info * info)
                     m_detect, &m_edge);
         if (count != 40)
         {
-            LOG(ERROR) << "call vfp_process_frame fails, fps: " << frame_time_offset + m_frame_count / fps << " info->color_type: " << info->color_type << " info->width: " << info->width << " info->height: " << info->height << " frame_time_offset: " << frame_time_offset << " m_frame_count:"  << m_frame_count  << " fps: "  << fps ;
+            // dna buffed 
         }
         else 
         {
             if (m_vdna_time_offset == -1)
             {
-                unsigned int dna_ts = (unsigned int)vdna_body;
+                uint32_t dna_ts = *(uint32_t*)vdna_body;
                 m_vdna_time_offset = m_current_task_begin_time.tv_sec * 1000 + m_current_task_begin_time.tv_usec / 1000 + frame_ts - dna_ts;
                 LOG(INFO) << "vdna delay: "<< m_vdna_time_offset ;
             }
-            //if (m_vdna_buffer->cur + count <= m_vdna_buffer->buf + m_vdna_buffer->vdna_buf_len)
             if (m_vdna_buffer->cur_len + count <= m_vdna_buffer->vdna_buf_len)
             {
                 memcpy(m_vdna_buffer->cur, vdna_body, count);
@@ -549,13 +555,13 @@ int FileProcessor::fingerprint_vfp(FILE * fp, off_t pos, video_file_info * info)
             }
             else
             {
-                unsigned int dna_ts = (unsigned int) m_vdna_buffer->buf;
+                uint32_t dna_ts = *(uint32_t*) m_vdna_buffer->buf;
                 write_dna_control_block(VIDEO_DNA, info->frame_count * 40, \
                     m_vdna_time_offset + dna_ts, m_cfp_file);
                     //info->begin_time.tv_sec * 1000 + info->begin_time.tv_usec / 1000 - m_vdna_time_offset, m_cfp_file);
                 fwrite(m_vdna_buffer->buf, m_vdna_buffer->cur_len, 1, m_cfp_file);
                 fflush(m_cfp_file);
-                m_vdna_buffer->buf = m_vdna_buffer->cur;
+                m_vdna_buffer->cur = m_vdna_buffer->buf;
                 m_vdna_buffer->cur_len = 0;
             }
 
@@ -803,28 +809,25 @@ int FileProcessor::fingerprint_flush()
 {
     int count = 0;
     unsigned char body[140];
-    while( (count = vfp_flush_frame(m_vfp_wrap_context, body)))
+    while( (count = vfp_flush_frame(m_vfp_wrap_context, body)) == 40)
     {
-        if (count)
+        if(m_vdna_buffer->cur_len + count <= m_vdna_buffer->vdna_buf_len)
         {
-            if(m_vdna_buffer->cur_len + count <= m_vdna_buffer->vdna_buf_len)
-            {
-                memcpy(m_vdna_buffer->cur, body, count);
-                m_vdna_buffer->cur_len += count;
-                m_vdna_buffer->cur += count;
-            }
-            else
-            {
-                unsigned int dna_ts = (unsigned int) m_vdna_buffer->buf;
-                write_dna_control_block(VIDEO_DNA, m_vdna_buffer->cur_len, dna_ts + m_vdna_time_offset, m_cfp_file);
-                fwrite(m_vdna_buffer->buf, m_vdna_buffer->cur_len, 1, m_cfp_file);
-                fflush(m_cfp_file);
-                m_vdna_buffer->cur = m_vdna_buffer->buf;
-                m_vdna_buffer->cur_len = 0;
-
-            }
+            memcpy(m_vdna_buffer->cur, body, count);
+            m_vdna_buffer->cur_len += count;
+            m_vdna_buffer->cur += count;
+        }
+        else
+        {
+            unsigned int dna_ts = (unsigned int) m_vdna_buffer->buf;
+            write_dna_control_block(VIDEO_DNA, m_vdna_buffer->cur_len, dna_ts + m_vdna_time_offset, m_cfp_file);
+            fwrite(m_vdna_buffer->buf, m_vdna_buffer->cur_len, 1, m_cfp_file);
+            fflush(m_cfp_file);
+            m_vdna_buffer->cur = m_vdna_buffer->buf;
+            m_vdna_buffer->cur_len = 0;
 
         }
+
     }
 
     if (m_vdna_buffer->cur_len )
