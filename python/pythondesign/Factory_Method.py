@@ -71,15 +71,16 @@ class FTPConnector(Connector):
         return FTPPort()
 
     def parse(self, content):
-        lines = content.seplit('\n')
+        lines = content.split('\n')
         filenames = []
         for line in lines:
             #The ftp fromat typically has a 8colums, split them 
             splited_line = line.split(None, 8)
+            print 'xxxxxxxx', line
             if len(splited_line) == 9:
                 filenames.append(splited_line[-1])
 
-        return '\n'.joing(filenames)
+        return '\n'.join(filenames)
 
 class Port(object):
     __metaclass__ = abc.ABCMeta
@@ -92,15 +93,15 @@ class Port(object):
 class HTTPPort(Port):
     """ A concrete product which represents http port. """
 
-    def __str(self):
+    def __str__(self):
         return "80"
 
-class HTTPSecureProt(Port):
+class HTTPSecurePort(Port):
     """ a CONCRETE product which represents https port."""
     def __str__(self):
         return "443"
 
-class FTPPort(self):
+class FTPPort(Port):
     """ A concrete product which represents ftp port."""
     def __str__(self):
         return "21"
@@ -120,7 +121,8 @@ if __name__ == '__main__':
 
     try:
         content = connector.read(domain, path)
-    except urllib2.URLError, e:
+    #except urllib2.URLError, e:
+    except :
         print "Can not access resource with this method"
     else:
         print connector.parse(content)
