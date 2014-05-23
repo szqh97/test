@@ -12,6 +12,7 @@ tags
 *.pyo
 test
 *.avi
+*.csv
 *.yuv
 *.mp4
 *.flv
