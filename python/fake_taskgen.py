@@ -11,7 +11,7 @@ import httplib2
 import traceback
 
 
-jobtracker_url = "http://192.168.50.52:8081/jobTracker/task/submit"
+jobtracker_url = "http://192.168.1.11:8081/jobTracker/task/submit"
 channels =[]
 name_prex = "TEST_"
 with file (sys.argv[1], 'r') as f:
@@ -23,7 +23,7 @@ with file (sys.argv[1], 'r') as f:
 #    channels.append({name:channel_uuid})
 
 videocaptures=[
-        "aaaaaaaaaaaaa",
+        "http://207.47.34.13:2222/fakescreenshot",
         "BBBBBBBBBBBBB",
         "CCCCCCCCCCCC",
         "DDDDDDDDDDDD"
@@ -34,7 +34,7 @@ def gen_fake_task(taskf):
     with file(taskf, 'r') as f:
         task_info = simplejson.load(f)
     i =0
-    for channel in channels:
+    for channel in channels[-1:]:
         try:
             task_info["requestId"] = str(uuid.uuid4())
             task_info["channel"]["name"] = channel.keys()[0]
