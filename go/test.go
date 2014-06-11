@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+    "crypto/md5"
+    "io"
 	"os"
+    "runtime"
 )
 
 func main() {
@@ -18,5 +21,14 @@ func main() {
 	var a interface{}
 	fmt.Println(fmt.Sprintf("xx", a))
     fmt.Println(float64(7/9.0))
+    fmt.Println(runtime.Version())
 
+    hostname,_ := os.Hostname()
+    fmt.Println(hostname)
+    h := md5.New()
+    fmt.Println(h)
+
+
+    io.WriteString(h, hostname)
+    fmt.Println(h, hostname)
 }
