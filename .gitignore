@@ -1,4 +1,5 @@
 *.o
+*.dat
 dna
 dna_dir/
 .*.sw*
