@@ -3,8 +3,15 @@ package nsqd
 import (
 	"testing"
 	"unsafe"
+    "log"
 )
 
+func TestGuid(t *testing.T){
+	factory := &guidFactory{1,2}
+    guid, _ := factory.NewGUID(1234)
+    log.Println("guid: ", guid)
+
+}
 func BenchmarkGUIDCopy(b *testing.B) {
 	source := make([]byte, 16)
 	var dest MessageID
@@ -29,6 +36,8 @@ func BenchmarkGUID(b *testing.B) {
 		if err != nil {
 			continue
 		}
+        log.Println(guid)
 		guid.Hex()
+
 	}
 }
