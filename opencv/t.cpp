@@ -18,10 +18,15 @@ float line_length(const Point2f &p1, const Point2f &p2)
     double dy = p1.y - p2.y;
     return sqrt(dx*dx + dy*dy);
 }
+double min(double d1, double d2)
+{
+    return d1 < d2 ? d1 : d2;
+}
 int main ( int argc, char *argv[] )
 {
-    Point2f p1(110, 239),  p2(110, 226);
-    cout << line_length(p1, p2) << endl;
+    double d1 = 3.4;
+    double d2 = 44.4;
+    cout << min(d1, d2) << endl;
     return 0;
 }			/* ----------  end of function main  ---------- */
 

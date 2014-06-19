@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     }
 
     Mat dst, cdst;
-    Canny(src, dst, 50, 200, 3);
+    Canny(src, dst, 50, 150, 3);
     cvtColor(dst, cdst, COLOR_GRAY2BGR);
 
 #if 0
