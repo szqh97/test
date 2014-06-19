@@ -3,8 +3,6 @@
 using namespace std;
 
 
-namespace strtool
-{
 string trim(const string& str)
 {
     string::size_type pos = str.find_first_not_of(' ');
@@ -75,5 +73,15 @@ string replace(const string& str, const string& src, const string& dest)
     return ret;
 }
 
-}
 
+int main ( int argc, char *argv[] )
+{
+    string ss = "./a/b/c/d/e/sss.ll.cmk";
+    vector<string> vt;
+    split(ss, vt, "/");
+    for (vector<string>::const_iterator it = vt.begin(); it != vt.end(); ++it)
+    {
+        cout << *it << " , " ;
+    }
+    return 0;
+}			/* ----------  end of function main  ---------- */

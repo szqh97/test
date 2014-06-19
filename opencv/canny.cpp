@@ -26,7 +26,9 @@ void showimage(const char *t, Mat& m)
 bool check_neighbors(int x, int y, LineList &lines)
 {
     cout << Point(x,y) << endl;
-    bool bflag = false;
+    bool bleft = false, btopl = false, btop = false, btopr = false;
+    list<Line::iterator> vlines;
+    
     for (LineList::iterator llit = lines.begin(); llit != lines.end(); ++llit)
     {
         cout << "the line size is: " << (*llit)->size() << &(*(*llit)->begin()) <<  " " <<&(*(*llit)->end()) << endl;
@@ -38,44 +40,55 @@ bool check_neighbors(int x, int y, LineList &lines)
             // left
             if (lit->x - x == -1 and lit->y == y)
             {
-                //(*llit)->push_back(Point(x, y));
-                bflag = true;
-                f = true;
+                bleft = true;
                 cout << "left "<< Point(x, y) << endl;
             } 
 
             // top left
             if (lit->x - x == -1 and lit->y - y == -1)
             {
-                //(*llit)->push_back(Point(x, y));
-                bflag = true;
-                f = true;
+                btopl = true;
                 cout << "top left "<< Point(x, y) << endl;
             }
             // top 
             if (lit->x == x and lit->y - y == -1)
             {
-                //(*llit)->push_back(Point(x, y));
-                bflag = true;
-                f = true;
+                btop = true;
                 cout << "top "<< Point(x, y) << endl;
             }
             // top right
             if (lit->x - x == 1 and lit->y - y == -1)
             {
-                //(*llit)->push_back(Point(x, y));
-                bflag = true;
-                f = true;
+                btopr = true;
                 cout << "top right "<< Point(x, y) << endl;
             }
         }
-        if (f)
+        if (bleft or btopr or btop or btopl)
         {
-            (*llit)->push_back(Point(x,y));
+            vlines.push_back(llit);
         }
     }
 
-    if (!bflag)
+    if (vlines.sze() > 0)
+    {
+        list<Line*>::iterator lit = vlines.begin();
+        list<Line*>::iterator dstit = lit;
+        (*lit)->push_back(Point(x, y));
+        // merge lines 
+        ++lit;
+        while (lit != vlines.end())
+        {
+            for (Line::iterator it = (*lit)->begin(); it != (*lit)->end(); ++it)
+            {
+                (*dstit)->push_back(*it);
+            }
+            lines.erase(*lit);
+            delete *(*lit);
+            ++lit;
+        }
+    }
+
+    if (!bleft and !btopl and !btopr and !btop)
     {
         cout << "Create a new line " << Point(x, y)<< endl;
         Line *pl = new Line(); 
@@ -117,6 +130,7 @@ void print_linecollections(LineList &lines)
         {
             cout << *lit << " ";
         }
+        delete *llit;
         cout << endl <<"=============================" << endl;
     }
 #endif
