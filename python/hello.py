@@ -1,36 +1,18 @@
 #!/usr/bin/env python
-
 import web
+import Queue
 
-import sys, logging
-from wsgilog import WsgiLog
-import config
+urls = ("/.*", "hello")
+cnt = 0
 
-class Log(WsgiLog):
-    def __init__(self, application):
-        WsgiLog.__init__(
-            self,
-            application,
-            logformat = '%(message)s',
-            tofile = True,
-            file = config.log_file,
-            interval = config.log_interval,
-            backups = config.log_backups
-            )
-
-urls = ("/hello", "hello")
 class hello:
-    def POST(self):
-        data = web.data()
-        if data.has_key("qvod_url"):
-            print data
+    def __init__(self):
+        global cnt
+        cnt +=1
     def GET(self):
-        data = web.input()
-        if data.has_key('a'):
-            print data['a']
+        return 'Hello, world, cnt is %d\n' % (cnt,)
 
-if __name__ == '__main__':
-    app = web.application(urls, globals())
-    app.run()
-
-
+application = web.application(urls, globals()).wsgifunc()
+#if __name__ == "__main__":
+#    app = web.application(urls, globals())
+#    app.run()
