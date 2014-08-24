@@ -11,8 +11,9 @@ func main(){
     taskDNAs, _ := js.Get("taskDNA").Array()
 
     for  tid := range taskDNAs{
-        //url, _ := js.Get("taskDNA").GetIndex(tid).Get("downloadUrl").String()
-        url, _ := js.Get("taskDNA").GetIndex(tid).Get("downloadUrl").String()
+        taskDNAjs := js.Get("taskDNA").GetIndex(tid)
+        url, _ := taskDNAjs.Get("downloadUrl").String()
+        fmt.Println(taskDNAjs)
         fmt.Println(url)
     }
     fmt.Println(d)

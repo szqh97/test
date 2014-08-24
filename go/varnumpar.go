@@ -12,7 +12,8 @@ func Min(a ...int) int {
         return 0
     }
     min := a[0]
-    for _, v := range a {
+    for i, v := range a {
+        fmt.Println(i)
         if v < min{
             min = v
         }

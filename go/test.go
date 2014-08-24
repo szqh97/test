@@ -5,6 +5,7 @@ import (
     "crypto/md5"
     "io"
 	"os"
+    "time"
     "runtime"
 )
 
@@ -31,4 +32,6 @@ func main() {
 
     io.WriteString(h, hostname)
     fmt.Println(h, hostname)
+
+    fmt.Println("time: ", time.Now())
 }
