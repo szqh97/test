@@ -1,4 +1,5 @@
 *.o
+.idea/
 *.dat
 dna
 dna_dir/
