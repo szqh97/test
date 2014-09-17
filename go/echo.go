@@ -6,8 +6,8 @@ import (
 var NewLine = flag.Bool("n", false, "print on newline")
 
 const (
-    Space = " "
-    newline = "\n"
+    Space = ""
+    Newline = "\n"
 )
 func main() {
     flag.PrintDefaults()
@@ -17,10 +17,13 @@ func main() {
         if i > 0 {
             s += Space
         }
+        if *NewLine {
+            s += Newline
+        }
         s += flag.Arg(i)
     }
     if *NewLine {
-        s += NewLine
+        s += Newline
     }
     os.Stdout.WriteString(s)
 }
