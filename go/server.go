@@ -5,7 +5,7 @@ import (
 )
 func main() {
     fmt.Println("Starting the server ...")
-    listener, err := net.Listen("tcp", "localhost:50000")
+    listener, err := net.Listen("tcp", "127.0.0.1:5000")
     if err != nil {
         fmt.Println("Error listening", err.Error())
         return
