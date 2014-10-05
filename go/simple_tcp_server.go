@@ -2,7 +2,6 @@ package main
 import (
     "flag"
     "net"
-    "os"
     "fmt"
 )
 const maxRead = 25
@@ -16,7 +15,8 @@ func main() {
     listener := initServer(hostAndPort)
     for {
         conn, err := listener.Accept()
-        check
+        checkError(err, "Accept:")
+        go connectionHandler(conn)
     }
 }
 func initServer(hostAndPort string) *net.TCPListener {
@@ -24,13 +24,13 @@ func initServer(hostAndPort string) *net.TCPListener {
     checkError(err, "Resolving address: port failed: '" + hostAndPort + "'")
     listener, err := net.ListenTCP("tcp", serverAddr)
     checkError(err, "ListenTCP: ")
-    println("Listening to: ", listener.Addr().String())
+    fmt.Println("Listening to: ", listener.Addr().String())
     return listener
 }
 
 func connectionHandler(conn net.Conn) {
     connFrom := conn.RemoteAddr().String()
-    println("Conncetion from: ", connFrom0
+    fmt.Println("Conncetion from: ", connFrom)
     sayHello(conn)
     for {
         var ibuf []byte = make([]byte, maxRead + 1)
@@ -39,16 +39,37 @@ func connectionHandler(conn net.Conn) {
         switch err {
         case nil :
             handleMsg(length, err, ibuf)
-        case os.EAGAIN:
-            continue
         default:
             goto DISCONNECT
         }
     }
 DISCONNECT:
     err := conn.Close()
-    println("closed closed conncetion. ", connFrom)
-    checkError(err, "Close:")
+    fmt.Println("closed closed conncetion. ", connFrom)
+    checkError(err, "Close: ")
+}
 
+func sayHello(to net.Conn) {
+    obuf := []byte{'L', 'e', 't', '\'', 's', ' ', 'G', 'O', '!', '\n'}
+    wrote, err := to.Write(obuf)
+    checkError(err, "Write: wrote " + string(wrote) + " bytes.")
+}
+func handleMsg(length int, err error, msg []byte){
+    if length > 0{
+        fmt.Println("<", length, ":")
+        for i := 0; ; i ++ {
+            if msg[i] == 0{
+                break;
+            }
+            fmt.Printf("%c", msg[i])
+        }
+        fmt.Print(">")
+    }
+}
+
+func checkError(error error, info string) {
+    if error != nil {
+        panic("Error: " + info + " " + error.Error())
+    }
 }
 
