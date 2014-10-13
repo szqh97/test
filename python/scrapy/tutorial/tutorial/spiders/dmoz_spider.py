@@ -1,5 +1,6 @@
 import scrapy
 from tutorial.items import DmozItem
+from scrapy import log
 class DmozSpider(scrapy.Spider):
     name    =   "dmoz"
     allowed_domains = ["dmoz.org"]
@@ -16,7 +17,7 @@ class DmozSpider(scrapy.Spider):
 #            desc = sel.xpath('text()').extract()
             item = DmozItem()
             item['title'] = sel.xpath('a/text()').extract()
+            self.log("the title is %s" % str(item['title']) )
             item['link'] = sel.xpath('a/@href').extract()
             item['desc'] = sel.xpath('text()').extract()
-            items.append(item)
         return items
