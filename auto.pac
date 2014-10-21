@@ -3046,5 +3046,5 @@ function FindProxyForURL(url, host) {
   if(/\.president\.gov\.tw/i.test(url)) return PROXY;
   //-- END OF AUTO-GENERATED RULES
 
-  return DEFAULT;
+  return PROXY;
 }
