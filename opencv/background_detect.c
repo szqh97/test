@@ -62,11 +62,12 @@ int main( int argc, char** argv )
 	fprintf(stderr, "Can not open video file %s\n", argv[1]);
 	return -2;
       }
- 
+    cvSetCaptureProperty(pCapture,CV_CAP_PROP_POS_FRAMES, 0);
   //逐帧读取视频
   while(pFrame = cvQueryFrame( pCapture ))
     {
       nFrmNum++;
+     cvSetCaptureProperty(pCapture,CV_CAP_PROP_POS_FRAMES, nFrmNum * 10);
  
       //如果是第一帧，需要申请内存，并初始化
       if(nFrmNum == 1)
@@ -100,8 +101,8 @@ int main( int argc, char** argv )
 	  cvThreshold(pFrMat, pFrImg, 60, 255.0, CV_THRESH_BINARY);
  
 	  //进行形态学滤波，去掉噪音  
-	  //cvErode(pFrImg, pFrImg, 0, 1);
-	  //cvDilate(pFrImg, pFrImg, 0, 1);
+	  cvErode(pFrImg, pFrImg, 0, 1);
+	  cvDilate(pFrImg, pFrImg, 0, 1);
  
 	  //更新背景
 	  cvRunningAvg(pFrameMat, pBkMat, 0.003, 0);

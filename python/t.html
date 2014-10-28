@@ -1,7 +1,25 @@
-<form method="post"action="http://192.168.40.169:8080/hello" >
+<html>
+<head>
+<script type="text/javascript">
+function check_data()
+{
+    var data = bridge.getData();
 
-         <inputtype="text" name="txt1">
-
-         <inputtype="text" name="txt2">
-
- </form> 
+    if (data === "")
+    {
+        setTimeout(check_data, 1000);
+    }
+    else
+    {
+        document.getElementById('data').innerText = data;
+    }
+}
+</script>
+</head>
+<body onload='check_data()'>
+<p>
+data: <span id="data"></span>
+</p>
+<input type="button" value="Exit" onclick="bridge.exit('goodbye from Javascript')">
+</body>
+</html>
