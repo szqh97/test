@@ -9,11 +9,10 @@ class Echo(protocol.Protocol):
         print "a connection is made, all is : ", count, ": alive is: ", self.connected, ":"
 
     def dataReceived(self, data):
-        print self.transport.getPeer()
         self.transport.write(data)
 
     def connectionLost(self, reason):
-        #print reason
+        print reason
         pass
 
 class EchoFactory(protocol.Factory):
