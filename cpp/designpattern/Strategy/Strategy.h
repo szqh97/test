@@ -2,12 +2,6 @@
 #define  Strategy_INC
 class Strategy;
 
-/*
- * =====================================================================
- *        Class:  Context
- *  Description:  
- * =====================================================================
- */
 class Context
 {
     public:
@@ -20,12 +14,6 @@ class Context
         Strategy* m_pStrategy;
 }; /* -----  end of class Context  ----- */
 
-/*
- * =====================================================================
- *        Class:  Strategy
- *  Description:  
- * =====================================================================
- */
 class Strategy
 {
     public:
@@ -36,12 +24,6 @@ class Strategy
     private:
 }; /* -----  end of class Strategy  ----- */
 
-/*
- * =======================================================================
- *        Class:  ConcreateStrageA
- *  Description:  
- * =======================================================================
- */
 class ConcreateStrageA : public Strategy
 {
     public:
