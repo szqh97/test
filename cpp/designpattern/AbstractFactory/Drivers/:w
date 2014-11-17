@@ -1,0 +1,13 @@
+#include "HRPD.h"
+#include <iostream>
+
+using namespace std;
+
+HRPD::HRPD(){}
+
+HRPD::~HRPD(){}
+
+void HRDD::print()
+{
+    cout << "HRPD::print" << endl;
+}
