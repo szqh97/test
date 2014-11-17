@@ -5,8 +5,8 @@
 class AbstractProductA
 {
     public:
-        AbstractProductA ();                             /* constructor      */
-        virtual ~AbstractProductA ();                            /* destructor       */
+        AbstractProductA ();                             
+        virtual ~AbstractProductA ();                    
         virtual void Operation() = 0;
     protected:
     private:
@@ -17,12 +17,10 @@ class AbstractProductA
 class AbstractProductB
 {
     public:
-        AbstractProductB ();                             /* constructor      */
-        virtual ~AbstractProductB ();                            /* destructor       */
+        AbstractProductB ();                             
+        virtual ~AbstractProductB ();                    
         virtual void Operation() = 0;
-
     protected:
-
     private:
 
 }; /* -----  end of class AbstractProductB  ----- */
@@ -30,8 +28,8 @@ class AbstractProductB
 class ProductA1 : public AbstractProductA
 {
     public:
-        ProductA1 ();                             /* constructor      */
-        ~ProductA1 ();                            /* destructor       */
+        ProductA1 ();                            
+        ~ProductA1 ();                           
         void Operation();
     protected:
     private:
@@ -41,8 +39,8 @@ class ProductA1 : public AbstractProductA
 class ProductA2 : public AbstractProductA
 {
     public:
-        ProductA2 ();                             /* constructor      */
-        ~ProductA2 ();                            /* destructor       */
+        ProductA2 ();                            
+        ~ProductA2 ();                           
         void Operation();
 
     protected:
@@ -52,8 +50,8 @@ class ProductA2 : public AbstractProductA
 class ProductB1 : public AbstractProductB
 {
     public:
-        ProductB1 ();                             /* constructor      */
-        ~ProductB1 ();                            /* destructor       */
+        ProductB1 ();                            
+        ~ProductB1 ();                           
         void Operation();
     protected:
     private:
@@ -62,8 +60,8 @@ class ProductB1 : public AbstractProductB
 class ProductB2 : public AbstractProductB
 {
     public:
-        ProductB2 ();                             /* constructor      */
-        ~ProductB2 ();                            /* destructor       */
+        ProductB2 ();                            
+        ~ProductB2 ();                           
         void Operation();
     protected:
     private:

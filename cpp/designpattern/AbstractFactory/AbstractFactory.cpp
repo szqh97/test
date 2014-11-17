@@ -1,7 +1,9 @@
 #include "AbstractFactory.h"
 AbstracFactory::AbstracFactory(){}
 
-AbstracFactory::~AbstracFactory(){}
+AbstracFactory::~AbstracFactory()
+{
+}
 
 ConcreteFactory1::ConcreteFactory1(){}
 

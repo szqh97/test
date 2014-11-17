@@ -8,8 +8,8 @@ class AbstractProductB;
 class AbstracFactory
 {
     public:
-        AbstracFactory ();                             /* constructor      */
-        virtual ~AbstracFactory ();                            /* destructor       */
+        AbstracFactory ();                             
+        virtual ~AbstracFactory ();                    
         virtual AbstractProductA* createProductA() = 0;
         virtual AbstractProductB* createProductB() = 0;
     protected:
@@ -20,8 +20,8 @@ class AbstracFactory
 class ConcreteFactory1 : public AbstracFactory
 {
     public:
-        ConcreteFactory1 ();                             /* constructor      */
-        ~ConcreteFactory1 ();                            /* destructor       */
+        ConcreteFactory1 ();                             
+        ~ConcreteFactory1 ();                            
         AbstractProductA* createProductA();
         AbstractProductB* createProductB();
     protected:
@@ -32,8 +32,8 @@ class ConcreteFactory1 : public AbstracFactory
 class ConcreteFactory2 : public AbstracFactory
 {
     public:
-        ConcreteFactory2 ();                             /* constructor      */
-        ~ConcreteFactory2 ();                            /* destructor       */
+        ConcreteFactory2 ();                             
+        ~ConcreteFactory2 ();                            
         AbstractProductA* createProductA();
         AbstractProductB* createProductB();
     protected:
