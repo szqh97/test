@@ -1,0 +1,4 @@
+#!/bin/bash
+grep 'HostName' ~/.ssh/config|grep -v '192.168.'|sed -e 's/^.*Name //g'|while read ip; do sudo route add -net $ip gateway 192.168.40.254 netmask 255.255.255.255 dev eth0; done
+sudo route add -net 218.108.90.52 gateway 192.168.40.254 netmask 255.255.255.255 dev eth0
+sudo route add -net 192.0.0.0 gateway 192.168.40.254 netmask 255.0.0.0 dev eth0
