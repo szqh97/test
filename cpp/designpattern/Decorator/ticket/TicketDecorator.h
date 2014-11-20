@@ -6,8 +6,9 @@ class TicketDecorator : public Component
 {
     public:
         TicketDecorator (Component* );                   /* constructor */
-        ~TicketDecorator();
+        virtual ~TicketDecorator();
         void callTrailer();
+
     protected:
     private:
         Component* myTrailer;

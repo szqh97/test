@@ -4,15 +4,20 @@ Factory::~Factory(){}
 
 Component* Factory::getComponent()
 {
-    bool doHeader1, doHeader2, doFooter1, doFooter2;
-    doHeader1 = true;
-    doHeader2 = false;
-    doFooter1 = true;
-    doFooter2 = false;
+    SalesTicket* mySalesTicket = new SalesTicket();
+    TicketDecorator* myComponent = 0;
 
-    Component* myComponent;
-    myComponent = new SalesTicket;
-    if (doHeader1) myComponent = new Footer2(myComponent);
+    myComponent = new Header1( mySalesTicket);
+    myComponent = new Footer2( myComponent );
+    myComponent = new Footer1( myComponent );
+    myComponent = new Header2( myComponent );
+    myComponent->callTrailer();
+
+
+    delete myComponent;
+    //delete mySalesTicket;
+
+
     return myComponent;
 }
 

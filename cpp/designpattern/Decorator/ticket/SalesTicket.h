@@ -7,7 +7,7 @@ class SalesTicket : public Component
 {
     public:
         SalesTicket ();                             /* constructor      */
-        ~SalesTicket ();                            /* destructor       */
+        virtual ~SalesTicket ();                            /* destructor       */
         void prtTicket();
 
     protected:

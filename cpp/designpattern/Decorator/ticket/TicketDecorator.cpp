@@ -6,7 +6,11 @@ TicketDecorator::TicketDecorator(Component* myComponent)
     myTrailer = myComponent;
 }
 
-TicketDecorator::~TicketDecorator(){}
+TicketDecorator::~TicketDecorator()
+{
+    delete this->myTrailer;
+    myTrailer = NULL;
+}
 
 void TicketDecorator::callTrailer()
 {
