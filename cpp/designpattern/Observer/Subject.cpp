@@ -1,4 +1,8 @@
 #include "Subject.h"
+#include "Observer.h"
+#include <iostream>
+
+using namespace std;
 Subject::Subject()
 {
     _obvs = new list<Observer*>;
@@ -6,12 +10,15 @@ Subject::Subject()
 
 Subject::~Subject()
 {
-    list<Observer*>::iterator it ;
-    for (it = _obvs->begin(); it != _obvs->end(); ++it)
+   if (_obvs->size() == 0)
     {
-        delete (*it);
+        delete _obvs;
     }
-    delete _obvs;
+    else 
+    {
+        cerr << "ERROR HERE! Size of _obvs should be zero orther than " << _obvs->size() << endl;;
+    }
+
 }
 
 void Subject::attach(Observer* obs)

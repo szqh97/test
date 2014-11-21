@@ -18,7 +18,7 @@ ConcreteObserverA::~ConcreteObserverA()
     _sub->detach(this);
     if (_sub)
     {
-        delete _sub;
+       // delete _sub;
     }
 }
 
@@ -50,7 +50,7 @@ ConcreteObserverB::~ConcreteObserverB()
     _sub->detach(this);
     if (_sub)
     {
-        delete _sub;
+        //delete _sub;
     }
 }
 

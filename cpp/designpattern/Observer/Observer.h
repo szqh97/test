@@ -1,6 +1,8 @@
 #ifndef  _Observer_H_
 #define  _Observer_H_
 #include "Subject.h"
+#include <string>
+typedef string State;
 class Observer
 {
     public:
@@ -13,7 +15,7 @@ class Observer
     private:
 }; 
 
-class ConcreteObserverA : Observer
+class ConcreteObserverA : public Observer
 {
     public:
         ConcreteObserverA (Subject*);    
@@ -25,9 +27,9 @@ class ConcreteObserverA : Observer
     private:
         Subject* _sub;
 
-}; /* -----  end of class ConcreteObserverA  ----- */
+}; 
 
-class ConcreteObserverB : Observer
+class ConcreteObserverB : public Observer
 {
     public:
         ConcreteObserverB (Subject*);    
@@ -39,7 +41,7 @@ class ConcreteObserverB : Observer
     private:
         Subject* _sub;
 
-}; /* -----  end of class ConcreteObserverB  ----- */
+};
 
 
 
