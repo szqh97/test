@@ -29,11 +29,6 @@ Decorator::Decorator(Component* com)
     this->_com = com;
 }
 
-void Decorator::SetComponent(Component* com)
-{
-    this->_com = com;
-}
-
 Decorator::~Decorator()
 {
     cout << "~Decorator" << endl;
