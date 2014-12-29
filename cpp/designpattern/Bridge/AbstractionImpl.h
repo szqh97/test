@@ -27,7 +27,7 @@ class ConcreteAbstractionImplA : public AbstractionImpl
 
 }; /* -----  end of class ConcreteAbstractionImplA  ----- */
 
-class ConcreteAbstractionImplB
+class ConcreteAbstractionImplB: public AbstractionImpl
 {
     public:
         ConcreteAbstractionImplB ();                             /* constructor      */

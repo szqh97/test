@@ -7,27 +7,27 @@ class AbstractionImpl;
 class Abstraction
 {
     public:
-        virtual ~Abstraction ();                            /* destructor       */
+        virtual ~Abstraction ();    
         virtual void Operation() = 0;
 
     protected:
         Abstraction();
     private:
 
-}; /* -----  end of class Abstracion  ----- */
+};
 
 
 class RefinedAbstraction : public Abstraction
 {
     public:
-        RefinedAbstraction (AbstractionImpl* impl);                             /* constructor      */
-        ~RefinedAbstraction ();                            /* destructor       */
+        RefinedAbstraction (AbstractionImpl* impl);   
+        ~RefinedAbstraction ();                      
         void Operation();
     protected:
 
     private:
         AbstractionImpl* _impl;
 
-}; /* -----  end of class RefinedAbstraction  ----- */
+}; 
 
-#endif   /* ----- #ifndef _Abstraction_H_  ----- */
+#endif  

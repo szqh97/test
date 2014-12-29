@@ -6,7 +6,7 @@ using namespace std;
 
 int main ( int argc, char *argv[] )
 {
-    AbstractionImpl *impl = new ConcreteAbstractionImplA();
+    AbstractionImpl *impl = new ConcreteAbstractionImplB();
     Abstraction *abs = new RefinedAbstraction(impl);
     abs->Operation();
     delete impl;
