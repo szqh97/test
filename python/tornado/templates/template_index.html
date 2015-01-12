@@ -1,0 +1,11 @@
+{% extends "main.html" %}
+{% block header %}
+<h1> {{ header_text }}</h1>
+{% end %}
+{% block body %}
+    <p>hello from child template!</p>
+{% end %}
+
+{% block footer %}
+<p>{{ footer_text }}</p>
+{% end %}
