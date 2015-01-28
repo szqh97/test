@@ -12,7 +12,7 @@ def f():
     print 'start'
     result = yield gen.Task(my_function)
     print 'result is ', result
-    IOLoop.instance().stop;
+    IOLoop.instance().stop();
 
 if __name__ == '__main__':
     f();
