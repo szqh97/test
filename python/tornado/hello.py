@@ -3,18 +3,30 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import tornado.websocket
+import logging
 
 from tornado.options import define, options
 define('port', default = 8888, help = 'run on the given port', type = int)
 clients = dict()
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
+        logging.info('in get ....')
         greeting = self.get_argument('greeting', 'hello')
-        self.write(greeting + ', frendly user')
-        self.finish()
+        #raise tornado.web.HTTPError(400, log_message="{'ErrCode':400, 'ErrMsg':'bad request...'}")
+        #self.write(greeting + ', frendly user')
+        self.clear()
+        self.set_status(400)
+        self.finish('tttttttttttttttttttttt')
+
+    def post(self):
+        logging.info(self.request.body)
+        body = self.get_argument('body', 'there is no body?')
+        logging.info(body)
+        
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self, *args):
+        
         self.id = self.get_argument('id')
         self.stream.set_nodelay(True)
         clients[self.id] = {'id':self.id, 'object':self}
