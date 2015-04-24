@@ -13,6 +13,13 @@ class DoubanBookSpider(Spider):
     allowed_domains = ['douban.com']
     start_urls = ['http://book.douban.com',
             ]
+    def __init__(self, **kwargs):
+        super(DoubanBookSpider, self).__init__(self, **kwargs)
+        #self.crawler.stats.set_value('crawled_page', 0)
+        pass
+    def __str__(self):
+        return 'DoubanBookSpider'
+
     def parse_item(self, response):
         book = ItemLoader(item = DoubanBookItem(), response = response)
         
@@ -43,7 +50,11 @@ class DoubanBookSpider(Spider):
             log.msg(title)
             #print title, link 
             title,link = title[0], link[0]
+            self.crawler.stats.inc_value('crawled_page')
             yield Request(url = link, callback=self.parse2)
+        log.msg("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+        log.msg("the crawled page is %s" %(str(self.crawler.stats.get_value('crawled_page')),))
+        log.msg("%s" % str(self.crawler.stats.get_stats()))
 
     def print_linkuri(self, response):
         print  'uri is: ', response.url

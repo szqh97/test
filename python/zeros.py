@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 def get_zeros(num_list):
     
     def get_m(n, m):
