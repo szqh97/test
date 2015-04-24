@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+from kazoo import client
+
+class sync_crawler_config(client.KazooClient):
+    def __init__(self, hosts, config_file):
+        self.hosts = hosts
+        self.config_file = config_file
+
+    def init(self):
+        try:
+            self.zk_instance = client.KazooClient(hosts)
+        except Exception, e:
+            print 'create zk instance error'
+        finally:
+            pass
+
+    def stop(self):
+        self.zk_instance.start()
+        pass
+    
+    def sync_config2server(self):
+        try:
+            self.zk_instance.create()
+        except Exception, e:
+            print 'err'
+        finally:
+            pass
+
+    def start(self):
+        self.zk_instance.stop()
+        pass
+
+
+if __name__ == '__main__':
+    pass
