@@ -5,17 +5,18 @@ import sys
 import traceback
 import optparse
 from optparse import OptionParser
-log = logging.getLogger('test-log')
+log = logging.getLogger('zk-utils')
 formatter = logging.Formatter('%(threadName)s %(asctime)s %(name)-15s %(levelname)-8s: %(message)s\n')
-file_handler = logging.FileHandler('test.log')
+file_handler = logging.FileHandler('/tmp/zk-utils.log')
 file_handler.setFormatter(formatter)
 stdout_stream = logging.StreamHandler(sys.stdout)
 log.addHandler(file_handler)
 log.addHandler(stdout_stream)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 
-
+sys.path.append(os.path.normpath(os.path.join(sys.path[0],os.path.realpath(__file__))))
 from kazoo import client
+
 ROOT_ZNODE = '/config/crawler'
 
 class sync_crawler_config(client.KazooClient):
@@ -87,6 +88,6 @@ if __name__ == '__main__':
         log.info("server is: %s, config_file is: %s, force_update is %s, node is %s", server, config_file, force_update, node)
         zk_client.update_configfile()
     else:
-        parser.set_usage('test_zookeeper.py -s 127.0.0.1:2181 -c crawler.conf [-f -n crawler]')
+        parser.set_usage('zk_utils.py -s 127.0.0.1:2181 -c crawler.conf [-f -n crawler]')
         print parser.print_help()
 
