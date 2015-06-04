@@ -28,8 +28,8 @@ class TornasyncException(Exception):
                 "tornasync running error!",
                 ]
 
-    def __str__(self):
-        return 'exception occurred! ' + self.err_info_list[self.err_code]
+        def __str__(self):
+            return 'exception occurred! ' + self.err_info_list[self.err_code]
     def __repr__(self):
         return str(self)
     def get_error_code(self):
@@ -39,7 +39,7 @@ class TornasyncException(Exception):
     def get_org_traceback(self):
         return self.org_traceback
 
-class Tarsync(object):
+class Tornasync(object):
 
     _quit = False
     _pool_size = 0
@@ -51,7 +51,7 @@ class Tarsync(object):
         return cls._pending_objs_pool is not None and not cls._pending_objs_pool.empty()
 
     @classmethod
-    def start_Tarsync(cls, poolsize):
+    def start_Tornasync(cls, poolsize):
 
         if cls._pending_objs_pool is not None:
             # Tarsync has already run
@@ -61,6 +61,56 @@ class Tarsync(object):
         cls._pending_objs_pool = Queue(cls._pool_size)
 
     @classmethod
+    def stop_Tornasync(cls):
+        '''
+        '''
+        if not cls._pending_objs_pool:
+            # Tarsync is not started
+            return 
+
+        while not cls._idle_objs_pool.empty():
+            cls._idle_objs_pool.get(block = False)
+
+        #FIXME: must consume the pending objects!!
+        while not cls._pending_objs_pool.empty():
+            cls._pending_objs_pool.get(block = False)
+
+        cls._pool_size = 0
+        cls._idle_objs_pool = None
+        cls._pending_objs_pool = None
+
+    def __init__(self):
+        self._cleanup()
+
+    def _cleanup(self):
+        self.callee_callback = None
+        self.callee = None
+        self.args = None
+        self.kwarg = None
+        self.gen_callback = None
+
+        self.response = None
+        self.error = None
+    
+    @classmethod
+    def gen_run(cls, callee, *args, **kwarg):
+        '''
+        this function should used only with tornado.gen
+        
+        sample:
+            response, error = yield tornado.gen.Task(Tornasync.gen_run, someFunc, Arg1, Arg2, ...)
+            if error:
+                logging.error("org_exc: " + str(error.org_exc()))
+            else:
+                response_handler(response)
+        '''
+        if cls._quit :
+            raise TornasyncException(constant.ERR_STOPED)
+        if not cls._pending_objs_pool:
+            raise TornasyncException(constant.ERR_NOT_START)
+
+
+    @classmethod
     def _worker_process(cls):
         while not cls._quit:
             tasync_obj = cls._pending_objs_pool.get(block = True)
@@ -68,9 +118,8 @@ class Tarsync(object):
 
             # tasync_obj is idling after running.
             cls._idle_objs_pool.put(tasync_obj)
-    
-    @classmethod
-    def _run(cls):
+
+    def _run(self):
         pass
 
 
