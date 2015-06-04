@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 # get every frame's ts info from dna 
-# by li_yun@vobile.cn 2014-02-11 15:35:35
+# by li_yun@163.com 2014-02-11 15:35:35
 #
 import sys
 import os

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 
-# li_yun@vobile.cn 
+# li_yun@163.com 
 # 2014-01-16 15:45:17
 import httplib2
 import simplejson

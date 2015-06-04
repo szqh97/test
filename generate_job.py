@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- ccoding: utf8 -*-
 
-# author: li_yun@vobile.cn
+# author: li_yun@163.com
 # date: 2013-12-08 14:24:44
 import struct
 import sys

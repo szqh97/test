@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 # merge audio and video 
-#  li_yun@vobile.cn
+#  li_yun@163.com
 #  2013-12-07 01:52:41
 
 import os

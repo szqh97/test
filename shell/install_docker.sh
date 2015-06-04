@@ -8,7 +8,7 @@ cat >>/etc/default/docker <<EOF
 DOCKER_OPTS="
     -H unix:///var/run/docker.sock 
     -H tcp://0.0.0.0:2375 
-    --graph /vobiledata/docker/lib/docker
+    --graph /szqh97data/docker/lib/docker
     --mtu 1462
 "
 EOF

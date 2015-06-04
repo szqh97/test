@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
-# Author: li_yun@vobile.cn
+# Author: li_yun@163.com
 # Date: 2013-12-13 22:33:14
 
 import re

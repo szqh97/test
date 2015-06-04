@@ -1,6 +1,6 @@
 /*
  * process_video_file.cpp
- *  Author: Li Yun <li_yun@vobile.cn>
+ *  Author: Li Yun <li_yun@163.com>
  */
 #include <iostream>
 #include <stdlib.h>
