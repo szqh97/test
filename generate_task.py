@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
-# Author: li_yun@vobile.cn
+# Author: 
 # Date:  2013-12-09 10:08:05
 
 import os
