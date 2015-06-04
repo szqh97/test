@@ -11,8 +11,10 @@ from tornado.options import define, options
 define('port', default = 8000, help = 'run on the gvien port', type = int)
 
 class IndexHandler(tornado.web.RequestHandler):
-    @tornado.web.asynchronous
-    @tornado.gen.engine
+# this is the old way?
+#    @tornado.web.asynchronous
+#    @tornado.gen.engine
+    @tornado.gen.coroutine
     def get(self):
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield tornado.gen.Task(client.fetch, 'http://demo.pythoner.com/itt2zh/ch5.html')
