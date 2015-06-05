@@ -7,14 +7,17 @@ Date  : 2015-06-04 14:02:05
 
 import multiprocessing.queues as Queue
 import multiprocessing.pool as Pool
+import multiprocessing
 from multiprocessing import Queue
+import traceback
+import logging
 
 import constant
 class TornasyncException(Exception):
     constant.ERR_UNKNOW      = 0
     constant.ERR_NOT_STARTED = 1
     constant.ERR_TOO_BUSY    = 2
-    constant.ERR_STOPED      = 3
+    constant.ERR_STOPPED     = 3
     constant.ERR_RUN_ERROR   = 4
 
     def __init__(self, errcode, org_exc = None, org_traceback = None):
@@ -60,6 +63,13 @@ class Tornasync(object):
         cls._pool_size = poolsize
         cls._pending_objs_pool = Queue(cls._pool_size)
 
+        for pix in xrange(cls._pool_size):
+            p = multiprocessing.Process(None, cls._worker_process)
+            p.start()
+        cls._idle_objs_pool = Queue(cls._pool_size)
+        for ndx in xrange(cls._pool_size):
+            cls._idle_objs_pool.put(Tornasync())
+
     @classmethod
     def stop_Tornasync(cls):
         '''
@@ -83,17 +93,46 @@ class Tornasync(object):
         self._cleanup()
 
     def _cleanup(self):
-        self.callee_callback = None
-        self.callee = None
+        self.callee_callback = lambda: None
+        self.callee = lambda: None
         self.args = None
         self.kwarg = None
-        self.gen_callback = None
+        self.gen_callback = lambda:None
 
         self.response = None
         self.error = None
     
     @classmethod
-    def gen_run(cls, callee, *args, **kwarg):
+    def run(cls, callee_callback, callee, *args, **kwargs):
+        '''
+        Call a callee function with args and kwargs in pool
+        The Tornasync isshould be a function or method like:
+            def Tornasync_ahndler(response, error):
+                pass
+            clas foo(object):
+                def Tornasync_handler(self, response, error):
+                    pass
+        '''
+        if Tornasync._quit:
+            raise TornasyncException(constant.ERR_STOPPED)
+        if not cls._pending_objs_pool:
+            raise TornasyncException(constant.ERR_NOT_STARTED)
+
+        try:
+            idle_obj = cls._idle_objs_pool.get(block = False)
+        except Queue.Empty:
+            raise TornasyncException(constant.ERR_TOO_BUSY)
+
+        idle_obj._cleanup()
+        idle_obj.callee_callback = callee_callback
+        idle_obj.callee = callee
+        idle_obj.args = args
+        idle_obj.kwargs = kwargs
+
+        cls._pending_objs_pool.put(idle_obj)
+
+    @classmethod
+    def gen_run(cls, callee, *args, **kwargs):
         '''
         this function should used only with tornado.gen
         
@@ -105,10 +144,25 @@ class Tornasync(object):
                 response_handler(response)
         '''
         if cls._quit :
-            raise TornasyncException(constant.ERR_STOPED)
+            raise TornasyncException(constant.ERR_STOPPED)
         if not cls._pending_objs_pool:
-            raise TornasyncException(constant.ERR_NOT_START)
+            raise TornasyncException(constant.ERR_NOT_STARTED)
 
+        try:
+            idle_obj = cls._idle_objs_pool.get(block = False)
+        except Queue.Empty:
+            raise TornasyncException(constant.ERR_TOO_BUSY)
+        idle_obj._cleanup()
+
+        idle_obj.gen_callback = kwargs["callback"]
+        del kwargs["callback"]
+
+        idle_obj.callee_callback = idle_obj._gen_run_callback
+        idle_obj.callee = callee
+        idle_obj.args = args
+        idle_obj.kwargs = kwargs
+
+        cls._pending_objs_pool.put(idle_obj)
 
     @classmethod
     def _worker_process(cls):
@@ -120,7 +174,39 @@ class Tornasync(object):
             cls._idle_objs_pool.put(tasync_obj)
 
     def _run(self):
-        pass
+        res = None
+        err = None
+        try:
+            res = self.callee(*self.args, **self.kwarg)
+        except Exception as e:
+            tb = traceback.format_exc()
+            logging.error(" >>>> \n%s\n Tornasync run error: \n %s %s\n", '-' *80, tb, '-' * 80)
+            err = TornasyncException(constant.ERR_RUN_ERROR, e, tb)
+        
+        if self.callee_callback:
+            try: 
+                self.callee_callback(res, err)
+            except Exception as e:
+                tb = traceback.format_exc()
+                logging.error(" >>>> \n%s\n Tornasync run error: \n %s %s\n", '-' *80, tb, '-' * 80)
+
+    def _gen_run_callback(self, response, error):
+        from tornado.ioloop import IOLoop
+        
+        if error:
+            self.error = error
+        else:
+            self.response = response
+
+        IOLoop.instance().add_callback(self._io_callback)
+
+    def _io_callback(self):
+        #restore kwargs for tornado.gen
+        self.kwargs['callback'] = self.gen_callback
+        self.gen_callback((self.response, self.error))
+        self._cleanup()
 
 
-
+# for test
+if __name__ == '__main__':
+    pass
