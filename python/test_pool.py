@@ -3,7 +3,7 @@ from multiprocessing import Pool
 
 import time
 def f(x):
-    time.sleep(4)
+    time.sleep(1)
     return x
 
 pool = Pool(processes = 4)

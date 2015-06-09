@@ -5,14 +5,19 @@ Date  : 2015-06-04 14:02:05
 
 '''
 
-import multiprocessing.queues as Queue
+#from __future__ import print_function
+#import multiprocessing.queues as Queue
 import multiprocessing.pool as Pool
 import multiprocessing
-from multiprocessing import Queue
+#from multiprocessing import Queue
 import traceback
 import logging
-
+import Queue
 import constant
+
+def _worker_process_runner(T):
+    T._worker_process()
+
 class TornasyncException(Exception):
     constant.ERR_UNKNOW      = 0
     constant.ERR_NOT_STARTED = 1
@@ -31,8 +36,8 @@ class TornasyncException(Exception):
                 "tornasync running error!",
                 ]
 
-        def __str__(self):
-            return 'exception occurred! ' + self.err_info_list[self.err_code]
+    def __str__(self):
+        return 'exception occurred! ' + self.err_info_list[self.err_code]
     def __repr__(self):
         return str(self)
     def get_error_code(self):
@@ -55,25 +60,47 @@ class Tornasync(object):
 
     @classmethod
     def start_Tornasync(cls, poolsize):
+        import threading
+        cls.async_result = []
 
         if cls._pending_objs_pool is not None:
             # Tarsync has already run
             return
         cls._quit = False
         cls._pool_size = poolsize
-        cls._pending_objs_pool = Queue(cls._pool_size)
+        cls._pending_objs_pool = Queue.Queue(cls._pool_size)
+
+        cls._idle_objs_pool = Queue.Queue(cls._pool_size)
+        cls.pool = multiprocessing.Pool(cls._pool_size)
 
         for pix in xrange(cls._pool_size):
-            p = multiprocessing.Process(None, cls._worker_process)
+            #try:
+            #    cls.pool.apply(_worker_process_runner, args = (Tornasync,))
+            #    print 'start worker process %d' % pix
+            #except Exception  as e:
+            #    print 'errrrrr', str(e)
+            print 'start worker process %d' % pix
+            p = multiprocessing.Process(None, target = _worker_process_runner, args = (Tornasync,))
             p.start()
-        cls._idle_objs_pool = Queue(cls._pool_size)
+           # p.start()
+#        for i in xrange(cls._pool_size):
+#            try: 
+#                result = cls.pool.apply_async(cls._worker_process, (None,))
+#                cls.async_result.append(result)
+#            except Exception as e:
+#                print 'err in pool ... ' + str(e)
         for ndx in xrange(cls._pool_size):
-            cls._idle_objs_pool.put(Tornasync())
+            try:
+                cls._idle_objs_pool.put(Tornasync())
+            except Exception as e:
+                print 'err while put to idle objects pool ... ' + str(e)
+            print 'put item to idle objects pool' + str(ndx)
 
     @classmethod
     def stop_Tornasync(cls):
         '''
         '''
+        print 'in stop Tornasync ...'
         if not cls._pending_objs_pool:
             # Tarsync is not started
             return 
@@ -88,15 +115,18 @@ class Tornasync(object):
         cls._pool_size = 0
         cls._idle_objs_pool = None
         cls._pending_objs_pool = None
+        print ' after ...'
+        cls.pool.close()
 
     def __init__(self):
+        self._pos = None
         self._cleanup()
 
     def _cleanup(self):
         self.callee_callback = lambda: None
         self.callee = lambda: None
         self.args = None
-        self.kwarg = None
+        self.kwargs = None
         self.gen_callback = lambda:None
 
         self.response = None
@@ -115,12 +145,14 @@ class Tornasync(object):
         '''
         if Tornasync._quit:
             raise TornasyncException(constant.ERR_STOPPED)
-        if not cls._pending_objs_pool:
+        if not Tornasync._pending_objs_pool:
             raise TornasyncException(constant.ERR_NOT_STARTED)
 
         try:
-            idle_obj = cls._idle_objs_pool.get(block = False)
+            idle_obj = Tornasync._idle_objs_pool.get(block = False)
+            print 'get an object from idel_objs'
         except Queue.Empty:
+            print 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
             raise TornasyncException(constant.ERR_TOO_BUSY)
 
         idle_obj._cleanup()
@@ -130,6 +162,7 @@ class Tornasync(object):
         idle_obj.kwargs = kwargs
 
         cls._pending_objs_pool.put(idle_obj)
+        print 'the object put pending pool'
 
     @classmethod
     def gen_run(cls, callee, *args, **kwargs):
@@ -150,7 +183,7 @@ class Tornasync(object):
 
         try:
             idle_obj = cls._idle_objs_pool.get(block = False)
-        except Queue.Empty:
+        except Queue.Empty():
             raise TornasyncException(constant.ERR_TOO_BUSY)
         idle_obj._cleanup()
 
@@ -167,17 +200,22 @@ class Tornasync(object):
     @classmethod
     def _worker_process(cls):
         while not cls._quit:
-            tasync_obj = cls._pending_objs_pool.get(block = True)
+            try:
+                print '---- in _worker_process before ...'
+                tasync_obj = cls._pending_objs_pool.get(block = True)
+                print '==== in _worker_process .....'
+            except Exception as e:
+                print 'error occurred ' + str(e)
             tasync_obj._run()
-
             # tasync_obj is idling after running.
             cls._idle_objs_pool.put(tasync_obj)
 
     def _run(self):
+        print '...... in run ......'
         res = None
         err = None
         try:
-            res = self.callee(*self.args, **self.kwarg)
+            res = self.callee(*self.args, **self.kwargs)
         except Exception as e:
             tb = traceback.format_exc()
             logging.error(" >>>> \n%s\n Tornasync run error: \n %s %s\n", '-' *80, tb, '-' * 80)
@@ -209,4 +247,27 @@ class Tornasync(object):
 
 # for test
 if __name__ == '__main__':
+    import time
+    def add(a, b):
+        print 'in add ....'
+        time.sleep(4)
+
+        return a + b
+    def on_add(response, error):
+        if error:
+            print 'error occurred!'
+            return
+        else:
+            print 'response is %d' % response
+
+    Tornasync.start_Tornasync(1)
+    b = time.time()
+    Tornasync.run(on_add, add, 333, 444)
+    #Tornasync.run(on_add, add, 342, 444)
+    #Tornasync.run(on_add, add, 352, 444)
+    #Tornasync.run(on_add, add, 362, 444)
+    #Tornasync.run(on_add, add, 371, 444)
+    e = time.time()
+    print b, e
+    #Tornasync.stop_Tornasync()
     pass
