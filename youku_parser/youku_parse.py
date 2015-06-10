@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import base64
 import string
 
 def F(value, c):
@@ -135,10 +136,24 @@ def encoder(a, c, isToBase64):
         b[h], b[f] = b[f], b[h]
         bytesR.append(chr(ord(c[q]) ^ b[(b[h] + b[f]) % 256]))
         q += 1
+    print bytesR
     result = ''.join(bytesR)
 
     if isToBase64:
-        import base64
         return base64.b64encode(result)
     return result
+
+
+def gen_new_ep(vid, ep):
+    template1 = 'becaf9be'
+    template2 = 'bf7e5f01'
+    template1 = 'b4eto0b4'
+    template2 = 'boa4poz1'
+    _decode_ep = base64.b64decode(ep)
+    t_s_slice = encoder(template1, _decode_ep, False)
+    token, sid = t_s_slice.split('_')
+    whole = '{0}_{1}_{2}'.format(sid, vid, token)
+    new_ep = encoder(template2, whole, True)
+
+    return ep, token , sid
 
