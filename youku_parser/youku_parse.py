@@ -119,3 +119,26 @@ def na(value):
         e.append(chr((c & 3) << 6 |b))
     return ''.join(e)
 
+def encoder(a, c, isToBase64):
+    bytesR = list()
+    f = 0; h = 0; q = 0
+    b = list(xrange(256))
+    while h < 256:
+        f = (f + b[h] + ord(a[h % len(a)])) % 256
+        b[h], b[f] = b[f], b[h]
+        h+=1
+    
+    f = 0; h = 0; q = 0
+    while q < len(c):
+        h = (h + 1) % 256
+        f = (f + b[h]) % 256
+        b[h], b[f] = b[f], b[h]
+        bytesR.append(chr(ord(c[q]) ^ b[(b[h] + b[f]) % 256]))
+        q += 1
+    result = ''.join(bytesR)
+
+    if isToBase64:
+        import base64
+        return base64.b64encode(result)
+    return result
+

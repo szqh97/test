@@ -185,6 +185,8 @@ int main ( int argc, char *argv[] )
     int a[] = {19,1,4,7,30,14,28,8,24,17,6,35,34,16,9,10,13,22,32,29,31,21,18,3,2,23,25,27,11,20,5,15,12,0,33,26};
     string ep = "MwXTTQQcILnT1/DB8eJxU9SmuBZr1wjIWRw=";
     std::string cc = E(F("b4eto0b4", a), na(ep));
+    std::string tmp_str="";
+    std::string formattedEP = D(E(F("boa4poz1", a), tmp_str.Str())).c_str();
     cout << cc << endl;
     return 0;
 }			/* ----------  end of function main  ---------- */
