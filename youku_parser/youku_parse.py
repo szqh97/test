@@ -1,6 +1,21 @@
 #!/usr/bin/env python
 import base64
 import string
+import urllib
+import httplib2
+import json
+import logging
+import sys
+import os
+
+log = logging.getLogger('youku_parser')
+formatter = logging.Formatter('%(threadName)s %(asctime)s %(name)-15s %(levelname)-8s: %(message)s\n')
+file_handler = logging.FileHandler('/tmp/youku_parser.log')
+file_handler.setFormatter(formatter)
+stdout_stream = logging.StreamHandler(sys.stdout)
+log.addHandler(file_handler)
+log.addHandler(stdout_stream)
+log.setLevel(logging.DEBUG)
 
 def F(value, c):
     '''
@@ -136,7 +151,6 @@ def encoder(a, c, isToBase64):
         b[h], b[f] = b[f], b[h]
         bytesR.append(chr(ord(c[q]) ^ b[(b[h] + b[f]) % 256]))
         q += 1
-    print bytesR
     result = ''.join(bytesR)
 
     if isToBase64:
@@ -147,13 +161,50 @@ def encoder(a, c, isToBase64):
 def gen_new_ep(vid, ep):
     template1 = 'becaf9be'
     template2 = 'bf7e5f01'
-    template1 = 'b4eto0b4'
-    template2 = 'boa4poz1'
     _decode_ep = base64.b64decode(ep)
     t_s_slice = encoder(template1, _decode_ep, False)
-    token, sid = t_s_slice.split('_')
+    sid, token = t_s_slice.split('_')
     whole = '{0}_{1}_{2}'.format(sid, vid, token)
     new_ep = encoder(template2, whole, True)
 
-    return ep, token , sid
+    return new_ep, sid, token
 
+
+def get_m3u8_url(vid, media_type = 'flv'):
+    type_dict = {'hd3':'flv', 'hd2':'flv', 'mp4':'flv', 'flvhd':'flv', '3gphd':'3gp', 'flv':'flv'}
+    get_video_data_url = 'http://v.youku.com/player/getPlayList/VideoIDS/{0}/Pf/4/ctype/12/ev/1'.format(vid)
+    m3u8_template = 'http://pl.youku.com/playlist/m3u8?ctype=12&ep={0}&ev=1&keyframe=1&oip={1}&sid={2}&token={3}&type={4}&vid={5}'
+    http = httplib2.Http(disable_ssl_certificate_validation=False)
+    resp, body = http.request(get_video_data_url)
+    #logging.info(get_video_data_url)
+    data_json = None
+    if resp.status == 200:
+        data_json = json.loads(body)
+    else:
+        log.error('request to {0} error, status is {1}'.format(get_video_data_url, resp.status))
+        return None
+    data_0 = data_json.get('data')[0]
+    oip = data_0.get('ip')
+    ep = data_0.get('ep')
+    segs = data_0.get('segs')
+    title = data_0.get('title')
+
+    if segs.get('flv'):
+        media_type = 'flv'
+    elif segs.get('hd3'):
+        media_type = 'hd3'
+    elif segs.get('hd2'):
+        media_type = 'hd2'
+    elif segs.get('mp4'):
+        media_type = 'mp4'
+
+    new_ep, sid, token = gen_new_ep(vid, ep)
+    ep = urllib.quote(new_ep)
+    m3u8_url = m3u8_template.format(ep, oip, sid, token, media_type, vid)
+    #log.info('the m3u8 url is {0} . '.format(m3u8_url))
+
+    return m3u8_url, title, type_dict.get(media_type)
+
+vid = sys.argv[1]
+m3u8, t, s = get_m3u8_url(vid)
+print m3u8
