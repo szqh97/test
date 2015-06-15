@@ -26,11 +26,11 @@ int dequeue()
 
 void enqueue(int x)
 {
-    {
         std::unique_lock<std::mutex> lock(mutex_);
+        size_t n = queu.size();
         queu.push_back(x);
-    }
-    cv.notify_one();
+        if (n == 0)
+            cv.notify_all();
 }
 
 void func1()
@@ -56,11 +56,21 @@ void func2()
 int main ( int argc, char *argv[] )
 {
 
-    std::thread t2(func2);
-    std::thread t1(func1);
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 30; ++i)
+    {
+        threads.push_back(std::thread(func1));
+    }
+    for (int i = 0; i < 10; ++i)
+    {
+        threads.push_back(std::thread(func2));
+    }
 
-    t2.join();
-    t1.join();
+    for(std::vector<std::thread>::iterator it = threads.begin(); it != threads.end(); ++it)
+    {
+        (*it).join();
+    }
+
     while (1)
         std::this_thread::sleep_for(std::chrono::microseconds(1000));
     return 0;
