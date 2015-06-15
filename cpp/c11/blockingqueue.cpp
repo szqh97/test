@@ -29,8 +29,7 @@ void enqueue(int x)
         std::unique_lock<std::mutex> lock(mutex_);
         size_t n = queu.size();
         queu.push_back(x);
-        if (n == 0)
-            cv.notify_all();
+        cv.notify_one();
 }
 
 void func1()
