@@ -26,8 +26,13 @@ int main ( int argc, char *argv[] )
 
     thread t1(func);
     t1.detach();
+    cout << "in main thread " << endl;
 
-    system("sleep 4");
+    while(1)
+    {
+    cout << "in main thread ..." << endl;
+       system("sleep 1") ;
+    }
 
     return 0;
 }			/* ----------  end of function main  ---------- */
