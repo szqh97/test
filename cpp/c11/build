@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+g++ -g --std=c++11 -pthread -Wl,--no-as-need $@
