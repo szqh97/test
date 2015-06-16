@@ -1,5 +1,4 @@
 #include <pthread.h>
-#include <iostream>
 #include <mutex>
 #include <memory>
 #include <boost/noncopyable.hpp>
@@ -48,7 +47,6 @@ namespace CallOnceVersion
                 // call_once only called at first time, then return 0 if other thread call it again
                 std::call_once(flag_, []{
                         value_.reset(new T); 
-                        std::cout << "=====in lambda: =====" << std::endl;
                         });
                 return std::move(value_);
             }
@@ -68,8 +66,6 @@ namespace CallOnceVersion
 
 namespace SingletonSharedPtr
 {
-// This is not a Singleton! only one thread can get the instance.
-//
 
     template<class T>
         class Singleton: boost::noncopyable
@@ -80,7 +76,6 @@ namespace SingletonSharedPtr
                 // call_once only called at first time, then return 0 if other thread call it again
                 std::call_once(flag_, []{
                         value_.reset(new T); 
-                        std::cout << "=====in lambda: =====" << std::endl;
                         });
                 return value_;
             }
