@@ -1,6 +1,9 @@
 *.o
 .idea/
 *.dat
+*.gz
+*.zip
+*.tgz
 dna
 dna_dir/
 .*.sw*
