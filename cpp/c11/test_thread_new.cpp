@@ -25,7 +25,6 @@ int main ( int argc, char *argv[] )
         cout << "xxxxxxxxxxx" << endl;
     }
     cout << std::this_thread::get_id() << endl;
-    cout << std::thread::id() << endl;
 
 
     return 0;
