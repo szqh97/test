@@ -18,7 +18,7 @@ CXXFLAGS = -g -O0 -Wall -Wextra -Werror \
 LDFLAGS = -L$(MUDUO_LIBRARY) -lmuduo_net -lmuduo_base -lpthread -lrt
 
 all: echo finger01 finger02 finger03 finger04 finger06 \
-	 finger07
+	 finger07 sudoku_base
 
 clean:
 	rm -f echo core finger01 finger02
@@ -43,6 +43,9 @@ finger06: finger06.cpp
 	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 finger07: finger07.cpp
+	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+sudoku_base: sudoku_base.cpp sudoku.cpp
 	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 .PHONY: all clean
