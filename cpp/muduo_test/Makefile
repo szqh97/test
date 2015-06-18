@@ -22,7 +22,7 @@ all: echo finger01 finger02 finger03 finger04 finger06 \
 
 clean:
 	rm -f echo core finger01 finger02
-	ls -F |grep \*|sed -e 's/\*//g' |xargs rm -rf
+	file *|grep executable|awk -F: '{print $1}'|xargs rm -f
 
 echo: $(SRC)/muduo_echoserver.cpp
 	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
