@@ -110,7 +110,7 @@ if __name__ == "__main__":
     if len(args) == 0:
         print usage(sys.argv[0])  # print help information and exit:
         sys.exit(2)      
-    print programname
+    #print programname
     html_files = glob.glob(args[0])
     for htmlfilename in html_files:
         outputfilename = os.path.splitext(htmlfilename)[0]+'.csv'
