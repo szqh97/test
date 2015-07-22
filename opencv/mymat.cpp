@@ -1,7 +1,7 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/highgui/highgui.hpp>
 using namespace std;
 using namespace cv;
@@ -40,7 +40,7 @@ int main ( int argc, char *argv[] )
     LUT(image, lookUpTable, J);
 
     //namedWindow("Display Image",CV_WINDOW_AUTOSIZE);
-    imshow("display image",J);
+    //imshow("display image",J);
     
     waitKey(0);
 
