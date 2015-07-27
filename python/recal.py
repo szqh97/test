@@ -84,10 +84,14 @@ def merge_matched_videos(matchedvideos, arch_matchedvideos):
     #tmp_m = matchedvideos.append(arch_matchedvideos, on='trackingWebsite_id')
     tmp_m = matchedvideos.append(arch_matchedvideos)
     tmp_group = tmp_m.groupby('trackingWebsite_id')
-    merged_matchedvideos = pd.concat([tmp_group.website_type.all(), \
-            tmp_group.matches.sum()], axis=1)
-    merged_matchedvideos['trackingWebsite_id'] = merged_matchedvideos.index
-    return merged_matchedvideos
+    grouped_website = tmp_group.website_type.all()
+    grouped_matches = tmp_group.matches.sum()
+    merged_matched_videos = pd.DataFrame()
+    merged_matched_videos['trackingWebsite_id'] = grouped_website.index
+    merged_matched_videos['website_type'] = grouped_website.values
+    merged_matched_videos['matches'] = grouped_matches.values
+    
+    return merged_matched_videos
 
 
 def gen_new_mediated_data(new_sample_site_info_table, matched_videos_table, \
@@ -165,8 +169,7 @@ def main_func():
     tracking_meta_files = './trackingMetas.txt'
     new_mediated_data_file = 'new_consumption_file.csv'
     old_mediated_data_file = 'old_consumption_file.csv'
-    header = "website_type,trackingWebsite_id,matches,cr,pageview_percentage,pageview_percent,\
-            daily_global_pageview,title_based_piracy,meta_id\n"
+    header = 'website_type,trackingWebsite_id,matches,cr,pageview_percentage,pageview_percent,daily_global_pageview,title_based_piracy,meta_id\n'
     with file(new_mediated_data_file, 'a') as new_mediated_data_file_fd:
         new_mediated_data_file_fd.write(header)
     with file(old_mediated_data_file, 'a') as old_mediated_data_file_fd:
@@ -174,7 +177,7 @@ def main_func():
     with file(tracking_meta_files, 'r') as trackingMetas_fd:
         meta_id = trackingMetas_fd.readline().replace('\n', '')
         while len(meta_id) != 0:
-            print 'meta_id is ', meta_id
+            #print 'meta_id is ', meta_id
             new_sample_site_info_table = './data/' + meta_id +'_new_sample_site_info.csv'
             old_sample_site_info_table = './data/' + meta_id +'_old_sample_site_info.csv'
             matched_videos_table = './data/' + meta_id + '_matchedVideo_matches.csv'
