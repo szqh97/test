@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from numpy import *
+import math
 
 def loadDataSet():
     postingList = [
@@ -39,11 +40,37 @@ def trainNB0(trainMatrix, trainCategory):
             p1Num += trainMatrix[i]
             p1Denom += sum(trainMatrix[i])
         else:
-            p0num += trainMatrix[i]
+            p0Num += trainMatrix[i]
             p0Denom += sum(trainMatrix[i])
     p1Vect = p1Num/p1Denom
-    p0Vect = p0num/p0Denom
+    p0Vect = p0Num/p0Denom
 
     return p0Vect, p1Vect, pAbusive
+
+def trainNB1(trainMatrix, trainCategory):
+    numTrainDocs = len(trainMatrix)
+    numWords = len(trainMatrix[0])
+    pAbusive = sum(trainCategory)/float(numTrainDocs)
+    p0Num = ones(numWords); p1Num = ones(numWords)
+    p0Denom = 2.0; p1Denom = 2.0
+    for i in xrange(numTrainDocs):
+        if trainCategory[i] == 1:
+            p1Num += trainMatrix[i]
+            p1Denom += sum(trainMatrix[i])
+        else:
+            p0Num += trainMatrix[i]
+            p0Denom += sum(trainMatrix[i])
+    p1Vect = math.log(p1Num/p1Denom)
+    p0Vect = math.log(p0Num/p0Denom)
+
+    return p0Vect, p1Vect, pAbusive
+
+def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
+    p1 = sum(vec2Classify * p1Vec) + math.log(pClass1)
+    p0 = sum(vec2Classify * p0Vec) + math.log(1.0 - pClass1)
+    if p1 > p0:
+        return 1
+    else:
+        return 0
 
 
