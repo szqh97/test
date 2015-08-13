@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from numpy import *
-import math
 
 def loadDataSet():
     postingList = [
@@ -60,17 +59,38 @@ def trainNB1(trainMatrix, trainCategory):
         else:
             p0Num += trainMatrix[i]
             p0Denom += sum(trainMatrix[i])
-    p1Vect = math.log(p1Num/p1Denom)
-    p0Vect = math.log(p0Num/p0Denom)
+    p1Vect = log(p1Num/p1Denom)
+    p0Vect = log(p0Num/p0Denom)
 
     return p0Vect, p1Vect, pAbusive
 
 def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
-    p1 = sum(vec2Classify * p1Vec) + math.log(pClass1)
-    p0 = sum(vec2Classify * p0Vec) + math.log(1.0 - pClass1)
+    p1 = sum(vec2Classify * p1Vec) + log(pClass1)
+    p0 = sum(vec2Classify * p0Vec) + log(1.0 - pClass1)
     if p1 > p0:
         return 1
     else:
         return 0
+
+def testingNB():
+    listOPosts, listClasses = loadDataSet()
+    myVocabList = createVocabList(listOPosts)
+    trainMat = []
+    for postinDoc in listOPosts:
+        trainMat.append(setOfWords2Vec(myVocabList, postinDoc))
+    p0v, p1v, pAb = trainNB1(array(trainMat), array(listClasses))
+    testEntry = ['love', 'my', 'dalmation']
+    thisDoc = array(setOfWords2Vec(myVocabList, testEntry))
+    print testEntry, 'classified as: ', classifyNB(thisDoc, p0v, p1v, pAb)
+    testEntry = ['stupid', 'garbage']
+    thisDoc = array(setOfWords2Vec(myVocabList, testEntry))
+    print testEntry, 'classified as: ', classifyNB(thisDoc, p0v, p1v, pAb)
+
+def bagOfWord2VecMN(vocabList, inputSet):
+    returnVec = [0]*len(vocabList)
+    for word in inputSet:
+        if word in vocabList:
+            returnVec[vocabList.index(word)] += 1
+    return returnVec
 
 
