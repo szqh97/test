@@ -38,8 +38,6 @@ int main ( int argc, char *argv[] )
 
     std::cout << "ticks is: " << ticks << ", seconds is: " << time_elapse.total_seconds() << std::endl;
 
-
-
     return 0;
 }			/* ----------  end of function main  ---------- */
 
