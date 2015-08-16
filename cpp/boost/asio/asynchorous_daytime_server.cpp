@@ -43,7 +43,7 @@ private:
         socket_(io_service)
     {
     }
-    void hander_writte(const boost::system::error_code& err,size_t s)
+    void hander_writte(const boost::system::error_code&,size_t)
     {
     }
     
@@ -66,7 +66,10 @@ private:
    {
        tcp_connection::pointer new_connection = tcp_connection::create(acceptor_.get_io_service());
 
-#if 1
+       acceptor_.async_accept(new_connection->get_socket(), 
+               boost::bind(&tcp_server::handler_accept, this, new_connection,
+                   boost::asio::placeholders::error));
+#if 0
        acceptor_.async_accept(new_connection->get_socket(), 
                boost::bind(&tcp_server::handler_accept, this, new_connection,
                    boost::asio::placeholders::error));
@@ -83,7 +86,7 @@ private:
    }
     tcp::acceptor acceptor_;
 };
-int main ( int argc, char *argv[] )
+int main ()
 {
     try
     {
