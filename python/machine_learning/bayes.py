@@ -93,4 +93,15 @@ def bagOfWord2VecMN(vocabList, inputSet):
             returnVec[vocabList.index(word)] += 1
     return returnVec
 
+def textParse(bigString):
+    import re
+    listOfToken = re.split(r'\W*', bigString)
+    return [tok.lower() for tok in listOfToken if len(tok) > 2]
+
+def spamTest():
+    docList = []
+    classList = []
+    fullText = []
+    for i in xrange(1, 26):
+
 
