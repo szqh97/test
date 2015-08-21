@@ -3,20 +3,20 @@ from numpy import *
 
 def loadDataSet():
     postingList = [
-            list('my dog has flea problems help please'.split(' ')),
-            list('maybe not take him to dog park stupid'.split(' ')),
-            list('my dalmation is so cute I love him'.split(' ')),
-            list('stop posting stupid worthless garbage'.split(' ')),
-            list('mr licks ate my stteak how to stop him'.split(' ')),
-            list('quit buying wothless dog food stupid'.split(' '))
-            ]
-    classVec = [0,1,0,1,0,1]
+        list('my dog has flea problems help please'.split(' ')),
+        list('maybe not take him to dog park stupid'.split(' ')),
+        list('my dalmation is so cute I love him'.split(' ')),
+        list('stop posting stupid worthless garbage'.split(' ')),
+        list('mr licks ate my stteak how to stop him'.split(' ')),
+        list('quit buying wothless dog food stupid'.split(' '))
+    ]
+    classVec = [0, 1, 0, 1, 0, 1]
     return postingList, classVec
 
 def createVocabList(dataSet):
     vocabSet = set([])
     for document in dataSet:
-        vocabSet = vocabSet|set(document)
+        vocabSet = vocabSet | set(document)
     return list(vocabSet)
 
 def setOfWords2Vec(vocabList, inputSet):
@@ -32,8 +32,10 @@ def trainNB0(trainMatrix, trainCategory):
     numTrainDocs = len(trainMatrix)
     numWords = len(trainMatrix[0])
     pAbusive = sum(trainCategory)/float(numTrainDocs)
-    p0Num = zeros(numWords); p1Num = zeros(numWords)
-    p0Denom = 0.0; p1Denom = 0.0
+    p0Num = zeros(numWords)
+    p1Num = zeros(numWords)
+    p0Denom = 0.0
+    p1Denom = 0.0
     for i in xrange(numTrainDocs):
         if trainCategory[i] == 1:
             p1Num += trainMatrix[i]
@@ -50,8 +52,10 @@ def trainNB1(trainMatrix, trainCategory):
     numTrainDocs = len(trainMatrix)
     numWords = len(trainMatrix[0])
     pAbusive = sum(trainCategory)/float(numTrainDocs)
-    p0Num = ones(numWords); p1Num = ones(numWords)
-    p0Denom = 2.0; p1Denom = 2.0
+    p0Num = ones(numWords)
+    p1Num = ones(numWords)
+    p0Denom = 2.0
+    p1Denom = 2.0
     for i in xrange(numTrainDocs):
         if trainCategory[i] == 1:
             p1Num += trainMatrix[i]
@@ -103,5 +107,33 @@ def spamTest():
     classList = []
     fullText = []
     for i in xrange(1, 26):
+        worldList = textParse(open('email/spam/%d.txt' % i).read())
+        docList.append(worldList)
+        fullText.extend(worldList)
+        classList.append(1)
+        worldList = textParse(open('email/ham/%d.txt' % i).read())
+        docList.append(worldList)
+        fullText.extend(worldList)
+        classList.append(0)
+    vocabList = createVocabList(docList)
+    trainingSet = range(50)
+    testSet = []
+    for i in xrange(10):
+        randIndex = int(random.uniform(0, len(trainingSet)))
+        testSet.append(trainingSet[randIndex])
+        del(trainingSet[randIndex])
+    trainMat = []
+    trainClasses = []
+    for docIndex in trainingSet:
+        trainMat.append(setOfWords2Vec(vocabList, docList[docIndex]))
+        trainClasses.append(classList[docIndex])
+    p0V, p1V, pSpam = trainNB0(array(trainMat), array(trainClasses))
+    errorCount = 0
+    for docIndex in testSet:
+        wordVector = setOfWords2Vec(vocabList, docList[docIndex])
+        if classifyNB(array(wordVector), p0V, p1V, pSpam) != \
+            classList[docIndex]:
+            errorCount += 1
+    print 'the error rate is: ', float(errorCount)/len(testSet)
 
 
