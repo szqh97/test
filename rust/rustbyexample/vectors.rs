@@ -11,5 +11,6 @@ fn main() {
 
     println!("the length of xs is {}", xs.len());
     println!("get last item {:?}", xs.pop());
-    println!("get last item {:?}", xs[:]);
+    println!("get last item {:?}", xs[1]);
+    println!("get last item {:?}", xs);
 }
