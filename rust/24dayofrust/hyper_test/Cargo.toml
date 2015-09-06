@@ -5,3 +5,4 @@ authors = ["szqh97 <szqh97@163.com>"]
 
 [dependencies]
 hyper = "0.6.13"
+url = "0.2.37"
