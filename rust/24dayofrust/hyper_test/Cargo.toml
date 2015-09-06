@@ -1,0 +1,7 @@
+[package]
+name = "hyper_test"
+version = "0.1.0"
+authors = ["szqh97 <szqh97@163.com>"]
+
+[dependencies]
+hyper = "0.6.13"
