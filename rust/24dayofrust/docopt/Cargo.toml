@@ -1,0 +1,10 @@
+[package]
+name = "docopt"
+version = "0.1.0"
+authors = ["szqh97 <szqh97@163.com>"]
+
+[dependencies]
+docopt = "0.6.72"
+#docopt_macros = "0.6.44"
+rustc-serialize = "0.3"
+
