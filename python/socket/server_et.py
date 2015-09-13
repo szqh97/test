@@ -36,6 +36,15 @@ try:
                         responses[connection.fileno()] = response
                 except socket.error:
                     raise 
+            elif event & select.EPOLLIN:
+                try:
+                    while True:
+                        requests[fileno] += connections[fileno].recv(1024)
+                except Exception, e:
+                    raise e
+                if EOL1 in requests[fileno] or EOL2 in requests[fileno]:
+                    epoll.modify(fileno, select.EPOLLOUT | select.EPOLLET)
+                    print('-'*34 + '\n' + requests[fileno].decode()[:-2])
             elif event & select.EPOLLOUT:
                 try:
                     while len(responses[fileno]) > 0:
