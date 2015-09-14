@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import socket
 import select
+import traceback
 
 EOL1 = b'\n\n'
 EOL2 = b'\n\r\n'
@@ -35,7 +36,8 @@ try:
                         requests[connection.fileno()] = b''
                         responses[connection.fileno()] = response
                 except socket.error:
-                    raise 
+                    print(traceback.format_exc())
+                    raise
             elif event & select.EPOLLIN:
                 try:
                     while True:
