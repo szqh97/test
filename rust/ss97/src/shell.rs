@@ -2,11 +2,8 @@
 //extern crate log;
 
 pub fn test_log() {
-    println!("xxxxxxxxxx");
     info!("test log info.");
-    debug!("test log info.");
-    error!("test log info.");
-    println!("xxxxxxxxxx");
-
+    debug!("test log debug.");
+    error!("test log error.");
 }
 
