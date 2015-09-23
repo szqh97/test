@@ -41,6 +41,40 @@ impl List {
     }
 }
 
+pub trait Drop {
+    fn drop(&mut self);
+}
+
+impl Drop for List {
+    fn drop(&mut self) {
+        self.head.drop();
+    }
+}
+
+impl Drop for Link {
+    fn drop(&mut self) {
+        match self.head {
+            Link::Empty  => {}
+            Link::More(ref mut boxed_node) =>{
+                boxed_node.drop();
+            }
+        }
+    }
+}
+
+impl Drop for Box<Node> {
+    fn drop(&mut self) {
+        self.ptr.drop();
+        deallocate(self.ptr);
+    }
+}
+
+impl Drop for Node {
+    fn drop(&mut self) {
+        self.next.drop();
+    }
+}
+
 #[cfg(test)]
 mod test{
     use super::List;
