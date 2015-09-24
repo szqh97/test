@@ -45,6 +45,17 @@ pub trait Drop {
     fn drop(&mut self);
 }
 
+impl Drop for List{
+    fn drop(&mut self){
+        let mut cur_link = mem::replace(&mut self.head, Link::Empty);
+        while let Link::More(mut boxed_node) = cur_link {
+            cur_link = mem::replace(&mut boxed_node.next, Link::Empty);
+        }
+    }
+}
+
+/*
+ *
 impl Drop for List {
     fn drop(&mut self) {
         self.head.drop();
@@ -74,6 +85,8 @@ impl Drop for Node {
         self.next.drop();
     }
 }
+
+*/
 
 #[cfg(test)]
 mod test{
