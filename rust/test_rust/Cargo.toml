@@ -1,0 +1,4 @@
+[package]
+name = "test_rust"
+version = "0.1.0"
+authors = ["szqh97 <szqh97@163.com>"]

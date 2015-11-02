@@ -12,4 +12,12 @@ fn main() {
     let t = (-1, false);
     println!("{:?}", reverse(t));
 
+    let mut sum: i64 = 0;
+    for i in 1 .. 100000{
+        sum += i;
+    }
+    if sum > 0 {
+        sum += 1;
+        
+    }
 }
