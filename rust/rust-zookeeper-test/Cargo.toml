@@ -1,0 +1,38 @@
+[package]
+name = "zookeeper"
+version = "0.2.0-pre"
+authors = ["Nandor Kracser <bonifaido@gmail.com>"]
+license = "MIT"
+homepage = "https://github.com/bonifaido/rust-zookeeper"
+repository = "https://github.com/bonifaido/rust-zookeeper"
+documentation = "http://bonifaido.github.io/rust-zookeeper"
+description = "A minimal ZooKeeper client"
+readme = "README.md"
+keywords = ["zk", "zookeeper", "distributed", "coordination"]
+
+[dependencies]
+byteorder = "0.3"
+# TODO mio specifies this version exactly!
+bytes = { git = "https://github.com/carllerche/bytes", rev = "7edb577d0a" }
+enum_primitive = "0.1"
+lazy_static = "0.1"
+log = "^0.3.1"
+env_logger = "^0.3.1"
+mio = { git = "https://github.com/carllerche/mio.git" }
+num = "0.1"
+time = "0.1"
+snowflake = "1.0.0"
+
+[dev-dependencies]
+env_logger = "^0.3.1"
+
+[features]
+unstable = []
+
+[[bin]]
+name="zktest"
+path="examples/zookeeper_example.rs"
+
+[[test]]
+name = "test"
+path = "tests/test.rs"
