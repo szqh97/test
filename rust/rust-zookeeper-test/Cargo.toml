@@ -30,8 +30,8 @@ env_logger = "^0.3.1"
 unstable = []
 
 [[bin]]
-name="zktest"
-path="examples/zookeeper_example.rs"
+name="test"
+path="examples/test.rs"
 
 [[test]]
 name = "test"

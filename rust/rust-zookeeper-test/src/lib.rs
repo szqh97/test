@@ -25,7 +25,7 @@ pub use watch::Watcher;
 
 mod consts;
 mod io;
-mod listeners;
+pub mod listeners;
 pub mod paths;
 mod proto;
 mod watch;

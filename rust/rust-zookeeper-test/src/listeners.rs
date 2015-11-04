@@ -12,11 +12,11 @@ impl Subscription {
     }
 }
 
-type ListenerMap<T> = HashMap<Subscription, Sender<T>>;
+pub type ListenerMap<T> = HashMap<Subscription, Sender<T>>;
 
 #[derive(Clone)]
 pub struct ListenerSet<T> where T: Send {
-    listeners: Arc<Mutex<ListenerMap<T>>>,
+    pub listeners: Arc<Mutex<ListenerMap<T>>>,
 }
 
 impl<T> ListenerSet<T> where T: Send + Clone {
