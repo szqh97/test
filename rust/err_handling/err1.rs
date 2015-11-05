@@ -26,6 +26,12 @@ fn find(haystack: &str, needle: char) -> Option<usize> {
     None
     
 }
+
+fn extension(file_name: &str)->Option<&str> {
+    find(file_name, '.').map(|i| &file_name[i+1..])
+    
+}
+
 pub fn main() {
     //guess(11);
     
@@ -37,5 +43,7 @@ pub fn main() {
        Some(i) => println!("File extension:{}", &file_name[i+1..]),
    }
 
+   println!("extension: {}", extension(file_name).unwrap());
+   println!("extension: {}", extension("fooboar").unwrap_or("rs"));
 
 }
