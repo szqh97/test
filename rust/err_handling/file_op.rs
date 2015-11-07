@@ -114,6 +114,15 @@ fn file_double5<P: AsRef<Path>>(file_path:P) -> Result<i32, CliErr> {
     Ok(2*n)
 }
 
+fn file_double6<P: AsRef<Path>>(file_path: P) -> Result<i32, Box<error::Error>> {
+    let mut file = try!(File::open(file_path));
+    let mut contents = String::new();
+    try!(file.read_to_string(&mut contents));
+    let n = try!(contents.trim().parse::<i32>());
+    Ok(2*n)
+    
+}
+
 pub fn main() {
     let doubled = file_double("./file_op.rs");
     println!("doubled {}", doubled);
@@ -126,4 +135,5 @@ pub fn main() {
         Ok(n) => println!("{}", n),
         Err(err) => println!("{:?}", err),
     }
+    println!("{:?}", file_double6("foobar").unwrap());
 }

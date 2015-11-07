@@ -11,7 +11,7 @@ fn write_ten_bytes_at_end<W: Write + Seek>(writer: &mut W) -> Result<()> {
 }
 
 pub fn main() {
-    let mut file = try!(File::create("foo.txt"));
+    let mut file = try!(File::create("foo.txt").map_err(|e| e.to_string()));
     //try!(write_ten_bytes_at_end(&mut file));
     
 }
