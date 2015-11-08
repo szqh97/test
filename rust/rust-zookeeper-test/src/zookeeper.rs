@@ -68,7 +68,7 @@ impl ZooKeeper {
         })
     }
 
-    fn parse_connect_string(connect_string: &str) -> ZkResult<(Vec<SocketAddr>, Option<String>)> {
+    pub fn parse_connect_string(connect_string: &str) -> ZkResult<(Vec<SocketAddr>, Option<String>)> {
         let (chroot, end) = match connect_string.find('/') {
             Some(start) => {
                 match &connect_string[start..connect_string.len()] {
@@ -81,7 +81,7 @@ impl ZooKeeper {
 
         let mut addrs = Vec::new();
         for addr_str in connect_string[..end].split(',') {
-            let addr = match addr_str.to_socket_addrs() {
+            let addr = match addr_str.trim().to_socket_addrs() {
                 Ok(mut addrs) => match addrs.nth(0) {
                     Some(addr) => addr,
                     None => return Err(ZkError::BadArguments)

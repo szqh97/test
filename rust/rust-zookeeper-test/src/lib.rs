@@ -24,12 +24,12 @@ pub use zookeeper_ext::ZooKeeperExt;
 pub use watch::Watcher;
 
 mod consts;
-mod io;
+pub mod io;
 pub mod listeners;
 pub mod paths;
 mod proto;
 mod watch;
 mod zoodefs;
-mod zookeeper;
+pub mod zookeeper;
 mod zookeeper_ext;
 pub mod recipes;

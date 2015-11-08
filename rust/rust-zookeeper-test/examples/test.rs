@@ -4,6 +4,19 @@ use std::collections::HashMap;
 use std::sync::mpsc;
 use zookeeper::listeners;
 
+use zookeeper::io;
+
+
+pub fn test_io() {
+    let (addrs, chroot) = zookeeper::ZooKeeper::parse_connect_string("127.0.0.1:2181, ::1:2181/mesos").unwrap();
+    println!("length {}", addrs.len());
+    println!("{:?}", addrs);
+    let mut hosts = zookeeper::io::Hosts::new(addrs);
+    let addr = hosts.get();
+    println!("{:?}", addr);
+    
+}
+
 pub fn listeners_test() {
     let (tx1, rx1) = mpsc::channel();
     let (tx2, rx2) = mpsc::channel();
@@ -30,6 +43,7 @@ pub fn listeners_test() {
     
 }
 pub fn main() {
-    listeners_test();
+    //listeners_test();
+    test_io();
     
 }

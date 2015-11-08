@@ -23,17 +23,17 @@ lazy_static! {
     RequestHeader{xid: -2, opcode: OpCode::Ping}.to_len_prefixed_buf().unwrap();
 }
 
-struct Hosts {
+pub struct Hosts {
     addrs: Vec<SocketAddr>,
     index: usize
 }
 
 impl Hosts {
-    fn new(addrs: Vec<SocketAddr>) -> Hosts {
+    pub fn new(addrs: Vec<SocketAddr>) -> Hosts {
         Hosts{addrs: addrs, index: 0}
     }
 
-    fn get(&mut self) -> &SocketAddr {
+    pub fn get(&mut self) -> &SocketAddr {
         let addr = &self.addrs[self.index];
         if self.addrs.len() == self.index+1 {
             self.index = 0;
