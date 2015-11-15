@@ -17,19 +17,21 @@ extern crate snowflake;
 
 pub use consts::*;
 pub use proto::{Acl, Stat, WatchedEvent};
+//pub use proto::{ReplyHeader};
 pub use zoodefs::acls;
 pub use zoodefs::perms;
 pub use zookeeper::{ZkResult, ZooKeeper};
 pub use zookeeper_ext::ZooKeeperExt;
 pub use watch::Watcher;
+pub use zookeeper::{RawRequest, RawResponse};
 
-mod consts;
+pub mod consts;
 pub mod io;
 pub mod listeners;
 pub mod paths;
-mod proto;
-mod watch;
-mod zoodefs;
+pub mod proto;
+pub mod watch;
+pub mod zoodefs;
 pub mod zookeeper;
-mod zookeeper_ext;
+pub mod zookeeper_ext;
 pub mod recipes;
