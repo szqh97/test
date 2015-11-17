@@ -1,5 +1,6 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+#include <vector>
 using namespace std;
 
 
@@ -24,6 +25,18 @@ int main()
     str2 = boost::trim_left_copy(str1);
     string str3 = boost::trim_right_copy(str2);
     cout << str3 <<endl;
+
+    std::string url = "eD2k://|file|%E5%8D%97%E4%BA%AC%E8%B7%AF.mkv|1610410489|DA3491C1AFFE9CA47977B3CDFD87A786|h=G3GJEANWCBHQWSIPZCIINIHEDWV7QXM4|/ ";
+    vector<string> strvec;
+    boost::split(strvec, url,  boost::algorithm::is_any_of("://"));
+    //string prefix = boost::to_lower_copy(*strvec.begin());
+    boost::to_lower(*strvec.begin());
+
+    cout << boost::equals(*strvec.begin(), "ed2k") << endl;
+
+    cout << strvec[0] << std::endl;
+
+
 
 
 
