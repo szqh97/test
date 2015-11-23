@@ -1,0 +1,11 @@
+[package]
+name = "pingpong"
+version = "0.1.0"
+authors = ["szqh97 <szqh97@163.com>"]
+
+[dependencies]
+mio = "0.4.4"
+
+[[bin]]
+name="server"
+path="src/server.rs"
