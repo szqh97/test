@@ -1,0 +1,11 @@
+[package]
+name = "rust_test"
+version = "0.1.0"
+authors = ["szqh97 <szqh97@163.com>"]
+
+[dependencies]
+rustc-serialize = "0.3.16"
+
+[[bin]]
+name = "jsong_test"
+path = "src/json_test.rs"
