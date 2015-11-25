@@ -9,3 +9,11 @@ rustc-serialize = "0.3.16"
 [[bin]]
 name = "jsong_test"
 path = "src/json_test.rs"
+
+[[bin]]
+name = "lifetime"
+path = "src/life_time.rs"
+
+[[bin]]
+name = "rust-borrow-lifetimes"
+path = "src/rust-borrow-lifetimes.rs"
