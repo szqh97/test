@@ -34,5 +34,15 @@ fn main() {
     */
 
 
+    /*
+    let mut a = Foo {f: box 0};
+    let y: &Foo;
+    if false {
+        let x = &a;
+        y = x;
+    }
+
+    a.f = box 1;
+    */
 
 }
