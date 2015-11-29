@@ -166,7 +166,7 @@ fn wrap() {
 }
 
     fn parse_dna_info () {
-        let file_path = Path::new("/home/szqh97/1.vdna");
+        let file_path = Path::new("/home/szqh97/1.adna");
         let mut buffer = Box::new(Vec::new());
         let mut dnafile = match File::open(&file_path) {
             Ok(file) => file,
@@ -197,6 +197,7 @@ fn wrap() {
                 exit_flag = true;
             }
             let ts: [u8; 4] = [dna_data_buf[pos], dna_data_buf[pos + 1], dna_data_buf[pos+2], dna_data_buf[pos + 3]];
+            //println!("{:?}", &dna_data_buf[pos..pos+4]);
             /*
             if let Some((dna, other)) = unsafe { decode::<dna_frame>(dna_frame_buf) } {
                 //println!("{}", dna);
