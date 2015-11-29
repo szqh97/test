@@ -190,14 +190,14 @@ fn wrap() {
         let mut dna_frame_buf:Vec<u8> = Vec::new();
         let mut extra_dna_frames_buf: Vec<u8> = Vec::new();
         let mut tmp_buff: Vec<u8> = Vec::new();
-        let (dna_frame_buf, extra_dna_frames_buf) = dna_data_buf.split_at_mut(40);
-        let tmp_buff = extra_dna_frames_buf;
+        //let (dna_frame_buf, extra_dna_frames_buf) = dna_data_buf.split_at_mut(40);
+        let mut pos: usize = 0;
         while !exit_flag {
-            if tmp_buff.len() == 0 {
+            if pos + 40 >= dna_data_buf.len() {
                 exit_flag = true;
             }
-            //else { exit_flag  = true; }
-
+            let ts: [u8; 4] = [dna_data_buf[pos], dna_data_buf[pos + 1], dna_data_buf[pos+2], dna_data_buf[pos + 3]];
+            /*
             if let Some((dna, other)) = unsafe { decode::<dna_frame>(dna_frame_buf) } {
                 //println!("{}", dna);
                 println!("PPP {}", tmp_buff.len());
@@ -205,6 +205,11 @@ fn wrap() {
 
             let (dna_frame_buf, extra_dna_frames_buf) = tmp_buff.split_at_mut(40);
             let tmp_buff = extra_dna_frames_buf;
+            */
+
+            pos += 40;
+            let dna_ts: u32 = unsafe{ mem::transmute::<[u8;4],u32>(ts) };
+            println!("dna ts is :{}", dna_ts);
 
         }
 
