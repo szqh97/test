@@ -4,16 +4,28 @@ version = "0.1.0"
 authors = ["szqh97 <szqh97@163.com>"]
 
 [dependencies]
+bincode = "*"
+
+abomonation = "0.4.1"
 rustc-serialize = "0.3.16"
 
-[[bin]]
-name = "jsong_test"
-path = "src/json_test.rs"
+
 
 [[bin]]
-name = "lifetime"
-path = "src/life_time.rs"
+name = "thread_test"
+path = "src/thread_test.rs"
 
 [[bin]]
-name = "rust-borrow-lifetimes"
-path = "src/rust-borrow-lifetimes.rs"
+name = "parse_dna"
+path = "src/parse_dna.rs"
+
+[[bin]]
+name = "guarantees"
+path = "src/guarantees.rs"
+
+[[bin]]
+name = "rc_test"
+path = "src/rc_test.rs"
+
+
+
