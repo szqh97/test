@@ -1,0 +1,12 @@
+[package]
+name = "rating_service"
+version = "0.1.0"
+authors = ["szqh97 <szqh97@163.com>"]
+
+[dependencies]
+#nickel = "0.7.3"
+iron = "0.2.5"
+
+[[bin]]
+name="hello"
+path="src/hello.rs"
