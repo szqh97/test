@@ -4,9 +4,8 @@ version = "0.1.0"
 authors = ["szqh97 <szqh97@163.com>"]
 
 [dependencies]
-#nickel = "0.7.3"
+rustc-serialize = "0.3.16"
 iron = "0.2.5"
+chrono = "0.2.17"
 
-[[bin]]
-name="hello"
-path="src/hello.rs"
+
