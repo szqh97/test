@@ -2,7 +2,7 @@ extern crate rustc_serialize;
 use std::collections::BTreeMap;
 use rustc_serialize::json::{self, Json, ToJson};
 
-
+use std::collections::HashMap;
 
 #[derive(RustcDecodable, RustcEncodable)]
 pub struct TestStruct {
@@ -23,6 +23,7 @@ impl ToJson for TestStruct {
     }
 }
 
+
 pub fn main() {
     
     let obj = TestStruct {
@@ -41,4 +42,34 @@ pub fn main() {
     let json_str: String = json_obj.to_string();
     println!("{}", json_str);
 
+
+    println!("{:?}", json::encode(&obj).unwrap().to_string());
+
+    ///////// JSON serialization in Rust Part 1.
+    let numer = 3.14f64;
+    let str = "Hello world";
+    println!("{:?}", json::encode(&numer).unwrap());
+    println!("{:?}", json::encode(&str).unwrap());
+
+    let opt = Some(3.14);
+    println!("{:?}", json::encode(&opt).unwrap());
+
+    let opt2:Option<f64> = None;
+    println!("{:?}", json::encode(&opt2).unwrap());
+
+
+    let vec = vec!(1939i32, 1945);
+    println!("{:?}", json::encode(&vec).unwrap());
+
+    let mut map = HashMap::new();
+    map.insert("pi", 3.14f64);
+    map.insert("e", 2.71);
+    println!("{:?}", json::encode(&map).unwrap());
+
+
+    let numbers = [1, 2, 3, 4, 5];
+    println!("{:?}", json::encode(&numbers).unwrap());
+
 }
+
+
