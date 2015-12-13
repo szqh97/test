@@ -39,9 +39,7 @@ pub struct RatingResponse {
 impl RatingResponse{
     pub fn new(err_code: i32, err_msg: String, rating_score: u32) -> RatingResponse{
         let mut rating_score: u32 = rating_score;
-        if err_code != 0 {
-            rating_score = 0;
-        }
+        if err_code != 0 { rating_score = 0; }
         RatingResponse {
            err_code: err_code,
            err_msg: err_msg,
@@ -76,13 +74,21 @@ pub fn test_ratingrequest_encode() {
 
     let json_obj: Json = req.to_json();
     let json_str: String = json_obj.to_string();
-    println!("rating request: {}", json_str);
-    let req: RatingRequest = json::decode(&json_str).unwrap();
-    println!("{:?}", req.meta_title);
+    println!("rating requestxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: {}", json_str);
+    //let req: RatingRequest = json::decode(&json_str).unwrap();
+    //println!("{:?}", req.meta_title);
 
-    let body: String = "\"sample_title\": \"Teen Wolf xx\",    \"sample_date\": \"2015-12-01\",    \"peers\": 23,    \"meta_title\":[        \"Teen Wolf S4\",        \"Teen Wolf S5\"         ],    \"meta_post_date\": [        \"2013-12-09\",        \"2014-05-09\"             ]}\n\r";
+    let body: String = "{\"sample_title\": \"Teen Wolf xx\",    \"sample_post_date\": \"2015-12-01\",    \"peers\": 23,    \"meta_title\":[        \"Teen Wolf S4\",        \"Teen Wolf S5\"         ],    \"meta_post_date\": [        \"2013-12-09\",        \"2014-05-09\"             ]}".trim().to_string();
+    println!("xxxxxxxx body {:?}", body);
 
-    let r: RatingRequest = json::decode(&body).unwrap();
+    let r: RatingRequest = match json::decode(&body) {
+        Ok(r) => r,
+        Err(e) => {
+            println!("error here: {:?}", e.to_string());
+            panic!("PANIC HERE");
+        },
+    };
+    //let r: RatingRequest = json::decode(&body).unwrap();
     println!("xxxxxxxxxxxxxxx{:?}", r.sample_post_date );
 
 }
