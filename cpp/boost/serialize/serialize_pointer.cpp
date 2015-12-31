@@ -72,6 +72,7 @@ private:
 
 };
 
+///// use BOOST_CLASS_EXPORT
 BOOST_CLASS_EXPORT(bird)
 
 void save_cls()
@@ -100,6 +101,30 @@ void load_cls()
     delete a;
 }
 
+////// use register_type()
+
+void save_load_register()
+{
+    {
+        std::ofstream file("/tmp/ser_reg.txt");
+        boost::archive::text_oarchive oa(file);
+        oa.register_type<bird>();
+        animal *a = new bird(3, true);
+        oa << a;
+        delete a;
+    }
+    {
+        std::ifstream file("/tmp/ser_reg.txt");
+        boost::archive::text_iarchive ia (file);
+        ia.register_type<bird>();
+        animal *a;
+        ia >> a;
+        std::cout << a->legs() << " bird: " << std::endl;
+        delete a;
+    }
+}
+
+
 int main()
 {
     save_p();
@@ -107,6 +132,8 @@ int main()
 
     save_cls();
     load_cls();
+
+    save_load_register();
     
     return 0;
 }
