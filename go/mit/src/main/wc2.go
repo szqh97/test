@@ -39,8 +39,18 @@ func Map(value string) *list.List {
 // of that key's string value. should return a single
 // output value for that key.
 func Reduce(key string, values *list.List) string {
-    str := "test"
-    return str
+    cnt := 0
+    for e := values.Front(); e != nil; e = e.Next() {
+        kv := e.Value.(mapreduce.KeyValue)
+        
+        if kv.Key == key {
+            fmt.Println(kv.Key)
+            //fmt.Println(strconv.Atoi(kv.Value.(mapreduce.KeyValue).Value))
+            //cnt += strconv.Atoi(kv.Value.(mapreduce.KeyValue).Value)
+        }
+    }
+
+    return strconv.Itoa(cnt)
 }
 
 // Can be run in 3 ways:
