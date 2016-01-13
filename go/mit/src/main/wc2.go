@@ -6,6 +6,7 @@ import "mapreduce"
 import (
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 import "container/list"
@@ -18,7 +19,10 @@ import "container/list"
 func Map(value string) *list.List {
 	l := list.New()
 	word_dict := map[string]int{}
-	for _, word := range strings.Split(value, " ") {
+	split_func := func(c rune) bool {
+		return !unicode.IsLetter(c) && !unicode.IsNumber(c)
+	}
+	for _, word := range strings.FieldsFunc(value, split_func) {
 
 		if cnt, ok := word_dict[word]; ok {
 			cnt += 1
