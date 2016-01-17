@@ -4,8 +4,13 @@ import "fmt"
 import "net/rpc"
 
 const (
-	Map    = "Map"
-	Reduce = "Reduce"
+	Map           = "Map"
+	Reduce        = "Reduce"
+	MapWorking    = "MapWorking"
+	MapDone       = "MapDone"
+	ReduceWorking = "ReduceWorking"
+	ReduceDone    = "ReduceDone"
+	Registed      = "Registed"
 )
 
 type JobType string

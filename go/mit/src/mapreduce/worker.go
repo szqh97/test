@@ -74,6 +74,7 @@ func RunWorker(MasterAddress string, me string,
 		log.Fatal("RunWorker: worker ", me, " error: ", e)
 	}
 	wk.l = l
+	fmt.Printf("master address: %s, worker: %s\n", MasterAddress, me)
 	Register(MasterAddress, me)
 
 	// DON'T MODIFY CODE BELOW
