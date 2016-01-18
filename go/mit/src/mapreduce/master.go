@@ -44,32 +44,61 @@ func (mr *MapReduce) RunMaster() *list.List {
 	}()
 
 	for {
+
 		fmt.Println("TTTTTTThe worker length is: ", len(mr.Workers))
-		for mapNum := 0; mapNum < mr.nMap; mapNum++ {
-			for worker, status := range mr.WorkerStatus {
-				fmt.Println("worker is ", worker, " status is ", status)
-				if status == Registed || status == MapDone {
-					jobargs := DoJobArgs{}
-					jobargs.File = mr.file
-					jobargs.Operation = Map
-					jobargs.JobNumber = mapNum
-					jobargs.NumOtherPhase = mr.nReduce
+		if len(mr.Workers) != 0 {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+	for mapNum := 0; mapNum < mr.nMap; {
+		for worker, status := range mr.WorkerStatus {
+			fmt.Println("worker is ", worker, " status is ", status)
+			if status == Registed || status == MapDone {
+				jobargs := DoJobArgs{}
+				jobargs.File = mr.file
+				jobargs.Operation = Map
+				jobargs.JobNumber = mapNum
+				jobargs.NumOtherPhase = mr.nReduce
 
-					jobreply := DoJobReply{}
+				jobreply := DoJobReply{}
 
-					ok := call(worker.address, "MapReduce.DoJob", jobargs, jobreply)
-					if ok != true {
-						fmt.Errorf("call MapReduce.DoJob faile")
-					}
-
-					fmt.Println("DOMAP result is :", jobreply.OK)
-
+				ok := call(worker.address, "Worker.DoJob", jobargs, &jobreply)
+				if ok != true {
+					fmt.Errorf("call MapReduce.DoJob faile")
+				} else {
+					mr.WorkerStatus[worker] = MapDone
+					mapNum++
 				}
 
-			}
-			time.Sleep(3 * time.Second)
-		}
+				fmt.Println("DOMAP result is :", jobreply.OK)
 
+			}
+
+		}
+	}
+
+	for reduceNum := 0; reduceNum < mr.nReduce; {
+		for worker, status := range mr.WorkerStatus {
+			fmt.Println("worker is ", worker, " status is ", status)
+			if status == MapDone || status == ReduceDone {
+				jobargs := DoJobArgs{}
+				jobargs.File = mr.file
+				jobargs.Operation = Reduce
+				jobargs.JobNumber = reduceNum
+				jobargs.NumOtherPhase = mr.nMap
+
+				jobreply := DoJobReply{}
+				ok := call(worker.address, "Worker.DoJob", jobargs, &jobreply)
+				if ok != true {
+					fmt.Errorf("call Worker.DoJob fail")
+				} else {
+
+					mr.WorkerStatus[worker] = ReduceDone
+					reduceNum++
+				}
+			}
+		}
 	}
 
 	return mr.KillWorkers()
