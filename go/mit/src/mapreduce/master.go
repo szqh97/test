@@ -39,13 +39,11 @@ func (mr *MapReduce) RunMaster() *list.List {
 			worker.address = workerAddress
 			mr.Workers[workerAddress] = worker
 			mr.WorkerStatus[worker] = Registed
-			fmt.Println("xxxxxxxx", mr.Workers)
 		}
 	}()
 
 	for {
 
-		fmt.Println("TTTTTTThe worker length is: ", len(mr.Workers))
 		if len(mr.Workers) != 0 {
 			break
 		}
@@ -61,6 +59,7 @@ func (mr *MapReduce) RunMaster() *list.List {
 				jobargs.JobNumber = mapNum
 				jobargs.NumOtherPhase = mr.nReduce
 
+				fmt.Printf("MMMMMapnum is %d\n", mapNum)
 				jobreply := DoJobReply{}
 
 				ok := call(worker.address, "Worker.DoJob", jobargs, &jobreply)
@@ -69,6 +68,9 @@ func (mr *MapReduce) RunMaster() *list.List {
 				} else {
 					mr.WorkerStatus[worker] = MapDone
 					mapNum++
+					if mapNum >= mr.nMap {
+						break
+					}
 				}
 
 				fmt.Println("DOMAP result is :", jobreply.OK)
@@ -88,14 +90,19 @@ func (mr *MapReduce) RunMaster() *list.List {
 				jobargs.JobNumber = reduceNum
 				jobargs.NumOtherPhase = mr.nMap
 
+				fmt.Printf("RRRRReduce is %d, nReduce is \n", reduceNum)
 				jobreply := DoJobReply{}
 				ok := call(worker.address, "Worker.DoJob", jobargs, &jobreply)
+				fmt.Println("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj", reduceNum)
 				if ok != true {
 					fmt.Errorf("call Worker.DoJob fail")
 				} else {
 
 					mr.WorkerStatus[worker] = ReduceDone
 					reduceNum++
+					if reduceNum >= mr.nReduce {
+						break
+					}
 				}
 			}
 		}
