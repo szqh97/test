@@ -10,6 +10,7 @@ import "bufio"
 import "log"
 import "sort"
 import "strconv"
+import "unicode"
 
 const (
 	nNumber = 100
@@ -22,22 +23,44 @@ const (
 
 // Split in words
 func MapFunc(value string) *list.List {
-	DPrintf("Map %v\n", value)
-	res := list.New()
-	words := strings.Fields(value)
-	for _, w := range words {
-		kv := KeyValue{w, ""}
-		res.PushBack(kv)
+	l := list.New()
+	word_dict := map[string]int{}
+	split_func := func(c rune) bool {
+		return !unicode.IsLetter(c) && !unicode.IsNumber(c)
 	}
-	return res
+	for _, word := range strings.FieldsFunc(value, split_func) {
+
+		if cnt, ok := word_dict[word]; ok {
+			cnt += 1
+			word_dict[word] = cnt
+		} else {
+			word_dict[word] = 1
+		}
+	}
+
+	for k, v := range word_dict {
+		l.PushBack(KeyValue{k, strconv.Itoa(v)})
+	}
+
+	return l
+
 }
 
 // Just return key
 func ReduceFunc(key string, values *list.List) string {
-	for e := values.Front(); e != nil; e = e.Next() {
-		DPrintf("Reduce %s %v\n", key, e.Value)
+
+	cnt := 0
+
+	for v := values.Front(); v != nil; v = v.Next() {
+		s_cnt := v.Value.(string)
+		c, err := strconv.Atoi(s_cnt)
+		if err != nil {
+			fmt.Printf("convert %s to int error", s_cnt)
+		}
+		cnt += c
+
 	}
-	return ""
+	return strconv.Itoa(cnt)
 }
 
 // Checks input file agaist output file: each input number should show up
