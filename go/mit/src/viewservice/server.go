@@ -15,9 +15,15 @@ type ViewServer struct {
 	dead     int32 // for testing
 	rpccount int32 // for testing
 	me       string
-
-
 	// Your declarations here.
+
+    clerkMap map[string]time.Time
+    clerkPingId map[string]uint64
+
+
+
+
+
 }
 
 //
@@ -26,6 +32,15 @@ type ViewServer struct {
 func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 
 	// Your code here.
+
+    clerkName = args.Me
+    clerkNum = args.Viewnum
+    clerkMap[clerkName] = time.Now()
+    oldPingId = clerkPingId[clerkName]
+
+    if oldPingId >= clerkNum {
+        return nil
+    }
 
 	return nil
 }
@@ -77,6 +92,9 @@ func StartServer(me string) *ViewServer {
 	vs := new(ViewServer)
 	vs.me = me
 	// Your vs.* initializations here.
+    vs.clerkMap = make(map[string]time.Time)
+    vs.clerkPingId = make(map[string]uint64)
+
 
 	// tell net/rpc about our RPC server and handlers.
 	rpcs := rpc.NewServer()
