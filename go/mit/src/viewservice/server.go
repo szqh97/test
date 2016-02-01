@@ -30,14 +30,20 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 	// Your code here.
 
 	clerkName := args.Me
-	clerkNum := args.Viewnum
+	now := time.Now()
 	vs.mu.Lock()
-	vs.clerkMap[clerkName] = time.Now()
-	if vs.currView.Viewnum == 0 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
-		vs.currView.Viewnum = clerkNum
+	vs.clerkMap[clerkName] = now
+	vs.currView.Viewnum = uint(len(vs.clerkMap))
+	if vs.currView.Viewnum == 1 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
 		vs.currView.Primary = clerkName
 		vs.currView.Backup = ""
+	} else {
+		if vs.currView.Primary != clerkName {
+			vs.currView.Backup = clerkName
+		}
 	}
+	log.Println("current view: ", vs.currView)
+
 	reply.View = vs.currView
 	vs.mu.Unlock()
 
@@ -74,6 +80,7 @@ func (vs *ViewServer) tick() {
 		backup := vs.currView.Backup
 		lastBackupTS := vs.clerkMap[backup]
 		if now.Sub(lastBackupTS) < PingInterval*DeadPings {
+			log.Println("primay is timeout, change backup: ", backup)
 			vs.currView.Primary = backup
 			vs.currView.Backup = ""
 		}
