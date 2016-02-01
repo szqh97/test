@@ -17,13 +17,9 @@ type ViewServer struct {
 	me       string
 	// Your declarations here.
 
-    clerkMap map[string]time.Time
-    clerkPingId map[string]uint64
-
-
-
-
-
+	clerkMap    map[string]time.Time
+	currView    View
+	clerkPingId map[string]uint64
 }
 
 //
@@ -33,14 +29,17 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 
 	// Your code here.
 
-    clerkName = args.Me
-    clerkNum = args.Viewnum
-    clerkMap[clerkName] = time.Now()
-    oldPingId = clerkPingId[clerkName]
-
-    if oldPingId >= clerkNum {
-        return nil
-    }
+	clerkName := args.Me
+	clerkNum := args.Viewnum
+	vs.mu.Lock()
+	vs.clerkMap[clerkName] = time.Now()
+	if vs.currView.Viewnum == 0 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
+		vs.currView.Viewnum = clerkNum
+		vs.currView.Primary = clerkName
+		vs.currView.Backup = ""
+	}
+	reply.View = vs.currView
+	vs.mu.Unlock()
 
 	return nil
 }
@@ -51,10 +50,12 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 func (vs *ViewServer) Get(args *GetArgs, reply *GetReply) error {
 
 	// Your code here.
+	vs.mu.Lock()
+	reply.View = vs.currView
+	vs.mu.Unlock()
 
 	return nil
 }
-
 
 //
 // tick() is called once per PingInterval; it should notice
@@ -62,6 +63,21 @@ func (vs *ViewServer) Get(args *GetArgs, reply *GetReply) error {
 // accordingly.
 //
 func (vs *ViewServer) tick() {
+	now := time.Now()
+	primary := vs.currView.Primary
+	if len(primary) != 0 {
+		lastPrimayTS := vs.clerkMap[primary]
+		if now.Sub(lastPrimayTS) < PingInterval*DeadPings {
+			return
+		}
+
+		backup := vs.currView.Backup
+		lastBackupTS := vs.clerkMap[backup]
+		if now.Sub(lastBackupTS) < PingInterval*DeadPings {
+			vs.currView.Primary = backup
+			vs.currView.Backup = ""
+		}
+	}
 
 	// Your code here.
 }
@@ -92,9 +108,11 @@ func StartServer(me string) *ViewServer {
 	vs := new(ViewServer)
 	vs.me = me
 	// Your vs.* initializations here.
-    vs.clerkMap = make(map[string]time.Time)
-    vs.clerkPingId = make(map[string]uint64)
-
+	vs.clerkMap = make(map[string]time.Time)
+	vs.clerkPingId = make(map[string]uint64)
+	vs.currView.Viewnum = 0
+	vs.currView.Backup = ""
+	vs.currView.Backup = ""
 
 	// tell net/rpc about our RPC server and handlers.
 	rpcs := rpc.NewServer()
