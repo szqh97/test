@@ -31,21 +31,22 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 
 	clerkName := args.Me
 	now := time.Now()
-	vs.mu.Lock()
-	vs.clerkMap[clerkName] = now
-	vs.currView.Viewnum = uint(len(vs.clerkMap))
-	if vs.currView.Viewnum == 1 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
+    if clerkName == "" {
+        return nil
+    }
+	if vs.currView.Viewnum == 0 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
+        vs.currView.Viewnum = args.Viewnum + 1
 		vs.currView.Primary = clerkName
 		vs.currView.Backup = ""
+        vs.clerkMap[clerkName] = now
+        reply.View = vs.currView
 	} else {
-		if vs.currView.Primary != clerkName {
+		if vs.currView.Primary == clerkName {
 			vs.currView.Backup = clerkName
 		}
 	}
 	log.Println("current view: ", vs.currView)
 
-	reply.View = vs.currView
-	vs.mu.Unlock()
 
 	return nil
 }
@@ -70,22 +71,25 @@ func (vs *ViewServer) Get(args *GetArgs, reply *GetReply) error {
 //
 
 func (vs *ViewServer) tick() {
+    log.Println("server.tick Entering...")
 	// Your code here.
+    /*
     if vs.currView.Viewnum == 0 {
         return
     }
+    */
 
 	primary := vs.currView.Primary
     backup := vs.currView.Backup
     if vs.isviewAlive(backup) == false {
         delete(vs.clerkMap, backup)
-        vs.currView.Viewnum = uint(len(vs.clerkMap))
+      //  vs.currView.Viewnum = uint(len(vs.clerkMap))
         vs.currView.Backup = ""
     }
 
     if vs.isviewAlive(primary) != true {
         delete(vs.clerkMap, primary)
-        vs.currView.Viewnum = uint(len(vs.clerkMap))
+       // vs.currView.Viewnum = uint(len(vs.clerkMap))
         vs.currView.Primary = ""
         if vs.isviewAlive(backup) == true {
             vs.currView.Primary = backup
