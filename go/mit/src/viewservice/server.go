@@ -68,26 +68,67 @@ func (vs *ViewServer) Get(args *GetArgs, reply *GetReply) error {
 // if servers have died or recovered, and change the view
 // accordingly.
 //
+
 func (vs *ViewServer) tick() {
-	now := time.Now()
+	// Your code here.
+    if vs.currView.Viewnum == 0 {
+        return
+    }
+
 	primary := vs.currView.Primary
+    backup := vs.currView.Backup
+    if vs.isviewAlive(backup) == false {
+        delete(vs.clerkMap, backup)
+        vs.currView.Viewnum = uint(len(vs.clerkMap))
+        vs.currView.Backup = ""
+    }
+
+    if vs.isviewAlive(primary) != true {
+        delete(vs.clerkMap, primary)
+        vs.currView.Viewnum = uint(len(vs.clerkMap))
+        vs.currView.Primary = ""
+        if vs.isviewAlive(backup) == true {
+            vs.currView.Primary = backup
+            vs.currView.Backup = ""
+        }
+
+    }
+    fmt.Println("in the tick func , clerkMap is : ", vs.clerkMap, vs.currView)
+
+
+    /*
+    lastPrimayTS := vs.clerkMap[primary]
+    lastBackupTS := vs.clerkMap[backup]
 	if len(primary) != 0 {
-		lastPrimayTS := vs.clerkMap[primary]
 		if now.Sub(lastPrimayTS) < PingInterval*DeadPings {
 			return
 		}
 
 		backup := vs.currView.Backup
-		lastBackupTS := vs.clerkMap[backup]
 		if now.Sub(lastBackupTS) < PingInterval*DeadPings {
 			log.Println("primay is timeout, change backup: ", backup)
 			vs.currView.Primary = backup
 			vs.currView.Backup = ""
 		}
 	}
+    */
 
-	// Your code here.
 }
+
+// isviewTimeOut detect whetherview is alive
+// add by 97
+func (vs *ViewServer) isviewAlive(view string) bool {
+    now := time.Now()
+    if lastPingTS, ok := vs.clerkMap[view]; ok {
+        if now.Sub(lastPingTS) < PingInterval * DeadPings {
+            return true
+        }
+    }
+
+    // clerk is neither Primary nor backup 
+    return false
+}
+
 
 //
 // tell the server to shut itself down.
