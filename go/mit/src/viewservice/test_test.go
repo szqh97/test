@@ -1,14 +1,15 @@
 package viewservice
-
 import "testing"
 import "runtime"
 import "time"
 import "fmt"
+import "log"
 import "os"
 import "strconv"
 
 func check(t *testing.T, ck *Clerk, p string, b string, n uint) {
 	view, _ := ck.Get()
+    log.Println(" p is: ", p, " b is: ", b , "n is: " , n ," currView is ", view)
 	if view.Primary != p {
 		t.Fatalf("wanted primary %v, got %v", p, view.Primary)
 	}
@@ -99,7 +100,7 @@ func Test1(t *testing.T) {
 	}
 	fmt.Printf("  ... Passed\n")
 
-	// revive ck1, should become backup
+	// revive ck1, should become backup {ck2, ck1}
 	fmt.Printf("Test: Restarted server becomes backup ...\n")
 
 	{
@@ -126,10 +127,12 @@ func Test1(t *testing.T) {
 	{
 		vx, _ := ck2.Get()
 		ck2.Ping(vx.Viewnum)
+        fmt.Println("currView is : ", vx)
 		for i := 0; i < DeadPings*2; i++ {
 			ck3.Ping(0)
 			v, _ := ck1.Ping(vx.Viewnum)
 			if v.Primary == ck1.me && v.Backup == ck3.me {
+
 				break
 			}
 			vx = v
@@ -139,7 +142,6 @@ func Test1(t *testing.T) {
 	}
 	fmt.Printf("  ... Passed\n")
 
-    return 
 	// kill and immediately restart the primary -- does viewservice
 	// conclude primary is down even though it's pinging?
 	fmt.Printf("Test: Restarted primary treated as dead ...\n")
@@ -190,14 +192,19 @@ func Test1(t *testing.T) {
 		vx, _ := ck1.Get()
 		for i := 0; i < DeadPings*3; i++ {
 			ck1.Ping(0)
+            log.Println("vx.ViweNum is ", vx.Viewnum)
 			ck3.Ping(vx.Viewnum)
 			v, _ := ck1.Get()
+            log.Println("check currView ", v)
+            log.Println("v.Viewnum is ", v.Viewnum, "vx.Viewnum is ", vx.Viewnum)
 			if v.Viewnum > vx.Viewnum {
+                log.Println("break kkkkkkk")
 				break
 			}
 			time.Sleep(PingInterval)
 		}
 		check(t, ck1, ck3.me, ck1.me, vx.Viewnum+1)
+        fmt.Println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
 		vy, _ := ck1.Get()
 		// ck3 is the primary, but it never acked.
 		// let ck3 die. check that ck1 is not promoted.
@@ -211,6 +218,7 @@ func Test1(t *testing.T) {
 		check(t, ck2, ck3.me, ck1.me, vy.Viewnum)
 	}
 	fmt.Printf("  ... Passed\n")
+    return 
 
 	// if old servers die, check that a new (uninitialized) server
 	// cannot take over.

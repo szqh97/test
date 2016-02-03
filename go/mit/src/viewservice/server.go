@@ -35,12 +35,35 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
         return nil
     }
     vs.clerkMap[clerkName] = now
+    // first ping , set view to primary
 	if vs.currView.Viewnum == 0 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
         vs.currView.Viewnum = args.Viewnum + 1
 		vs.currView.Primary = clerkName
 		vs.currView.Backup = ""
         reply.View = vs.currView
 	}
+
+    //primary ping 
+    if clerkName == vs.currView.Primary {
+        // if primary restarted, ping(0)
+        if args.Viewnum + 1 < vs.currView.Viewnum {
+            if vs.isviewAlive(vs.currView.Backup) {
+                vs.currView.Primary = vs.currView.Backup
+                vs.currView.Backup = clerkName
+            }
+            reply.View = vs.currView
+            return nil
+        }
+        vs.currView.Viewnum = args.Viewnum + 1
+        reply.View = vs.currView
+    }
+
+    // backup ping 
+    if clerkName == vs.currView.Backup {
+        reply.View = vs.currView
+    }
+
+    /*
 
     if args.Viewnum < vs.currView.Viewnum {
         reply.View = vs.currView
@@ -51,7 +74,7 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
     if args.Viewnum >= vs.currView.Viewnum {
         vs.currView.Viewnum = args.Viewnum + 1
     }
-    log.Println("current view: ", vs.currView)
+    */
 
 
 
@@ -100,7 +123,15 @@ func (vs *ViewServer) tick() {
 
     }
 
-    fmt.Println("in the tick func , clerkMap is : ", vs.clerkMap, vs.currView)
+    for clerkName, _ := range vs.clerkMap {
+        if vs.currView.Primary != clerkName && vs.currView.Backup == "" {
+            if vs.isviewAlive(clerkName) {
+                vs.currView.Backup = clerkName
+            }
+
+        }
+    }
+
 
 }
 
