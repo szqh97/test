@@ -68,6 +68,7 @@ func Test1(t *testing.T) {
 
 	{
 		vx, _ := ck1.Get()
+        fmt.Println("vx is  ssssss ", vx )
 		for i := 0; i < DeadPings*2; i++ {
 			ck1.Ping(1)
 			view, _ := ck2.Ping(0)
@@ -79,7 +80,6 @@ func Test1(t *testing.T) {
 		check(t, ck1, ck1.me, ck2.me, vx.Viewnum+1)
 	}
 	fmt.Printf("  ... Passed\n")
-    return
 
 	// primary dies, backup should take over
 	fmt.Printf("Test: Backup takes over if primary fails ...\n")
@@ -99,7 +99,6 @@ func Test1(t *testing.T) {
 	}
 	fmt.Printf("  ... Passed\n")
 
-	return
 	// revive ck1, should become backup
 	fmt.Printf("Test: Restarted server becomes backup ...\n")
 
@@ -140,6 +139,7 @@ func Test1(t *testing.T) {
 	}
 	fmt.Printf("  ... Passed\n")
 
+    return 
 	// kill and immediately restart the primary -- does viewservice
 	// conclude primary is down even though it's pinging?
 	fmt.Printf("Test: Restarted primary treated as dead ...\n")

@@ -34,18 +34,25 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
     if clerkName == "" {
         return nil
     }
+    vs.clerkMap[clerkName] = now
 	if vs.currView.Viewnum == 0 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
         vs.currView.Viewnum = args.Viewnum + 1
 		vs.currView.Primary = clerkName
 		vs.currView.Backup = ""
-        vs.clerkMap[clerkName] = now
         reply.View = vs.currView
-	} else {
-		if vs.currView.Primary == clerkName {
-			vs.currView.Backup = clerkName
-		}
 	}
-	log.Println("current view: ", vs.currView)
+
+    if args.Viewnum < vs.currView.Viewnum {
+        reply.View = vs.currView
+        if vs.currView.Primary != clerkName && vs.currView.Backup == "" {
+            vs.currView.Backup = clerkName
+        }
+    }
+    if args.Viewnum >= vs.currView.Viewnum {
+        vs.currView.Viewnum = args.Viewnum + 1
+    }
+    log.Println("current view: ", vs.currView)
+
 
 
 	return nil
@@ -72,13 +79,8 @@ func (vs *ViewServer) Get(args *GetArgs, reply *GetReply) error {
 
 func (vs *ViewServer) tick() {
     log.Println("server.tick Entering...")
-	// Your code here.
-    /*
-    if vs.currView.Viewnum == 0 {
-        return
-    }
-    */
 
+	// Your code here.
 	primary := vs.currView.Primary
     backup := vs.currView.Backup
     if vs.isviewAlive(backup) == false {
@@ -97,25 +99,8 @@ func (vs *ViewServer) tick() {
         }
 
     }
+
     fmt.Println("in the tick func , clerkMap is : ", vs.clerkMap, vs.currView)
-
-
-    /*
-    lastPrimayTS := vs.clerkMap[primary]
-    lastBackupTS := vs.clerkMap[backup]
-	if len(primary) != 0 {
-		if now.Sub(lastPrimayTS) < PingInterval*DeadPings {
-			return
-		}
-
-		backup := vs.currView.Backup
-		if now.Sub(lastBackupTS) < PingInterval*DeadPings {
-			log.Println("primay is timeout, change backup: ", backup)
-			vs.currView.Primary = backup
-			vs.currView.Backup = ""
-		}
-	}
-    */
 
 }
 
