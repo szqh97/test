@@ -41,7 +41,15 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 		vs.currView.Primary = clerkName
 		vs.currView.Backup = ""
         reply.View = vs.currView
+        return nil
 	}
+
+    // backup ping 
+    if clerkName == vs.currView.Backup {
+        reply.View = vs.currView
+        vs.currView.Backup = clerkName
+        return nil
+    }
 
     //primary ping 
     if clerkName == vs.currView.Primary {
@@ -49,34 +57,21 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
         if args.Viewnum + 1 < vs.currView.Viewnum {
             if vs.isviewAlive(vs.currView.Backup) {
                 vs.currView.Primary = vs.currView.Backup
-                vs.currView.Backup = clerkName
+                vs.currView.Backup = ""
             }
             reply.View = vs.currView
             return nil
         }
         vs.currView.Viewnum = args.Viewnum + 1
         reply.View = vs.currView
+        return nil
     }
 
-    // backup ping 
-    if clerkName == vs.currView.Backup {
+
+    if vs.currView.Backup == "" {
+        vs.currView.Backup = clerkName
         reply.View = vs.currView
     }
-
-    /*
-
-    if args.Viewnum < vs.currView.Viewnum {
-        reply.View = vs.currView
-        if vs.currView.Primary != clerkName && vs.currView.Backup == "" {
-            vs.currView.Backup = clerkName
-        }
-    }
-    if args.Viewnum >= vs.currView.Viewnum {
-        vs.currView.Viewnum = args.Viewnum + 1
-    }
-    */
-
-
 
 	return nil
 }
@@ -106,11 +101,7 @@ func (vs *ViewServer) tick() {
 	// Your code here.
 	primary := vs.currView.Primary
     backup := vs.currView.Backup
-    if vs.isviewAlive(backup) == false {
-        delete(vs.clerkMap, backup)
-      //  vs.currView.Viewnum = uint(len(vs.clerkMap))
-        vs.currView.Backup = ""
-    }
+
 
     if vs.isviewAlive(primary) != true {
         delete(vs.clerkMap, primary)
@@ -123,6 +114,12 @@ func (vs *ViewServer) tick() {
 
     }
 
+    if vs.isviewAlive(backup) == false {
+        delete(vs.clerkMap, backup)
+       //vs.currView.Viewnum = uint(len(vs.clerkMap))
+        vs.currView.Backup = ""
+
+    }
     for clerkName, _ := range vs.clerkMap {
         if vs.currView.Primary != clerkName && vs.currView.Backup == "" {
             if vs.isviewAlive(clerkName) {
