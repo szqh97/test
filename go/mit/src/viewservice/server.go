@@ -19,7 +19,7 @@ type ViewServer struct {
 
 	clerkMap    map[string]time.Time
 	currView    View
-	clerkPingId map[string]uint64
+    lastPing    PingArgs
 }
 
 //
@@ -28,7 +28,11 @@ type ViewServer struct {
 func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 
 	// Your code here.
-
+    log.Println("[Ping] receive Ping ", args)
+    if args.Viewnum == 24 {
+        log.Println("currView is ", vs.currView)
+    }
+    vs.lastPing = *args
 	clerkName := args.Me
 	now := time.Now()
     if clerkName == "" {
@@ -47,7 +51,6 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
     // backup ping 
     if clerkName == vs.currView.Backup {
         reply.View = vs.currView
-        vs.currView.Backup = clerkName
         return nil
     }
 
@@ -97,29 +100,26 @@ func (vs *ViewServer) Get(args *GetArgs, reply *GetReply) error {
 
 func (vs *ViewServer) tick() {
     log.Println("server.tick Entering...")
+    
 
 	// Your code here.
 	primary := vs.currView.Primary
     backup := vs.currView.Backup
 
-
     if vs.isviewAlive(primary) != true {
         delete(vs.clerkMap, primary)
-       // vs.currView.Viewnum = uint(len(vs.clerkMap))
-        vs.currView.Primary = ""
+      //  vs.currView.Primary = ""
         if vs.isviewAlive(backup) == true {
             vs.currView.Primary = backup
             vs.currView.Backup = ""
         }
-
     }
 
     if vs.isviewAlive(backup) == false {
         delete(vs.clerkMap, backup)
-       //vs.currView.Viewnum = uint(len(vs.clerkMap))
         vs.currView.Backup = ""
-
     }
+
     for clerkName, _ := range vs.clerkMap {
         if vs.currView.Primary != clerkName && vs.currView.Backup == "" {
             if vs.isviewAlive(clerkName) {
@@ -128,8 +128,7 @@ func (vs *ViewServer) tick() {
 
         }
     }
-
-
+    log.Println("[tick] server.tick Leaving ... ",vs.currView)
 }
 
 // isviewTimeOut detect whetherview is alive
@@ -174,7 +173,6 @@ func StartServer(me string) *ViewServer {
 	vs.me = me
 	// Your vs.* initializations here.
 	vs.clerkMap = make(map[string]time.Time)
-	vs.clerkPingId = make(map[string]uint64)
 	vs.currView.Viewnum = 0
 	vs.currView.Backup = ""
 	vs.currView.Backup = ""

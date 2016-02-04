@@ -9,7 +9,8 @@ import "strconv"
 
 func check(t *testing.T, ck *Clerk, p string, b string, n uint) {
 	view, _ := ck.Get()
-    log.Println(" p is: ", p, " b is: ", b , "n is: " , n ," currView is ", view)
+    fmt.Println("[check] currView is ", view)
+    log.Println("[check] p is: ", p, " b is: ", b , "n is: " , n ," currView is ", view)
 	if view.Primary != p {
 		t.Fatalf("wanted primary %v, got %v", p, view.Primary)
 	}
@@ -69,7 +70,6 @@ func Test1(t *testing.T) {
 
 	{
 		vx, _ := ck1.Get()
-        fmt.Println("vx is  ssssss ", vx )
 		for i := 0; i < DeadPings*2; i++ {
 			ck1.Ping(1)
 			view, _ := ck2.Ping(0)
@@ -190,13 +190,13 @@ func Test1(t *testing.T) {
 		// set up p=ck3 b=ck1, but
 		// but do not ack
 		vx, _ := ck1.Get()
+        log.Println("currView is ", vx)
 		for i := 0; i < DeadPings*3; i++ {
 			ck1.Ping(0)
-            log.Println("vx.ViweNum is ", vx.Viewnum)
 			ck3.Ping(vx.Viewnum)
 			v, _ := ck1.Get()
             log.Println("check currView ", v)
-            log.Println("v.Viewnum is ", v.Viewnum, "vx.Viewnum is ", vx.Viewnum)
+            log.Println("v is ", v, "vx is ", vx)
 			if v.Viewnum > vx.Viewnum {
                 log.Println("break kkkkkkk")
 				break
@@ -204,12 +204,13 @@ func Test1(t *testing.T) {
 			time.Sleep(PingInterval)
 		}
 		check(t, ck1, ck3.me, ck1.me, vx.Viewnum+1)
-        fmt.Println("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
 		vy, _ := ck1.Get()
+        fmt.Println("VYVYVYVYVYVYVYVYVYVYVYVYYVYV", vy)
 		// ck3 is the primary, but it never acked.
 		// let ck3 die. check that ck1 is not promoted.
 		for i := 0; i < DeadPings*3; i++ {
 			v, _ := ck1.Ping(vy.Viewnum)
+            fmt.Println("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV", v)
 			if v.Viewnum > vy.Viewnum {
 				break
 			}
