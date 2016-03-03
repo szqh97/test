@@ -40,4 +40,5 @@ pkg/linux_386/
 opencv/pic
 go/src/github.com/
 go/pkg/linux_386/
+*.torrent
 
