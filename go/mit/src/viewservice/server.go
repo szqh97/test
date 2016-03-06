@@ -19,7 +19,7 @@ type ViewServer struct {
 
 	clerkMap    map[string]time.Time
 	currView    View
-    lastPing    PingArgs
+    backupNum   uint
 }
 
 //
@@ -32,7 +32,6 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
     if args.Viewnum == 24 {
         log.Println("currView is ", vs.currView)
     }
-    vs.lastPing = *args
 	clerkName := args.Me
 	now := time.Now()
     if clerkName == "" {
@@ -41,7 +40,7 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
     vs.clerkMap[clerkName] = now
     // first ping , set view to primary
 	if vs.currView.Viewnum == 0 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
-        vs.currView.Viewnum = args.Viewnum + 1
+        vs.currView.Viewnum = args.Viewnum
 		vs.currView.Primary = clerkName
 		vs.currView.Backup = ""
         reply.View = vs.currView
@@ -50,6 +49,7 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 
     // backup ping 
     if clerkName == vs.currView.Backup {
+        vs.backupNum = args.Viewnum
         reply.View = vs.currView
         return nil
     }
@@ -57,7 +57,7 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
     //primary ping 
     if clerkName == vs.currView.Primary {
         // if primary restarted, ping(0)
-        if args.Viewnum + 1 < vs.currView.Viewnum {
+        if args.Viewnum < vs.currView.Viewnum {
             if vs.isviewAlive(vs.currView.Backup) {
                 vs.currView.Primary = vs.currView.Backup
                 vs.currView.Backup = ""
@@ -65,7 +65,7 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
             reply.View = vs.currView
             return nil
         }
-        vs.currView.Viewnum = args.Viewnum + 1
+        vs.currView.Viewnum = args.Viewnum 
         reply.View = vs.currView
         return nil
     }
@@ -87,6 +87,7 @@ func (vs *ViewServer) Get(args *GetArgs, reply *GetReply) error {
 	// Your code here.
 	vs.mu.Lock()
 	reply.View = vs.currView
+    reply.View.Viewnum += 1
 	vs.mu.Unlock()
 
 	return nil
@@ -100,7 +101,6 @@ func (vs *ViewServer) Get(args *GetArgs, reply *GetReply) error {
 
 func (vs *ViewServer) tick() {
     log.Println("server.tick Entering...")
-    
 
 	// Your code here.
 	primary := vs.currView.Primary
@@ -109,7 +109,9 @@ func (vs *ViewServer) tick() {
     if vs.isviewAlive(primary) != true {
         delete(vs.clerkMap, primary)
       //  vs.currView.Primary = ""
-        if vs.isviewAlive(backup) == true {
+      // if backup's Viewnum > currView.Num then change it to primay
+      // else do not change backup and primay
+        if vs.isviewAlive(backup) == true && vs.currView.Viewnum >= vs.backupNum {
             vs.currView.Primary = backup
             vs.currView.Backup = ""
         }

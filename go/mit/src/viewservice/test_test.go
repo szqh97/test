@@ -88,7 +88,7 @@ func Test1(t *testing.T) {
 	{
 		ck1.Ping(2)
 		vx, _ := ck2.Ping(2)
-		fmt.Println("current view is ", vx)
+		fmt.Println("current vvvvview  vx is ", vx)
 		for i := 0; i < DeadPings*2; i++ {
 			v, _ := ck2.Ping(vx.Viewnum)
 			if v.Primary == ck2.me && v.Backup == "" {
@@ -205,12 +205,10 @@ func Test1(t *testing.T) {
 		}
 		check(t, ck1, ck3.me, ck1.me, vx.Viewnum+1)
 		vy, _ := ck1.Get()
-        fmt.Println("VYVYVYVYVYVYVYVYVYVYVYVYYVYV", vy)
 		// ck3 is the primary, but it never acked.
 		// let ck3 die. check that ck1 is not promoted.
 		for i := 0; i < DeadPings*3; i++ {
 			v, _ := ck1.Ping(vy.Viewnum)
-            fmt.Println("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV", v)
 			if v.Viewnum > vy.Viewnum {
 				break
 			}
@@ -219,8 +217,8 @@ func Test1(t *testing.T) {
 		check(t, ck2, ck3.me, ck1.me, vy.Viewnum)
 	}
 	fmt.Printf("  ... Passed\n")
-    return 
 
+    return 
 	// if old servers die, check that a new (uninitialized) server
 	// cannot take over.
 	fmt.Printf("Test: Uninitialized server can't become primary ...\n")
