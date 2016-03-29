@@ -218,7 +218,6 @@ func Test1(t *testing.T) {
 	}
 	fmt.Printf("  ... Passed\n")
 
-    return 
 	// if old servers die, check that a new (uninitialized) server
 	// cannot take over.
 	fmt.Printf("Test: Uninitialized server can't become primary ...\n")
@@ -226,16 +225,19 @@ func Test1(t *testing.T) {
 	{
 		for i := 0; i < DeadPings*2; i++ {
 			v, _ := ck1.Get()
+            fmt.Println("vvvvvvvv, ", v)
 			ck1.Ping(v.Viewnum)
 			ck2.Ping(0)
 			ck3.Ping(v.Viewnum)
 			time.Sleep(PingInterval)
+        fmt.Println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", v)
 		}
 		for i := 0; i < DeadPings*2; i++ {
 			ck2.Ping(0)
 			time.Sleep(PingInterval)
 		}
 		vz, _ := ck2.Get()
+        fmt.Println("vz is ", vz)
 		if vz.Primary == ck2.me {
 			t.Fatalf("uninitialized backup promoted to primary")
 		}

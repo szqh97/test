@@ -1,16 +1,20 @@
+
 #![feature(box_syntax)] 
 struct Foo {
     f: Box<i32>,
 }
 
+#[warn(dead_code)] 
 fn max<'a>(x: &'a Foo, y: &'a Foo)-> &'a Foo {
     if x.f > y.f { x } else { y }
 }
 
+#[warn(dead_code)] 
 struct Link<'a> {
     link: &'a Foo,
 }
 
+#[warn(dead_code)] 
 fn store_foo<'a>(x:&mut Link<'a>, y:&'a Foo) {
  //   x.link = y;
  //

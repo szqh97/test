@@ -42,7 +42,7 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
 	if vs.currView.Viewnum == 0 && len(vs.currView.Primary) == 0 && len(vs.currView.Backup) == 0 {
         vs.currView.Viewnum = args.Viewnum
 		vs.currView.Primary = clerkName
-		vs.currView.Backup = ""
+		//vs.currView.Backup = ""
         reply.View = vs.currView
         return nil
 	}
@@ -74,6 +74,12 @@ func (vs *ViewServer) Ping(args *PingArgs, reply *PingReply) error {
     if vs.currView.Backup == "" {
         vs.currView.Backup = clerkName
         reply.View = vs.currView
+        return nil
+    }
+
+    if !vs.isviewAlive(vs.currView.Primary) && !vs.isviewAlive(vs.currView.Backup){
+        return nil
+    
     }
 
 	return nil

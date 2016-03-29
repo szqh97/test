@@ -122,6 +122,7 @@ mod tests {
 
     #[test]
     fn test_scoped_unsubscribe() {
+        println!("xxxxxxxxxxxxxxxxxxxxxxx");
         let ls = ListenerSet::<bool>::new();
 
         {

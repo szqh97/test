@@ -1,3 +1,4 @@
+#[warn(dead_code)] 
 struct Foo<'a> {
     vec1: Vec<i32>,
     slice: &'a mut [i32],

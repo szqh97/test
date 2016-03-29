@@ -28,4 +28,6 @@ name = "rc_test"
 path = "src/rc_test.rs"
 
 
-
+[[bin]]
+name = "ui"
+path = "src/uninitial.rs"
