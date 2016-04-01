@@ -2,6 +2,21 @@
 #include <boost/algorithm/string.hpp>
 using namespace std;
 
+
+void test ()
+{
+    //std::string priority = "high, normal";
+    std::string priority = "high";
+
+    std::string priority_list = "'" + priority + "'";
+    boost::regex r("[\\s]+", boost::regex::perl);
+    priority_list = boost::regex_replace(priority_list, r, "");
+    boost::regex r2(",", boost::regex::perl);
+    priority_list = boost::regex_replace(priority_list, r2, "','");
+    std::cout << priority_list << std::endl;
+
+
+}
 int main( int argc, char * argv[] )
 {
     //string exp = "Key   Peele";
@@ -56,5 +71,9 @@ int main( int argc, char * argv[] )
         cout << "no match" << endl;
     }
     cout << sm.size() << endl;
+
+
+    cout << "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" << endl;
+    test();
 }
 
