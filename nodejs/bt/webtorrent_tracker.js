@@ -19,13 +19,26 @@ torrent.on('wire', function (wire, addr){
 });
 
 
+var port=8000
 server = torrent.createServer();
+
+server.listen(port, initServer)
+.on('error', function (err) {
+  if (err.code === 'EADDRINUSE' || err.code === 'EACCES') {
+    // If port is taken, pick one a free one automatically
+    return server.listen(0, initServer)
+  }
+  //fatalError(err)
+})
+
+
 function initServer () {
     if (torrent.ready) onReady()
     else torrent.once('ready', onReady)
 };
 
 function onReady(){
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     drawTorrent(torrent)
 }
 
@@ -34,5 +47,5 @@ function drawTorrent(torrent){
 }
 
 
-setTimeout(function () { process.exit(0) }, 1000);
+//setTimeout(function () { process.exit(0) }, 1000);
 

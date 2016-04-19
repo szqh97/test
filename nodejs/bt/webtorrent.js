@@ -350,6 +350,7 @@ function runDownload (torrentId) {
   })
 
   function onReady () {
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
     if (typeof argv.select === 'boolean') {
       clivas.line('Select a file to download:')
       torrent.files.forEach(function (file, i) {
