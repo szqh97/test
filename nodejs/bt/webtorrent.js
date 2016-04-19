@@ -330,6 +330,7 @@ function runDownload (torrentId) {
   // Start http server
   server = torrent.createServer()
 
+  console.log(server)
   function initServer () {
     if (torrent.ready) onReady()
     else torrent.once('ready', onReady)
