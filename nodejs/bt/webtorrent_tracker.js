@@ -43,9 +43,9 @@ function onReady(){
 }
 
 function drawTorrent(torrent){
-    console.log(torrent)
+    //console.log(torrent)
 }
 
 
-//setTimeout(function () { process.exit(0) }, 1000);
+setTimeout(function () { process.exit(0) }, 10000);
 
