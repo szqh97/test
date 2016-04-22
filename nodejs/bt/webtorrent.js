@@ -294,7 +294,7 @@ function runDownload (torrentId) {
       updateMetadata()
       torrent.on('wire', updateMetadata)
       torrent.on('metadata', function () {
-        clivas.clear()
+        //clivas.clear()
         torrent.removeListener('wire', updateMetadata)
       })
     }
@@ -505,7 +505,7 @@ function drawTorrent (torrent) {
     var speed = torrent.downloadSpeed
     var estimate = moment.duration(torrent.timeRemaining / 1000, 'seconds').humanize()
 
-    clivas.clear()
+    //clivas.clear()
 
     line(
       '{green:' + (seeding ? 'Seeding' : 'Downloading') + ': }' +
