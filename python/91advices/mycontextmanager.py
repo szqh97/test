@@ -18,3 +18,6 @@ class MyContextManager(object):
 with MyContextManager():
     print 'Testing ...'
     raise (ValueError)
+
+with MyContextManager():
+    pass
