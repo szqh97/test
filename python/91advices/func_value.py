@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+def inc(n):
+    print id(n)
+    n = n + 1
+    print id(n)
+n = 3
+print id(n)
+inc(n)
+
+print n
+print '-----------'
+
 def change_list(orginator_list):
     print 'orgnator_list is:', orgnator_list
     new_list = orgnator_list
