@@ -66,3 +66,20 @@ class Stock:
         self.name = name
         self.shares = shares
         self.price = price
+
+def check_attributes(**kwargs):
+    def decorate(cls):
+        for key, value in kwargs.items():
+            if isinstance(value, Descriptor):
+                value.name = key
+                setattr(cls, key, value)
+            else:
+                setattr(cls, key, value(key))
+        return cls
+    return decorate
+
+class Stock2:
+    def __init__(self, name, shares, price):
+        self.name   = name
+        self.price  = price
+        self.shares = shares
