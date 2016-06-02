@@ -38,34 +38,41 @@ class MaxSized(Descriptor):
             raise ValueError('size must be < ' + str(self.size))
         super().__set__(instance, value)
 
+
 class Integer(Typed):
     expected_type = int
+
 
 class UnsignedInteger(Integer, Unsigned):
     pass
 
+
 class Float(Typed):
     expected_type = float
+
 
 class UnsignedFloat(Float, Unsigned):
     pass
 
+
 class String(Typed):
     expected_type = str
+
 
 class SizedString(String, MaxSized):
     pass
 
 
 class Stock:
-    name   = SizedString('name', size=8)
+    name = SizedString('name', size=8)
     shares = UnsignedInteger('shares')
-    price  = UnsignedFloat('price')
+    price = UnsignedFloat('price')
 
     def __init__(self, name, shares, price):
         self.name = name
         self.shares = shares
         self.price = price
+
 
 def check_attributes(**kwargs):
     def decorate(cls):
@@ -78,8 +85,12 @@ def check_attributes(**kwargs):
         return cls
     return decorate
 
+
+@check_attributes(name=SizedString(size=8), 
+        shares=UnsignedInteger, 
+        price=UnsignedFloat)
 class Stock2:
     def __init__(self, name, shares, price):
-        self.name   = name
-        self.price  = price
+        self.name = name
+        self.price = price
         self.shares = shares
