@@ -15,3 +15,8 @@ print(corp[2])
 print(corp["city"])
 print(corp.staff[1])
 print(corp[10])
+
+print(table.getn(corp))
+print(#corp)
+local s = "kkkk"
+print(#s)
