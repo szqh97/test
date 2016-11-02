@@ -20,5 +20,7 @@ func main() {
 		fmt.Printf("Error %v starting process!", err)
 		os.Exit(1)
 	}
+
+	pid, err = os.StartProcess("/bin/ls")
 	fmt.Printf("the process id is %v\n", pid)
 }
