@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <stdlib.h>
 using namespace std;
 
 
@@ -73,6 +75,20 @@ string replace(const string& str, const string& src, const string& dest)
     return ret;
 }
 
+string join(const vector<string> &vec, const string sep = ",")
+{
+    string ret;
+    for(int i = 0; i < vec.size(); i++)
+    {
+        string s = vec[i];
+        if (i != vec.size() - 1)
+        {
+            s += sep;
+        }
+        ret += s;
+    }
+    return ret;
+}
 
 int main ( int argc, char *argv[] )
 {
@@ -83,5 +99,13 @@ int main ( int argc, char *argv[] )
     {
         cout << *it << " , " ;
     }
+    cout << "-------_" << endl;
+    vt.pop_back();
+    cout << join(vt, "#") << endl;
+    std::wstring ws = L"数第一个字节的首字符为非";
+    std::string s= "数第一个字节的首字符为非";
+    cout << s.substr(0, 3) << endl;
+    cout << s.substr(0, 4) << endl;
+    cout << ws.substr(0, 4) << endl;
     return 0;
 }			/* ----------  end of function main  ---------- */
