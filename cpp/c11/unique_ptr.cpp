@@ -19,7 +19,9 @@ int main ( int argc, char *argv[] )
     unique_ptr<Foo> p1(new Foo);
     if (p1) p1->bar();
     {
-        unique_ptr<Foo>p2(move(p1));
+        //unique_ptr<Foo> p2(move(p1));
+        unique_ptr<Foo> p2(new Foo);
+    
         if (p1 == nullptr) cout << "p1 is null \n";
         f(*p2);
         p1 = move(p2);

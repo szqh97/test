@@ -24,12 +24,18 @@ void dowork1()
     shared_ptr<Foo> sp3(sp2);
     cout << "sp1 pointer: " << sp1.get() << endl;
     cout << "sp2 pointer: " << sp2.get() << endl;
+    cout << "sp3 pointer: " << sp3.get() << endl;
 
     cout << "counter sp1: " << sp1.use_count() << endl;
     cout << "counter sp2: " << sp2.use_count() << endl;
     cout << "counter sp3: " << sp3.use_count() << endl;
 
     sp1.reset();
+    cout << "counter sp1: " << sp1.use_count() << endl;
+    cout << "counter sp2: " << sp2.use_count() << endl;
+    cout << "counter sp3: " << sp3.use_count() << endl;
+
+    sp1->print();
     cout << "counter sp1: " << sp1.use_count() << endl;
     cout << "counter sp2: " << sp2.use_count() << endl;
     cout << "counter sp3: " << sp3.use_count() << endl;

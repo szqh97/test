@@ -106,6 +106,10 @@ int main ( int argc, char *argv[] )
     std::string s= "数第一个字节的首字符为非";
     cout << s.substr(0, 3) << endl;
     cout << s.substr(0, 4) << endl;
-    cout << ws.substr(0, 4) << endl;
+    std::string ttt = "andriod";
+    if (ttt == "andriod")
+    {
+        std::cout << "KKKKKKKKKKKKK" << std::endl;
+    }
     return 0;
 }			/* ----------  end of function main  ---------- */
