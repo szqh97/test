@@ -74,8 +74,13 @@ int CHttpClient::Post(const std::string & strUrl, const std::string & strPost, s
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 3);
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
 	res = curl_easy_perform(curl);
+    long response_code = -1;
+    if (res == CURLE_OK)
+    {
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+    }
 	curl_easy_cleanup(curl);
-	return res;
+	return response_code;
 }
 
 int CHttpClient::Get(const std::string & strUrl, std::string & strResponse)
@@ -103,8 +108,10 @@ int CHttpClient::Get(const std::string & strUrl, std::string & strResponse)
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 3);
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
 	res = curl_easy_perform(curl);
+    long http_code  = -1;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
 	curl_easy_cleanup(curl);
-	return res;
+	return http_code;
 }
 
 int CHttpClient::Posts(const std::string & strUrl, const std::string & strPost, std::string & strResponse, const char * pCaPath)
@@ -177,8 +184,10 @@ int CHttpClient::Gets(const std::string & strUrl, std::string & strResponse, con
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 3);
 	curl_easy_setopt(curl, CURLOPT_TIMEOUT, 3);
 	res = curl_easy_perform(curl);
+    long http_code  = -1;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http_code);
 	curl_easy_cleanup(curl);
-	return res;
+	return http_code;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
