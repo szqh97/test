@@ -8,6 +8,15 @@ int task(int x)
     std::this_thread::sleep_for(std::chrono::seconds(3));
     return x;
 }
+
+double squ(double x)
+{
+    if (x < 0)
+    {
+        throw std::out_of_range("x< 0");
+    }
+    return x;
+}
 int main()
 {
     std::future<int> f1 = std::async(std::launch::async, [](){return 9;});
@@ -36,6 +45,10 @@ int main()
     std::future<int> myf2 = std::async(std::launch::async, task, 11);
     cout << "kkkk" << myf.get() << endl;
     cout << "kkkk" << myf2.get() << endl;
+
+
+    cout << "--------" << endl;
+    squ(-1);
 
     return 0;
 
