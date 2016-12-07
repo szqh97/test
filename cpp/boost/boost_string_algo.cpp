@@ -1,5 +1,6 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+#include <boost/regex.hpp>
 #include <vector>
 using namespace std;
 
@@ -68,6 +69,11 @@ int main()
     boost::split(strvec, magnet_prex, boost::algorithm::is_any_of(":"));
     cout << strvec.back() << endl;
     
+    cout << "-----------------------------------------manget-----------------------------------------"<< endl;
+
+    std::string img = "http://file.ttest.kaipao.cc/T3gthTB7LT1R49lp5K_2x2";
+    boost::regex reg("_[0-9]+x[0-9]+");
+        
 
 
 
