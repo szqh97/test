@@ -1,5 +1,5 @@
-#include "ClientEchoPacket.h"
-using namespace tbnet;
+#include "EChoClient.h"
+#include <ipackethandler.h>
 int ClientEchoPacket::encode_count = 0;
 ClientEchoPacket::ClientEchoPacket()
 {
@@ -7,23 +7,31 @@ ClientEchoPacket::ClientEchoPacket()
     _index = 0;
 }
 
-void ClientEchoPacket::setString(const std::string& str)
+void ClientEchoPacket::setString(char* str)
 {
-    _str = str;
+    strncpy(_str, str, DATA_MAX_SIZE);
+    _str[DATA_MAX_SIZE] = '\0';
 }
 
-bool ClientEchoPacket::encode(Databuffer *output)
+bool ClientEchoPacket::encode(DataBuffer *output)
 {
-    output->writeString(_str);
+    output->writeBytes(_str, strlen(_str));
     encode_count++;
     return true;
 }
 
-bool ClientEchoPacket::decode(Databuffer *input, PacketHeader *header)
+bool ClientEchoPacket::decode(DataBuffer *input, PacketHeader *header)
 {
     _recvLen = header->_dataLen;
     int len = header->_dataLen;
-    input->readString()
+    if (len >= DATA_MAX_SIZE) {
+        len = DATA_MAX_SIZE - 1;
+    }
+    input->readBytes(_str, len);
+    _str[len] = '\0';
+    if (header->_dataLen > len) {
+        input->drainData(header->_dataLen - len);
+    }
 
     return true;
 }
@@ -42,7 +50,7 @@ ClientEchoPacketHandler::ClientEchoPacketHandler()
     atomic_set(&_count, 0);
 }
 
-HPRetCode ClientEchoPacketHandler::handlePacket(Packet *packet, void *args)
+IPacketHandler::HPRetCode ClientEchoPacketHandler::handlePacket(Packet *packet, void *args)
 {
     ClientEchoPacket *echopacket = (ClientEchoPacket*) args;
     atomic_inc(&_count);
@@ -100,9 +108,33 @@ void EchoClient::start(int c)
         cons[i]->setQueueLimit(500);
     }
     transport.start();
-    char buffer[DAATA_MAX_SIZE + 1];
+    char buffer[DATA_MAX_SIZE + 1];
     int sendcount = 0;
     int pid = getpid();
     TBSYS_LOG(INFO, "PID: %d", pid);
 
+    for (int i = 0; i < gsendcount; ++i) {
+        int len = 1988;
+        sprintf(buffer, "%010d_%010d", pid, i);
+        memset(buffer+21, 'a', len-21);
+        buffer[len] = '\0';
+        ClientEchoPacket *packet = new ClientEchoPacket();
+        packet->setIndex(i);
+        packet->setString(buffer);
+        if (!cons[i%c]->postPacket(packet, NULL, packet)) {
+            break;
+        }
+        gsendlen += len;
+        sendcount ++;
+    }
+    gsendcount = sendcount;
+    TBSYS_LOG(ERROR, "send finish.");
+    transport.wait();
+    free(cons);
+}
+
+
+void singalHander(int sig)
+{
+    transport.stop();
 }
