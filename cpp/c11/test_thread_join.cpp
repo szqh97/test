@@ -18,10 +18,10 @@ void func2()
 int main ( int argc, char *argv[] )
 {
     std::thread t(func);
-    //t.join();
+    t.join();
     
     std::thread t2 (func2);
-    //t2.join();
+    t2.join();
     cout << "aaaaaaaaaaa" << endl;
     return 0;
 }			/* ----------  end of function main  ---------- */

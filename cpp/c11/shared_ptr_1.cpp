@@ -167,6 +167,8 @@ int main ( int argc, char *argv[] )
     cout << "===== do dowork_vector =====" << endl;
     dowork_vector() ;
 
+    std::shared_ptr<int> p (NULL);
+    if (!p.get()) cout << "KKKKKKKKKKKKKKKK" << endl;
     return 0;
 }			/* ----------  end of function main  ---------- */
 
