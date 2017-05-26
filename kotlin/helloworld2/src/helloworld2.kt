@@ -3,6 +3,10 @@
  */
 
 import testc.*
+import datap.*
+import sealt.*
+import templatet.*
+import delegator.*
 
 fun testbreak (){
     loop@ for (i in 1 .. 100) {
@@ -59,6 +63,15 @@ class Bar1(override  val count: Int) : Foo
 class Bar2: Foo {
     override var count: Int = 0
 }
+
+open class CC
+class DD: CC()
+fun CC.foo() = "C"
+fun DD.foo() = "D"
+fun printFoo(c: CC) {
+    println(c.foo())
+}
+
 fun main(args: Array<String>) {
     testbreak()
     val invoice = Invoice()
@@ -79,4 +92,32 @@ fun main(args: Array<String>) {
     println(child.prop)
     child.foo()
 
+    val l = mutableListOf(1,2,3)
+    l.swap(2, 0)
+
+    println(l)
+
+    printFoo(DD())
+    val jack = User(name = "Jack", age=1)
+    println(jack)
+
+    val box: Box<Int> = Box<Int>(1)
+    val bb2 = Box(1)
+    println(box)
+    println(bb2)
+
+    val bb = BaseImpl(10)
+    Derived(bb).print()
+
+    println ("---------")
+    println(lazVal)
+    println(lazVal)
+
+    val user = UUser();
+    user.name = "test"
+    user.name = "kkk"
+
+    val muser = MUser(mapOf("name" to "Json Doe",
+            "age" to 14))
+    println(muser)
 }
