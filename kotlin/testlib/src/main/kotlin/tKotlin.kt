@@ -29,3 +29,9 @@ class Button: View() {
 
 fun View.showOff() = println("view show off")
 fun Button.showOff() = println("Button show off")
+
+var StringBuilder.lastChar: Char
+    get() = get(length - 1)
+    set(value: Char) {
+        this.setCharAt(length - 1 , value)
+    }
