@@ -3,6 +3,7 @@
  */
 import tclass.*
 import SmartCast.*
+import TCollect.*
 fun main(args: Array<String>) {
     println("Hello ${if (args.size > 0) args[0] else "SomeOne"}")
     testPerson()
@@ -18,6 +19,9 @@ fun main(args: Array<String>) {
     println(eval(Sum(Num(1), Num(2))))
     println(eval2(Sum(Num(1), Num(2))))
     evalWithLoggin(Sum(Num(1), Num(2)))
+
+    testIteratingMap()
+    testCollection()
 
 
 }

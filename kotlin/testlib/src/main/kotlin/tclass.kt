@@ -2,7 +2,8 @@
  * Created by li_yun on 2017/5/30.
  */
 package  tclass
-import java.util.Random
+import java.util.*
+
 class  Person(
         val name:String,
         var isMarried: Boolean
@@ -73,3 +74,15 @@ fun mixOptimized(c1: Color, c2: Color)  =
             (c1 == Color.YELLOW && c2 == Color.BLUE) || (c1 == Color.BLUE && c2 == Color.YELLOW) -> Color.GREEN
             else -> throw  Exception("Dirty color")
         }
+
+fun testIteratingMap() {
+    val binaryReps = TreeMap<Char, String>()
+    for (c in 'A' .. 'F') {
+        val binary = Integer.toBinaryString(c.toInt())
+        binaryReps[c] = binary
+    }
+
+    for ((letter, binary) in binaryReps) {
+        println("$letter = $binary")
+    }
+}
