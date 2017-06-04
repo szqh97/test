@@ -5,6 +5,7 @@ import tclass.*
 import SmartCast.*
 import TCollect.*
 import strings.*
+import delegation.*
 fun main(args: Array<String>) {
     fun test(){
         println("Hello ${if (args.size > 0) args[0] else "SomeOne"}")
