@@ -3,6 +3,8 @@
  */
 package strings
 
+import java.io.Serializable
+
 fun String.lastChar(): Char = this.get(this.length - 1)
 fun <T> Collection<T>.joinToString(
         separator: String = ", ",
@@ -35,3 +37,32 @@ var StringBuilder.lastChar: Char
     set(value: Char) {
         this.setCharAt(length - 1 , value)
     }
+
+interface Clickable {
+    fun click()
+    fun showOff() = println("I'm clickable")
+}
+
+
+open class RichButton : Clickable {
+    final override fun click() {}
+}
+
+interface State : Serializable
+
+
+
+class Outer {
+    inner  class Inner {
+        fun getOuterReference(): Outer = this@Outer
+    }
+}
+
+class User constructor(_nickname: String) {
+    val nickname: String
+    init {
+        nickname = _nickname
+    }
+}
+
+
