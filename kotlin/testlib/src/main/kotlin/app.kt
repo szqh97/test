@@ -31,6 +31,7 @@ fun main(args: Array<String>) {
     val sb = StringBuilder("Kotlin?")
     sb.lastChar = '!'
     println(sb)
+    println("12.3456-A.tet".split("."))
 
 
 }
