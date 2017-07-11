@@ -1,7 +1,11 @@
 #!/usr/bin/env lua
-local ffi = require("ffi")
+
+local ffi = require "ffi"
+local myffi = ffi.load("myffi")
+
 ffi.cdef[[
-int printf(const char * fmt, ...)
+int add(int x, int y);
 ]]
 
-ffi.C.printf("Hello %s!", "world")
+local res = myffi.add(1,2)
+print (res)
