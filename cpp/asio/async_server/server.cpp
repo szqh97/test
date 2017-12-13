@@ -32,14 +32,23 @@ public:
 
 private:
     void handle_write(const boost::system::error_code&  error, size_t bytes_transferred) {
-        boost::asio::async_read_until(socket_,
-                sbuf_,
-                "\n",
-                boost::bind(&session::handle_read,
-                    shared_from_this(),
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred
-                    ));
+        if (error) {
+            std::cout << error << "----" << std::endl;
+            delete this;
+            return;
+        }
+        if (socket_.is_open() ) {
+            boost::asio::async_read_until(socket_,
+                    sbuf_,
+                    "\n",
+                    boost::bind(&session::handle_read,
+                        shared_from_this(),
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred
+                        ));
+//            std::cout << "in handle write" << std::endl;
+
+        }
     }
 
     void handle_read(const boost::system::error_code& error, size_t bytes_transferred) {
