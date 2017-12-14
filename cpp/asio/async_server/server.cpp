@@ -5,6 +5,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
+using std::cin;
+using std::cout;
+using std::endl;
 using boost::asio::ip::tcp;
 using boost::asio::ip::address;
 
@@ -46,12 +49,22 @@ private:
                         boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred
                         ));
-//            std::cout << "in handle write" << std::endl;
+            std::cout << "in handle write" << std::endl;
 
         }
     }
 
     void handle_read(const boost::system::error_code& error, size_t bytes_transferred) {
+        if (error) {
+            cout << boost::system::system_error(error).what() << endl;
+            return;
+        }
+#if 0
+        std::cout << error.message() << std::endl;
+        if (error.value() == boost::asio::error::eof) {
+            return;
+        }
+#endif
         boost::asio::async_write(socket_,
                 sbuf_,
                 boost::bind(&session::handle_write,
@@ -103,7 +116,7 @@ private:
 int main(int argc, char *argv[])
 {
     boost::asio::io_service io_service;
-    tcp::endpoint endpoint(tcp::v4(), 10000);
+    tcp::endpoint endpoint(tcp::v4(), 9999);
 
     server s(io_service, endpoint);
     s.run();
