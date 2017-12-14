@@ -7,7 +7,6 @@
 #include <boost/asio/streambuf.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
 
 using boost::asio::ip::tcp;
@@ -60,7 +59,6 @@ private:
 
     void handle_read(const boost::system::error_code& error, size_t bytes_transferred) {
         std::cout << buf << std::endl;
-        boost::this_thread::sleep(boost::posix_time::microseconds(100));
         strcpy(buf, "hello world\n");
         boost::asio::async_write(socket_,
                 boost::asio::buffer(buf, strlen(buf)),
@@ -84,7 +82,7 @@ int main(int argc, char *argv[])
 {
     boost::asio::io_service io_service;
         
-    tcp::endpoint endpoint(address::from_string("127.0.0.1"), 10000);
+    tcp::endpoint endpoint(address::from_string("127.0.0.1"), 9999);
     client_ptr new_client(new client(io_service, endpoint));
     new_client->start();
     io_service.run();
