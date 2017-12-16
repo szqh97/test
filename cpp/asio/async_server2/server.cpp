@@ -1,6 +1,8 @@
 #include "server.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>>
+#include <algorithm>
+#include <iterator>
 using namespace std;
 
 
@@ -11,7 +13,8 @@ void session::start() {
     tcp::no_delay option(true);
     socket_.set_option(option);
 
-    cout <<__FILE__<<":"<< __LINE__ << ": Client " << boost::lexical_cast<string>(socket_.remote_endpoint()) << " connected..." << endl;
+    string client = boost::lexical_cast<string>(socket_.remote_endpoint());
+    cout <<__FILE__<<":"<< __LINE__ << ": Client ["<< client <<"]("<< this <<")" << " connected..." << endl;
     boost::asio::async_read_until(socket_, sbuf_, "\n",
             boost::bind(&session::handle_read,
                 shared_from_this(),
@@ -23,7 +26,15 @@ void session::start() {
 void session::handle_write(const boost::system::error_code& error, size_t bytes_transferred) {
     if (error) {
         string client = boost::lexical_cast<string>(this->socket_.remote_endpoint());
-        std::cerr << __FILE__<< ":" <<__LINE__ << ": Client:[" << client << "] closed: " <<  boost::system::system_error(error).what() << endl;
+        std::cerr << __FILE__<< ":" <<__LINE__ << ": Client:[" << client << "](" << this << ") closed: " <<  boost::system::system_error(error).what() << endl;
+        auto it = g_session_list.begin();
+        while (it != g_session_list.end()) {
+            if (it->get() == this) {
+                it = g_session_list.erase(it);
+            } else {
+                ++it;
+            }
+        }
         return ;
     }
 
@@ -38,7 +49,16 @@ void session::handle_write(const boost::system::error_code& error, size_t bytes_
 void session::handle_read(const boost::system::error_code& error, size_t bytes_transferred) {
     if (error) {
         string client = boost::lexical_cast<string>(this->socket_.remote_endpoint());
-        std::cerr << __FILE__<< ":" <<__LINE__ << ": Client:[" << client << "] closed: " <<  boost::system::system_error(error).what() << endl;
+        std::cerr << __FILE__<< ":" <<__LINE__ << ": Client:[" << client << "](" << this << ") closed: " <<  boost::system::system_error(error).what() << endl;
+        auto it = g_session_list.begin();
+
+        while (it != g_session_list.end()) {
+            if (it->get() == this) {
+                it = g_session_list.erase(it);
+            } else {
+                ++it;
+            }
+        }
         return ;
     }
 
@@ -53,7 +73,6 @@ void session::handle_read(const boost::system::error_code& error, size_t bytes_t
 ////////////////////
 server::server(boost::asio::io_service& io_service, tcp::endpoint& endpoint) 
     : io_service_(io_service), acceptor_(io_service, endpoint), timer_(io_service, boost::posix_time::seconds(1)){
-        cout << "xxxxx" << endl;
         session_ptr new_session (new session(io_service_));
 
 #if 0
