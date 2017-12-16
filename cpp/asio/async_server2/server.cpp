@@ -1,8 +1,11 @@
 #include "server.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>>
 using namespace std;
 
-session::session(boost::asio::io_service& io_service) : socket_(io_service) {}
+
+session::session(boost::asio::io_service& io_service) 
+    : socket_(io_service){}
 
 void session::start() {
     tcp::no_delay option(true);
@@ -46,15 +49,51 @@ void session::handle_read(const boost::system::error_code& error, size_t bytes_t
                 boost::asio::placeholders::bytes_transferred));
 }
 
+    
 ////////////////////
 server::server(boost::asio::io_service& io_service, tcp::endpoint& endpoint) 
-    : io_service_(io_service), acceptor_(io_service, endpoint){
+    : io_service_(io_service), acceptor_(io_service, endpoint), timer_(io_service, boost::posix_time::seconds(1)){
+        cout << "xxxxx" << endl;
         session_ptr new_session (new session(io_service_));
+
+#if 0
         acceptor_.async_accept(new_session->socket(),
             boost::bind(&server::handle_accept,
                     this, new_session, boost::asio::placeholders::error));
+#endif
+
+        acceptor_.async_accept(new_session->socket(),
+                boost::bind(&server::handle_accept2,
+                    this,new_session, boost::asio::placeholders::error));
+
 }
 
+#if 0
+void server::run() {
+
+    //timer_.async_wait(callback_);
+    io_service_.run();
+}
+#endif
+
+void server::handle_accept2(session_ptr new_session, const boost::system::error_code& error) {
+if (error) {
+        string client = boost::lexical_cast<string>(tcp::socket(this->io_service_).remote_endpoint());
+        std::cerr << __FILE__<<":" <<  __LINE__ << ": Client: [" << client << "] closed: " << boost::system::system_error(error).what() << endl;
+    }
+
+//////FIXME add lock
+
+    new_session->start();
+    g_session_list.push_back(std::move(new_session));
+    new_session.reset(new session(io_service_));
+    cout << "g_session_list len is: " << g_session_list.size() << endl;
+
+
+    acceptor_.async_accept(new_session->socket(), 
+            boost::bind(&server::handle_accept2, this, new_session, boost::asio::placeholders::error));
+
+}
 void server::handle_accept(session_ptr new_session, const boost::system::error_code& error) {
     if (error) {
         string client = boost::lexical_cast<string>(tcp::socket(this->io_service_).remote_endpoint());
@@ -66,4 +105,5 @@ void server::handle_accept(session_ptr new_session, const boost::system::error_c
     acceptor_.async_accept(new_session->socket(), 
             boost::bind(&server::handle_accept, this, new_session, boost::asio::placeholders::error));
 }
+
 
