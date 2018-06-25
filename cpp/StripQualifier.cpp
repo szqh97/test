@@ -16,9 +16,10 @@ class TypeTraits
         typedef typename unConst<T>::Result NonConstType;
 };
 
+const char *T = "/im/autoreply";
 int main ( int argc, char *argv[] )
-{
 
+    std::cout << sizeof(T) << endl;
     return 0;
 }			/* ----------  end of function main  ---------- */
 

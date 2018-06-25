@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdint.h>
+#include <string>
 using namespace std;
 #if 0
 #undef int32_t
@@ -10,7 +11,11 @@ typedef long long            int64_t;
 #endif
 #endif
 
-int main(int argc, char *argv[])
+const char *T = "/im/autoreply";
+const std::string AUTOREPLY_PREFIX    = "/im/autoreply";
+const std::string AUTOREPLY_STATUS    = AUTOREPLY_PREFIX + "/status";
+const std::string AUTOREPLY_CONTENT   = AUTOREPLY_PREFIX + "/content";
+int main()
 {
     
     int32_t t = 111;
@@ -20,6 +25,9 @@ int main(int argc, char *argv[])
     cout << __SIZEOF_LONG_LONG__ << endl;
     cout << __SIZEOF_LONG__ << endl;
     cout << sizeof(int64_t) << endl;
+    cout << sizeof(T) << endl;
+    cout << strlen(T) << endl;
+    cout << AUTOREPLY_PREFIX.length() << endl;
 
     return 0;
 }
