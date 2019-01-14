@@ -30,6 +30,6 @@ def encode_multipart_formdata(img_file):
 if __name__ == '__main__':
     f = './test.db'
     import sys
-    host = 'http://120.26.137.224:38700/'
+    host = 'http://120.26.137.224:38700/upload'
     post2_multipart(host, sys.argv[1])
 

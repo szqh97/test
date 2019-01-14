@@ -92,5 +92,11 @@ if __name__ == "__main__":
 
     server = SimpleEchoServer()
     server.listen(1234)
+    def test_timer():
+        import time
+        print "ts now is :" + str(time.time())
+    
+    # test timer worker.
+    tornado.ioloop.PeriodicCallback(test_timer, 5000).start()
 
     tornado.ioloop.IOLoop.instance().start()
